@@ -16,6 +16,86 @@
     }
     svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
+    /* First-Time Onboarding Voice Setup Modal */
+    .onboard-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 7, 0.96);
+      backdrop-filter: blur(16px);
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .onboard-modal.open { display: flex; }
+    .onboard-card {
+      width: 100%;
+      max-width: 390px;
+      background: #121217;
+      border: 1px solid #262630;
+      border-radius: 26px;
+      padding: 26px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+    .onboard-title {
+      font-size: 22px;
+      font-weight: 600;
+      background: linear-gradient(110deg, #ffffff 20%, #38bdf8 70%, #2dd4bf 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .onboard-sub { font-size: 13.5px; color: #8e8e98; line-height: 1.5; margin-top: -8px; }
+    .voice-choice-grid { display: flex; flex-direction: column; gap: 12px; }
+    .voice-choice-btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #18181f;
+      border: 1.5px solid #2a2a35;
+      border-radius: 18px;
+      padding: 16px;
+      color: #f4f4f6;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .voice-choice-btn.selected {
+      border-color: #38bdf8;
+      background: #132030;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.18);
+    }
+    .vc-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #22222b;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .vc-info { display: flex; flex-direction: column; gap: 3px; }
+    .vc-name { font-size: 15px; font-weight: 600; }
+    .vc-desc { font-size: 12px; color: #9ca3af; }
+    .onboard-confirm {
+      background: #f4f4f6;
+      color: #09090b;
+      border: none;
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
     /* Minimal OLED Top Bar */
     .topbar {
       display: flex;
@@ -66,14 +146,14 @@
     .top-right { display: flex; align-items: center; gap: 8px; }
     .mode-badge {
       font-size: 11px;
-      color: #a1a1aa;
+      color: #38bdf8;
       background: #16161a;
       border: 1px solid #242429;
       padding: 6px 10px;
       border-radius: 16px;
     }
 
-    /* Left Sidebar Drawer (Search + New Chat + Pin + Rename + Export) */
+    /* Left Sidebar Drawer */
     .overlay {
       display: none;
       position: fixed;
@@ -258,7 +338,7 @@
     .qp-item:active { background: #1a1a22; }
     .qp-item svg { width: 18px; height: 18px; color: #38bdf8; }
 
-    /* Messages + Rich Formatting + Code Blocks + Generated Images */
+    /* Messages */
     .msg-wrap { display: flex; flex-direction: column; max-width: 88%; }
     .msg-wrap.user { align-self: flex-end; }
     .msg-wrap.ai { align-self: flex-start; max-width: 96%; }
@@ -623,6 +703,36 @@
 </head>
 <body>
 
+  <!-- First-Time Permanent Voice Selection Modal -->
+  <div class="onboard-modal" id="onboardModal">
+    <div class="onboard-card">
+      <div class="onboard-title">Choose Your AI Companion</div>
+      <div class="onboard-sub">Ek baar select karein — aapki chat aur Live mode mein hamesha yahi permanent voice aur style rahegi.</div>
+      <div class="voice-choice-grid">
+        <button class="voice-choice-btn selected" id="optFemale" onclick="playSound('switch'); pickGender('female')">
+          <div class="vc-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+          </div>
+          <div class="vc-info">
+            <span class="vc-name">Female • Monika Sogam</span>
+            <span class="vc-desc">Deep, Clear & Expressive Hindi Voice</span>
+          </div>
+        </button>
+
+        <button class="voice-choice-btn" id="optMale" onclick="playSound('switch'); pickGender('male')">
+          <div class="vc-icon">
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="vc-info">
+            <span class="vc-name">Male • Bunty</span>
+            <span class="vc-desc">Punchy, Crisp & Reel King Energy</span>
+          </div>
+        </button>
+      </div>
+      <button class="onboard-confirm" onclick="playSound('chime'); confirmCompanion()">Set Permanent Voice</button>
+    </div>
+  </div>
+
   <!-- Sidebar Drawer -->
   <div class="overlay" id="overlay" onclick="playSound('tap'); toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
@@ -649,11 +759,11 @@
       </button>
       <div class="brand-pill" onclick="playSound('tap')">
         <span class="aura-dot" id="statusDot"></span>
-        <span>AURA</span>
+        <span id="brandTitle">AURA</span>
       </div>
     </div>
     <div class="top-right">
-      <span class="mode-badge" id="statusText">JARVIS Core</span>
+      <span class="mode-badge" id="statusText">Ready</span>
       <button class="round-btn" onclick="playSound('tap'); toggleSettings()" aria-label="Settings">
         <svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
       </button>
@@ -664,20 +774,19 @@
   <div class="settings-panel" id="settingsPanel">
     <div class="row">
       <input type="password" id="apiKeyInput" placeholder="Gemini API Key..." style="flex:1;" />
-      <input type="password" id="elKeyInput" placeholder="ElevenLabs Key (Bunty)..." style="flex:1;" />
+      <input type="password" id="elKeyInput" placeholder="ElevenLabs API Key..." style="flex:1;" />
       <button class="save-btn" onclick="playSound('chime'); saveKeys()">Save</button>
     </div>
     <div class="row">
-      <select id="modeSelect" onchange="playSound('switch')" style="flex:1;">
-        <option value="charming">Mode: Bunty Reel King / Companion</option>
-        <option value="respect">Mode: Respectful Family</option>
-        <option value="jarvis">Mode: JARVIS Tactical</option>
+      <select id="genderSelect" onchange="changeCompanionFromSettings()" style="flex:1;">
+        <option value="female">Companion: Female (Monika Sogam Deep)</option>
+        <option value="male">Companion: Male (Bunty Reel King)</option>
       </select>
-      <button class="ghost-btn active-pill" id="voiceEngineBtn" onclick="toggleVoiceEngine()">Voice: Bunty EL</button>
+      <button class="ghost-btn active-pill" id="voiceEngineBtn" onclick="toggleVoiceEngine()">ElevenLabs: ON</button>
       <button class="ghost-btn" id="soundToggleBtn" onclick="toggleUiSound()">Sound: ON</button>
     </div>
     <div class="row">
-      <button class="ghost-btn" onclick="playSound('tap'); faceUnlockGreet()">Face Unlock Greet</button>
+      <button class="ghost-btn" onclick="playSound('tap'); faceUnlockGreet()">Welcome Greet</button>
       <button class="ghost-btn" onclick="playSound('tap'); simulateMessage()">Private Msg Alert</button>
     </div>
   </div>
@@ -700,11 +809,11 @@
       <button class="plus-trigger" onclick="playSound('tap'); openPlusSheet()" aria-label="Tools and Attachments">
         <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       </button>
-      <input type="text" id="userInput" placeholder="Ask AURA" oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
+      <input type="text" id="userInput" placeholder="Ask anything..." oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
       <button class="mic-btn" id="micBtn" onclick="playSound('tap'); startVoiceOnce()" aria-label="Voice Dictation">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button class="wave-btn" id="liveWaveBtn" onclick="playSound('chime'); openLiveMode()" aria-label="AURA Live Vision and Voice">
+      <button class="wave-btn" id="liveWaveBtn" onclick="playSound('chime'); openLiveMode()" aria-label="Live Vision and Voice">
         <svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
       </button>
       <button class="send-btn" id="sendBtn" onclick="playSound('chime'); sendMessage()" aria-label="Send">
@@ -761,7 +870,7 @@
     <div class="live-top">
       <div class="live-status-pill">
         <span class="aura-dot"></span>
-        <span id="liveModeLabel">AURA Live</span>
+        <span id="liveModeLabel">Live</span>
       </div>
       <button class="round-btn" onclick="playSound('switch'); switchCamera()" aria-label="Flip Camera">
         <svg viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
@@ -776,7 +885,7 @@
         <div class="halo-mid"></div>
         <div class="halo-core"></div>
       </div>
-      <div class="live-caption" id="liveSubtitle">Tap Mic to talk in Bunty voice, or enable Camera / Screen Live</div>
+      <div class="live-caption" id="liveSubtitle">Tap Mic to talk, or enable Camera / Screen Live</div>
     </div>
 
     <div class="live-bottom">
@@ -796,19 +905,37 @@
   </div>
 
   <script>
-    const BUNTY_VOICE_ID = 'FZkK3TvQ0pjyDmT8fzIW';
-
-    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari core intelligence hai. Tum apne Malik Manish ki loyal, energetic aur smart AI companion ho.
+    // Official ElevenLabs Voice IDs
+    const VOICES = {
+      female: {
+        id: 'Ms9OTvWb99V6DwRHZn6q', // Monika Sogam - Deep and Clear
+        name: 'Monika',
+        badge: 'Monika • Deep',
+        prompt: `Tumhara naam Monika hai (AURA AI ki permanent female voice & persona). Tum Manish ki intelligent, warm, deep aur expressive AI companion ho.
 Rules:
-1. Bunty Reel King / Companion Mode mein punchy, crisp, energetic aur relatable Hinglish andaaz mein baat karo—bilkul ek sharp best friend / creator ki tarah.
-2. Respectful Family Mode mein elders/family ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
-3. Agar kabhi koi galti ho jaye, toh behas mat karo—seedha "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
-4. Message aane par bahar se sirf naam/alert batao ("Sir, ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-5. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, crisp aur helpful jawab 2-3 lines mein do.`;
+1. Hamesha ek graceful, smart aur charming ladki ke andaaz mein natural Hinglish mein baat karo.
+2. Agar kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry, meri galti thi, abhi theek karti hoon!" maan kar sudhaar karo.
+3. Message aane par bahar se sirf alert do ("WhatsApp par ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
+4. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, clear aur helpful jawab 2-3 lines mein do.`
+      },
+      male: {
+        id: 'FZkK3TvQ0pjyDmT8fzIW', // Bunty - Punchy, Crisp and Reel King
+        name: 'Bunty',
+        badge: 'Bunty • King',
+        prompt: `Tumhara naam Bunty hai (AURA AI ka permanent male voice & persona). Tum Manish ke sabse loyal, sharp, energetic aur punchy AI dost ho—bilkul Reel King Bunty ke style mein!
+Rules:
+1. Poori baatcheet punchy, crisp, energetic aur bhai-wale Hinglish andaaz mein sambhalo! Seedha point par aao aur Manish ko "bhai" ya "boss" bol kar mast confidence ke saath baat karo.
+2. Agar kabhi koi galti ho jaye, toh behas mat karo—turant "Sorry bhai, meri galti thi, abhi set karta hoon!" bol kar sudhaar karo.
+3. Message aane par bahar se sirf alert do ("Boss, WhatsApp par ek naya message aaya hai, padh kar sunaun kya?") aur bina permission andar ka text mat padho.
+4. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, crisp aur punchy jawab 2-3 lines mein do.`
+      }
+    };
 
+    let selectedGender = localStorage.getItem('aura_permanent_gender') || '';
+    let tempGender = 'female';
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
     let elApiKey = localStorage.getItem('aura_el_key') || '';
-    let useBuntyEL = localStorage.getItem('aura_use_bunty') !== 'off';
+    let useElevenLabs = localStorage.getItem('aura_use_el') !== 'off';
     let cachedModel = '';
     let chats = JSON.parse(localStorage.getItem('aura_omni_chats') || '[]');
     let currentChatId = null;
@@ -816,6 +943,41 @@ Rules:
     let activeToolPrefix = '';
     let uiSoundEnabled = localStorage.getItem('aura_ui_sound') !== 'off';
     let currentAudio = null;
+
+    // First-Time Onboarding Logic
+    function pickGender(g) {
+      tempGender = g;
+      document.getElementById('optFemale').classList.toggle('selected', g === 'female');
+      document.getElementById('optMale').classList.toggle('selected', g === 'male');
+    }
+
+    function confirmCompanion() {
+      selectedGender = tempGender;
+      localStorage.setItem('aura_permanent_gender', selectedGender);
+      document.getElementById('onboardModal').classList.remove('open');
+      applyCompanionUI();
+      if (!apiKey) document.getElementById('settingsPanel').classList.add('open');
+      renderChat();
+    }
+
+    function changeCompanionFromSettings() {
+      playSound('switch');
+      selectedGender = document.getElementById('genderSelect').value;
+      localStorage.setItem('aura_permanent_gender', selectedGender);
+      applyCompanionUI();
+      renderChat();
+    }
+
+    function applyCompanionUI() {
+      const cfg = VOICES[selectedGender || 'female'];
+      document.getElementById('brandTitle').innerText = 'AURA • ' + cfg.name.toUpperCase();
+      document.getElementById('statusText').innerText = cfg.badge;
+      document.getElementById('liveModeLabel').innerText = cfg.name + ' Live';
+      document.getElementById('genderSelect').value = selectedGender || 'female';
+      document.getElementById('userInput').placeholder = selectedGender === 'male'
+        ? 'Bunty se kuch bhi pooch bhai...'
+        : 'Monika se kuch bhi poochiye...';
+    }
 
     // Tactile UI Sound Synthesizer
     let audioCtx = null;
@@ -864,19 +1026,19 @@ Rules:
     }
 
     function toggleVoiceEngine() {
-      useBuntyEL = !useBuntyEL;
-      localStorage.setItem('aura_use_bunty', useBuntyEL ? 'on' : 'off');
+      useElevenLabs = !useElevenLabs;
+      localStorage.setItem('aura_use_el', useElevenLabs ? 'on' : 'off');
       updateVoiceBtnUI();
       playSound('switch');
     }
 
     function updateVoiceBtnUI() {
       const btn = document.getElementById('voiceEngineBtn');
-      if (useBuntyEL) {
-        btn.innerText = 'Voice: Bunty EL';
+      if (useElevenLabs) {
+        btn.innerText = 'ElevenLabs: ON';
         btn.classList.add('active-pill');
       } else {
-        btn.innerText = 'Voice: Browser';
+        btn.innerText = 'Browser Voice';
         btn.classList.remove('active-pill');
       }
     }
@@ -888,7 +1050,6 @@ Rules:
     let isScreenOn = false;
 
     if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
-    else document.getElementById('settingsPanel').classList.add('open');
     if (elApiKey) document.getElementById('elKeyInput').value = elApiKey;
     document.getElementById('soundToggleBtn').innerText = uiSoundEnabled ? 'Sound: ON' : 'Sound: OFF';
     updateVoiceBtnUI();
@@ -1004,11 +1165,17 @@ Rules:
       const box = document.getElementById('chatBox');
       box.innerHTML = '';
       const chat = chats.find(c => c.id === currentChatId);
+      const isMale = selectedGender === 'male';
+      const titleTxt = isMale ? 'Kya scene hai, Manish?' : 'Hello, Manish';
+      const subTxt = isMale
+        ? 'Bunty full power mein ready hai — bol kya kaam nikalna hai aaj?'
+        : 'Monika ready hai — bataiye aaj main aapki kya madad karun?';
+
       if (!chat || chat.messages.length === 0) {
         box.innerHTML = `
           <div class="welcome-box">
-            <div class="welcome-title">Hello, Manish</div>
-            <div class="welcome-sub">AURA Core + Bunty Voice ready. Where should we start?</div>
+            <div class="welcome-title">${titleTxt}</div>
+            <div class="welcome-sub">${subTxt}</div>
             <div class="quick-prompts">
               <button class="qp-item" onclick="playSound('switch'); quickStart('Create Image', '__IMAGE__')">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
@@ -1020,7 +1187,7 @@ Rules:
               </button>
               <button class="qp-item" onclick="playSound('switch'); quickStart('Canvas', 'Clean code ya reel script likho: ')">
                 <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                <span>Canvas & Code</span>
+                <span>Canvas & Script</span>
               </button>
               <button class="qp-item" onclick="playSound('switch'); quickStart('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
                 <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
@@ -1065,17 +1232,18 @@ Rules:
       });
     }
 
-    function drawMessage(sender, text, fileName, imageUrl, msgIndex) {
+    function drawMessage(sender, text, fileName, imageUrl) {
       const box = document.getElementById('chatBox');
       const wb = box.querySelector('.welcome-box');
       if (wb) wb.remove();
 
+      const cfg = VOICES[selectedGender || 'female'];
       const wrap = document.createElement('div');
       wrap.className = 'msg-wrap ' + sender;
 
       const meta = document.createElement('div');
       meta.className = 'msg-meta';
-      meta.innerText = sender === 'user' ? 'You' : 'AURA';
+      meta.innerText = sender === 'user' ? 'Manish' : cfg.name;
 
       const bubble = document.createElement('div');
       bubble.className = 'msg-bubble';
@@ -1142,17 +1310,14 @@ Rules:
     async function regenerateLast() {
       const chat = chats.find(c => c.id === currentChatId);
       if (!chat || chat.messages.length < 2) return;
-      if (chat.messages[chat.messages.length - 1].sender === 'ai') {
-        chat.messages.pop();
-      }
+      if (chat.messages[chat.messages.length - 1].sender === 'ai') chat.messages.pop();
       const lastUser = chat.messages[chat.messages.length - 1];
       if (!lastUser || lastUser.sender !== 'user') return;
       persistChats();
       renderChat();
       document.getElementById('statusText').innerText = 'Thinking...';
-      const mode = document.getElementById('modeSelect').value;
-      const result = await callGemini(lastUser.text, mode, null);
-      document.getElementById('statusText').innerText = 'JARVIS Core';
+      const result = await callGemini(lastUser.text, null);
+      applyCompanionUI();
       if (result.ok) {
         addMsg('ai', result.text);
         speak(result.text);
@@ -1171,7 +1336,6 @@ Rules:
       document.getElementById('settingsPanel').classList.toggle('open');
     }
 
-    /* Plus Bottom Sheet Controls */
     function openPlusSheet() {
       document.getElementById('sheetBackdrop').classList.add('open');
       document.getElementById('plusSheet').classList.add('open');
@@ -1237,14 +1401,15 @@ Rules:
       localStorage.setItem('aura_gemini_key', apiKey);
       localStorage.setItem('aura_el_key', elApiKey);
       document.getElementById('settingsPanel').classList.remove('open');
+      const cfg = VOICES[selectedGender || 'female'];
       const msg = elApiKey
-        ? 'Keys save ho gayi hain Sir! Ab Bunty ki punchy voice active hai.'
-        : 'Gemini Key save ho gayi hai Sir. Bunty voice ke liye ElevenLabs key bhi daal sakte hain.';
+        ? `Keys save ho gayi hain! Ab ${cfg.name} ki asli voice active hai.`
+        : `Gemini Key save ho gayi! ${cfg.name} ki ElevenLabs voice ke liye ElevenLabs key bhi daal sakte hain.`;
       addMsg('ai', msg);
       speak(msg);
     }
 
-    /* ================= ELEVENLABS BUNTY VOICE + AUTO FALLBACK ================= */
+    /* ================= DUAL ELEVENLABS VOICE (MONIKA DEEP / BUNTY) ================= */
     function stopSpeaking() {
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -1254,14 +1419,15 @@ Rules:
 
     function fallbackBrowserSpeak(text) {
       if (!('speechSynthesis' in window)) return;
+      const isFemale = (selectedGender || 'female') === 'female';
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'hi-IN';
-      utter.pitch = 1.02;
-      utter.rate = 1.08;
+      utter.pitch = isFemale ? 1.12 : 0.98;
+      utter.rate = isFemale ? 1.02 : 1.08;
       const voices = window.speechSynthesis.getVoices();
-      const maleHindi = voices.find(v => v.lang.includes('hi') && v.name.toLowerCase().includes('male'))
+      const matched = voices.find(v => v.lang.includes('hi') && v.name.toLowerCase().includes(isFemale ? 'female' : 'male'))
         || voices.find(v => v.lang.includes('hi-IN'));
-      if (maleHindi) utter.voice = maleHindi;
+      if (matched) utter.voice = matched;
 
       const dot = document.getElementById('statusDot');
       const halo = document.getElementById('liveHalo');
@@ -1272,16 +1438,18 @@ Rules:
 
     async function speak(text) {
       stopSpeaking();
-      const cleanText = text.replace(/```[\s\S]*?```/g, 'Code screen par likh diya hai Sir.').replace(/[*#_`]/g, '').trim();
+      const cleanText = text.replace(/```[\s\S]*?```/g, 'Code screen par likh diya hai.').replace(/[*#_`]/g, '').trim();
       if (!cleanText) return;
 
-      if (useBuntyEL && elApiKey) {
+      const cfg = VOICES[selectedGender || 'female'];
+
+      if (useElevenLabs && elApiKey) {
         const dot = document.getElementById('statusDot');
         const halo = document.getElementById('liveHalo');
         try {
           dot.classList.add('speaking');
           halo.classList.add('speaking');
-          const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${BUNTY_VOICE_ID}`, {
+          const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${cfg.id}`, {
             method: 'POST',
             headers: {
               'xi-api-key': elApiKey,
@@ -1291,7 +1459,12 @@ Rules:
             body: JSON.stringify({
               text: cleanText,
               model_id: 'eleven_multilingual_v2',
-              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.45, use_speaker_boost: true }
+              voice_settings: {
+                stability: selectedGender === 'female' ? 0.52 : 0.45,
+                similarity_boost: 0.82,
+                style: selectedGender === 'female' ? 0.35 : 0.45,
+                use_speaker_boost: true
+              }
             })
           });
           if (!res.ok) throw new Error('ElevenLabs HTTP ' + res.status);
@@ -1352,7 +1525,7 @@ Rules:
       return contents;
     }
 
-    async function callGemini(text, mode, fileObj) {
+    async function callGemini(text, fileObj) {
       const models = await getModels();
       let lastError = 'Model error';
       const parts = [];
@@ -1362,6 +1535,7 @@ Rules:
       parts.push({ text: text || 'Is image/file ko detail mein samjhaiye.' });
 
       const contents = buildConversationContents(parts);
+      const cfg = VOICES[selectedGender || 'female'];
 
       for (const model of models) {
         try {
@@ -1369,7 +1543,7 @@ Rules:
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              systemInstruction: { parts: [{ text: SYSTEM_PROMPT + "\nCurrent Mode: " + mode }] },
+              systemInstruction: { parts: [{ text: cfg.prompt }] },
               contents
             })
           });
@@ -1399,7 +1573,7 @@ Rules:
 
       if (prefixToUse === '__IMAGE__') {
         const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(rawText)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
-        const reply = `Yeh rahi aapki generated image Sir: "${rawText}"`;
+        const reply = `Yeh rahi aapki image: "${rawText}"`;
         addMsg('ai', reply, '', imgUrl);
         speak(reply);
         return;
@@ -1407,21 +1581,20 @@ Rules:
 
       if (!apiKey) {
         document.getElementById('settingsPanel').classList.add('open');
-        addMsg('ai', 'Sir, pehle Settings mein apni Gemini API Key paste karke Save dabaiye.');
+        addMsg('ai', 'Pehle Settings mein apni Gemini API Key paste karke Save dabaiye.');
         return;
       }
 
       document.getElementById('statusText').innerText = 'Thinking...';
-      const mode = document.getElementById('modeSelect').value;
       const promptFinal = prefixToUse ? (prefixToUse + rawText) : rawText;
-      const result = await callGemini(promptFinal, mode, fileToSend);
-      document.getElementById('statusText').innerText = 'JARVIS Core';
+      const result = await callGemini(promptFinal, fileToSend);
+      applyCompanionUI();
 
       if (result.ok) {
         addMsg('ai', result.text);
         speak(result.text);
       } else {
-        addMsg('ai', `Sorry Sir, API error: ${result.error}`);
+        addMsg('ai', `API error: ${result.error}`);
       }
     }
 
@@ -1436,20 +1609,22 @@ Rules:
       rec.onresult = (e) => {
         playSound('chime');
         dot.classList.remove('listening');
-        document.getElementById('statusText').innerText = 'JARVIS Core';
+        applyCompanionUI();
         sendMessage(e.results[0][0].transcript);
       };
       rec.onerror = () => {
         dot.classList.remove('listening');
-        document.getElementById('statusText').innerText = 'JARVIS Core';
+        applyCompanionUI();
       };
       rec.start();
     }
 
     /* ================= LIVE HALO RING + CAMERA + SCREEN SHARE ================= */
     function openLiveMode() {
+      const cfg = VOICES[selectedGender || 'female'];
       document.getElementById('liveModal').classList.add('open');
-      document.getElementById('liveSubtitle').innerText = 'Tap Mic to talk in Bunty voice, or enable Camera / Screen Live';
+      document.getElementById('liveModeLabel').innerText = cfg.name + ' Live';
+      document.getElementById('liveSubtitle').innerText = `${cfg.name} sun rahi/raha hai — Mic dabayein ya Camera / Screen Live chalu karein!`;
     }
 
     function stopLiveTracks() {
@@ -1471,7 +1646,8 @@ Rules:
     }
 
     async function toggleCamera() {
-      if (isCameraOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = 'AURA Live'; return; }
+      const cfg = VOICES[selectedGender || 'female'];
+      if (isCameraOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = cfg.name + ' Live'; return; }
       stopLiveTracks();
       try {
         liveStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode }, audio: false });
@@ -1482,7 +1658,7 @@ Rules:
         isCameraOn = true;
         document.getElementById('btnCam').classList.add('active');
         document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera' : 'Front Camera';
-        document.getElementById('liveSubtitle').innerText = 'Camera active. Tap Mic and ask about what you see.';
+        document.getElementById('liveSubtitle').innerText = 'Camera active. Mic daba kar poochiye kya dikh raha hai.';
       } catch (err) { alert('Camera permission allow karein: ' + err.message); }
     }
 
@@ -1493,7 +1669,8 @@ Rules:
     }
 
     async function toggleScreenShare() {
-      if (isScreenOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = 'AURA Live'; return; }
+      const cfg = VOICES[selectedGender || 'female'];
+      if (isScreenOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = cfg.name + ' Live'; return; }
       stopLiveTracks();
       try {
         liveStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
@@ -1504,7 +1681,7 @@ Rules:
         isScreenOn = true;
         document.getElementById('btnScreen').classList.add('active');
         document.getElementById('liveModeLabel').innerText = 'Screen Live';
-        document.getElementById('liveSubtitle').innerText = 'Screen sharing active. Tap Mic to ask.';
+        document.getElementById('liveSubtitle').innerText = 'Screen share active. Mic daba kar poochiye.';
       } catch (err) { alert('Screen share cancel ya unsupported: ' + err.message); }
     }
 
@@ -1545,13 +1722,12 @@ Rules:
         addMsg('user', spoken, frameObj ? frameObj.name : '');
 
         if (!apiKey) {
-          document.getElementById('liveSubtitle').innerText = 'Save Gemini API Key in Settings first.';
+          document.getElementById('liveSubtitle').innerText = 'Settings mein Gemini API Key save karein.';
           return;
         }
 
         document.getElementById('liveSubtitle').innerText = 'Processing...';
-        const mode = document.getElementById('modeSelect').value;
-        const result = await callGemini(spoken, mode, frameObj);
+        const result = await callGemini(spoken, frameObj);
 
         if (result.ok) {
           document.getElementById('liveSubtitle').innerText = result.text;
@@ -1565,19 +1741,21 @@ Rules:
       rec.onerror = () => {
         micBtn.classList.remove('active');
         halo.classList.remove('listening');
-        document.getElementById('liveSubtitle').innerText = 'Could not hear clearly. Tap Mic again.';
+        document.getElementById('liveSubtitle').innerText = 'Aawaz clear nahi aayi, dobara Mic dabayein.';
       };
       rec.start();
     }
 
     function faceUnlockGreet() {
       document.getElementById('settingsPanel').classList.remove('open');
-      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne punchy Bunty andaaz mein welcome karo!');
+      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne andaaz mein welcome karo!');
     }
 
     function simulateMessage() {
       document.getElementById('settingsPanel').classList.remove('open');
-      const alertText = 'Sir, WhatsApp par ek naya message aaya hai. Kya main padh kar sunaun?';
+      const alertText = selectedGender === 'male'
+        ? 'Boss, WhatsApp par ek naya message aaya hai. Padh kar sunaun kya?'
+        : 'WhatsApp par ek naya message aaya hai, kya main padh kar sunaun?';
       addMsg('ai', alertText);
       speak(alertText);
     }
@@ -1586,7 +1764,7 @@ Rules:
       navigator.getBattery().then(bat => {
         bat.addEventListener('chargingchange', () => {
           playSound('chime');
-          const msg = bat.charging ? 'Sir, charging shuru ho gayi hai.' : 'Sir, charger disconnect kar diya gaya hai.';
+          const msg = bat.charging ? 'Charging shuru ho gayi hai.' : 'Charger disconnect kar diya gaya hai.';
           addMsg('ai', msg);
           speak(msg);
         });
@@ -1594,6 +1772,12 @@ Rules:
     }
 
     window.onload = () => {
+      if (!selectedGender) {
+        document.getElementById('onboardModal').classList.add('open');
+      } else {
+        applyCompanionUI();
+        if (!apiKey) document.getElementById('settingsPanel').classList.add('open');
+      }
       if (chats.length === 0) createNewChat();
       else { currentChatId = chats[0].id; renderSidebar(); renderChat(); }
     };
