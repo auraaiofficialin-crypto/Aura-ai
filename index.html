@@ -23,6 +23,7 @@
       align-items: center;
       padding: 12px 16px;
       background: #0a0a0c;
+      border-bottom: 1px solid #16161b;
       z-index: 10;
     }
     .top-left { display: flex; align-items: center; gap: 10px; }
@@ -38,7 +39,7 @@
       justify-content: center;
       cursor: pointer;
     }
-    .round-btn:active { background: #222228; }
+    .round-btn:active { background: #222228; transform: scale(0.95); }
     .brand-pill {
       display: flex;
       align-items: center;
@@ -72,7 +73,7 @@
       border-radius: 16px;
     }
 
-    /* Left Sidebar Drawer */
+    /* Left Sidebar Drawer (Search + New Chat + Pin + Rename + Export) */
     .overlay {
       display: none;
       position: fixed;
@@ -84,8 +85,8 @@
     .sidebar {
       position: fixed;
       top: 0;
-      left: -300px;
-      width: 285px;
+      left: -305px;
+      width: 290px;
       height: 100dvh;
       background: #111114;
       border-right: 1px solid #1f1f24;
@@ -108,7 +109,17 @@
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
+    }
+    .search-box {
+      background: #0a0a0c;
+      border: 1px solid #24242b;
+      border-radius: 14px;
+      padding: 8px 12px;
+      color: #f4f4f6;
+      font-size: 13px;
+      margin-bottom: 12px;
+      outline: none;
     }
     .sec-label {
       font-size: 11px;
@@ -143,7 +154,7 @@
       text-overflow: ellipsis;
       padding-right: 6px;
     }
-    .hist-btns { display: flex; gap: 4px; }
+    .hist-btns { display: flex; gap: 3px; }
     .mini-svg-btn {
       background: transparent;
       border: none;
@@ -155,12 +166,18 @@
     }
     .mini-svg-btn svg { width: 15px; height: 15px; }
     .mini-svg-btn.pinned { color: #38bdf8; }
+    .sidebar-footer {
+      border-top: 1px solid #1f1f24;
+      padding-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
 
     /* Settings Sheet */
     .settings-panel {
       display: none;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       padding: 14px 16px;
       background: #121216;
       border-bottom: 1px solid #222228;
@@ -194,9 +211,12 @@
       padding: 8px 12px;
       font-size: 12px;
       cursor: pointer;
+      flex: 1;
+      text-align: center;
     }
+    .ghost-btn.active-pill { border-color: #38bdf8; color: #38bdf8; }
 
-    /* Main Workspace & Original AURA Welcome */
+    /* Main Workspace */
     .chat-area {
       flex: 1;
       overflow-y: auto;
@@ -210,7 +230,7 @@
       padding: 8px 4px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
     .welcome-title {
       font-size: 30px;
@@ -220,39 +240,71 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .welcome-sub { font-size: 16px; color: #71717a; margin-top: -10px; }
-    .quick-prompts { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+    .welcome-sub { font-size: 15px; color: #71717a; margin-top: -8px; }
+    .quick-prompts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
     .qp-item {
       display: flex;
-      align-items: center;
-      gap: 12px;
+      flex-direction: column;
+      gap: 8px;
       background: #121216;
       border: 1px solid #1f1f26;
-      padding: 12px 14px;
+      padding: 14px;
       border-radius: 16px;
       color: #d4d4d8;
-      font-size: 14px;
+      font-size: 13px;
       text-align: left;
       cursor: pointer;
     }
     .qp-item:active { background: #1a1a22; }
     .qp-item svg { width: 18px; height: 18px; color: #38bdf8; }
 
-    /* Messages */
+    /* Messages + Rich Formatting + Code Blocks + Generated Images */
     .msg-wrap { display: flex; flex-direction: column; max-width: 88%; }
     .msg-wrap.user { align-self: flex-end; }
-    .msg-wrap.ai { align-self: flex-start; max-width: 95%; }
+    .msg-wrap.ai { align-self: flex-start; max-width: 96%; }
     .msg-meta { font-size: 11px; color: #71717a; margin-bottom: 4px; padding: 0 4px; }
     .msg-bubble {
       padding: 12px 16px;
       border-radius: 20px;
       font-size: 15px;
-      line-height: 1.55;
+      line-height: 1.6;
       word-wrap: break-word;
     }
     .user .msg-bubble { background: #1c1c22; color: #f4f4f6; border-bottom-right-radius: 4px; }
     .ai .msg-bubble { background: transparent; color: #e4e4e7; padding: 2px 4px; }
-    .msg-actions { display: flex; gap: 8px; margin-top: 6px; padding-left: 4px; }
+    .gen-img {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 16px;
+      margin-top: 8px;
+      border: 1px solid #282832;
+      display: block;
+    }
+    .code-card {
+      background: #121217;
+      border: 1px solid #262630;
+      border-radius: 14px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .code-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      background: #18181f;
+      font-size: 11px;
+      color: #a1a1aa;
+    }
+    .code-body {
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px;
+      overflow-x: auto;
+      white-space: pre;
+      color: #e4e4e7;
+    }
+    .msg-actions { display: flex; gap: 8px; margin-top: 8px; padding-left: 4px; flex-wrap: wrap; }
     .act-chip {
       display: flex;
       align-items: center;
@@ -261,7 +313,7 @@
       border: 1px solid #24242b;
       color: #a1a1aa;
       font-size: 11px;
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 10px;
       cursor: pointer;
     }
@@ -279,7 +331,7 @@
       margin-bottom: 6px;
     }
 
-    /* Bottom Composer (ChatGPT + Gemini Fusion) */
+    /* Bottom Composer */
     .bottom-dock {
       padding: 8px 14px 16px;
       background: #0a0a0c;
@@ -340,14 +392,13 @@
       justify-content: center;
       cursor: pointer;
     }
-    .mic-btn:active { color: #ffffff; background: #222228; }
     .wave-btn {
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      border: none;
-      background: #2563eb;
-      color: #ffffff;
+      border: 1px solid #2c2c36;
+      background: #1e1e26;
+      color: #38bdf8;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -366,7 +417,7 @@
       cursor: pointer;
     }
 
-    /* Combined Gemini + ChatGPT Bottom Sheet for '+' Button */
+    /* Bottom Sheet */
     .sheet-backdrop {
       display: none;
       position: fixed;
@@ -379,7 +430,7 @@
       position: fixed;
       left: 0;
       right: 0;
-      bottom: -520px;
+      bottom: -540px;
       background: #16161a;
       border-top: 1px solid #282830;
       border-top-left-radius: 24px;
@@ -417,7 +468,6 @@
       font-size: 13px;
       cursor: pointer;
     }
-    .media-card:active { background: #2a2a33; }
     .tool-list { display: flex; flex-direction: column; gap: 4px; }
     .tool-row {
       display: flex;
@@ -437,7 +487,7 @@
     .tool-name { font-size: 14px; font-weight: 500; }
     .tool-desc { font-size: 12px; color: #71717a; }
 
-    /* Hybrid ChatGPT Voice + Gemini Live Vision Screen */
+    /* Flagship Concentric Frosted Halo Ring */
     .live-modal {
       display: none;
       position: fixed;
@@ -481,26 +531,45 @@
       object-fit: cover;
       display: none;
     }
-    /* ChatGPT Style Animated Sky-Aura Sphere */
-    .aura-orb {
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 85%, #0f172a 100%);
-      box-shadow: 0 0 60px rgba(56, 189, 248, 0.35);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .halo-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       z-index: 4;
     }
-    .aura-orb.speaking {
-      animation: orbSpeak 0.65s infinite alternate ease-in-out;
-      box-shadow: 0 0 85px rgba(56, 189, 248, 0.65);
+    .halo-outer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      box-shadow: 0 0 50px rgba(45, 212, 191, 0.15), inset 0 0 30px rgba(56, 189, 248, 0.12);
+      transition: transform 0.3s ease;
     }
-    .aura-orb.listening {
-      animation: orbListen 0.5s infinite alternate ease-in-out;
-      background: radial-gradient(circle at 35% 30%, #ffe4e6 0%, #fb7185 50%, #be123c 100%);
+    .halo-mid {
+      position: absolute;
+      inset: 24px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(45, 212, 191, 0.45);
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(10, 10, 12, 0.85) 75%);
+      backdrop-filter: blur(12px);
     }
-    @keyframes orbSpeak { from { transform: scale(0.95); } to { transform: scale(1.12); } }
-    @keyframes orbListen { from { transform: scale(0.96); } to { transform: scale(1.08); } }
+    .halo-core {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: radial-gradient(circle at 30% 30%, rgba(224, 242, 254, 0.9), rgba(56, 189, 248, 0.35) 65%, transparent 100%);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.5);
+    }
+    .halo-container.speaking .halo-outer { animation: ringWave 0.8s infinite alternate ease-in-out; border-color: rgba(45, 212, 191, 0.7); }
+    .halo-container.speaking .halo-core { animation: corePulse 0.5s infinite alternate ease-in-out; }
+    .halo-container.listening .halo-outer { border-color: rgba(244, 63, 94, 0.7); box-shadow: 0 0 50px rgba(244, 63, 94, 0.25); }
+    .halo-container.listening .halo-core { background: radial-gradient(circle at 30% 30%, #ffe4e6, rgba(244, 63, 94, 0.5) 70%, transparent 100%); box-shadow: 0 0 35px rgba(244, 63, 94, 0.6); }
+    @keyframes ringWave { from { transform: scale(0.95); } to { transform: scale(1.14); } }
+    @keyframes corePulse { from { transform: scale(0.92); } to { transform: scale(1.08); } }
 
     .live-caption {
       position: absolute;
@@ -555,32 +624,37 @@
 <body>
 
   <!-- Sidebar Drawer -->
-  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+  <div class="overlay" id="overlay" onclick="playSound('tap'); toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
-    <button class="new-chat-btn" onclick="createNewChat()">
+    <button class="new-chat-btn" onclick="playSound('chime'); createNewChat()">
       <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       <span>New chat</span>
     </button>
+    <input type="text" class="search-box" id="historySearch" placeholder="Search chats..." oninput="renderSidebar()" />
     <div class="sec-label" id="pinHeader" style="display:none;">Pinned</div>
     <div class="history-list" id="pinnedList" style="flex:0; margin-bottom:10px;"></div>
     <div class="sec-label">Recent</div>
     <div class="history-list" id="recentList"></div>
+    <div class="sidebar-footer">
+      <button class="ghost-btn" onclick="playSound('tap'); exportCurrentChat()">Export Chat</button>
+      <button class="ghost-btn" onclick="playSound('tap'); clearAllChats()">Clear All</button>
+    </div>
   </div>
 
   <!-- Minimal OLED Top Bar -->
   <div class="topbar">
     <div class="top-left">
-      <button class="round-btn" onclick="toggleSidebar()" aria-label="Menu">
+      <button class="round-btn" onclick="playSound('tap'); toggleSidebar()" aria-label="Menu">
         <svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg>
       </button>
-      <div class="brand-pill">
+      <div class="brand-pill" onclick="playSound('tap')">
         <span class="aura-dot" id="statusDot"></span>
         <span>AURA</span>
       </div>
     </div>
     <div class="top-right">
       <span class="mode-badge" id="statusText">JARVIS Core</span>
-      <button class="round-btn" onclick="toggleSettings()" aria-label="Settings">
+      <button class="round-btn" onclick="playSound('tap'); toggleSettings()" aria-label="Settings">
         <svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
       </button>
     </div>
@@ -589,17 +663,22 @@
   <!-- Clean Settings Drawer -->
   <div class="settings-panel" id="settingsPanel">
     <div class="row">
-      <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key..." style="flex:1;" />
-      <button class="save-btn" onclick="saveKey()">Save</button>
+      <input type="password" id="apiKeyInput" placeholder="Gemini API Key..." style="flex:1;" />
+      <input type="password" id="elKeyInput" placeholder="ElevenLabs Key (Bunty)..." style="flex:1;" />
+      <button class="save-btn" onclick="playSound('chime'); saveKeys()">Save</button>
     </div>
     <div class="row">
-      <select id="modeSelect" style="flex:1;">
-        <option value="charming">Mode: Charming Companion</option>
+      <select id="modeSelect" onchange="playSound('switch')" style="flex:1;">
+        <option value="charming">Mode: Bunty Reel King / Companion</option>
         <option value="respect">Mode: Respectful Family</option>
         <option value="jarvis">Mode: JARVIS Tactical</option>
       </select>
-      <button class="ghost-btn" onclick="faceUnlockGreet()">Face Greet</button>
-      <button class="ghost-btn" onclick="simulateMessage()">Msg Alert</button>
+      <button class="ghost-btn active-pill" id="voiceEngineBtn" onclick="toggleVoiceEngine()">Voice: Bunty EL</button>
+      <button class="ghost-btn" id="soundToggleBtn" onclick="toggleUiSound()">Sound: ON</button>
+    </div>
+    <div class="row">
+      <button class="ghost-btn" onclick="playSound('tap'); faceUnlockGreet()">Face Unlock Greet</button>
+      <button class="ghost-btn" onclick="playSound('tap'); simulateMessage()">Private Msg Alert</button>
     </div>
   </div>
 
@@ -610,7 +689,7 @@
   <div class="bottom-dock">
     <div class="active-tool-pill" id="activeToolBar">
       <span id="activeToolLabel">Tool Active</span>
-      <button class="mini-svg-btn" onclick="clearToolAndFile()">
+      <button class="mini-svg-btn" onclick="playSound('tap'); clearToolAndFile()">
         <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
@@ -618,73 +697,73 @@
     <input type="file" id="fileInput" style="display:none;" onchange="onFilePicked(event)" />
 
     <div class="composer">
-      <button class="plus-trigger" onclick="openPlusSheet()" aria-label="Tools and Attachments">
+      <button class="plus-trigger" onclick="playSound('tap'); openPlusSheet()" aria-label="Tools and Attachments">
         <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       </button>
       <input type="text" id="userInput" placeholder="Ask AURA" oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
-      <button class="mic-btn" id="micBtn" onclick="startVoiceOnce()" aria-label="Voice Dictation">
+      <button class="mic-btn" id="micBtn" onclick="playSound('tap'); startVoiceOnce()" aria-label="Voice Dictation">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button class="wave-btn" id="liveWaveBtn" onclick="openLiveMode()" aria-label="AURA Live Vision and Voice">
+      <button class="wave-btn" id="liveWaveBtn" onclick="playSound('chime'); openLiveMode()" aria-label="AURA Live Vision and Voice">
         <svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
       </button>
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Send">
+      <button class="send-btn" id="sendBtn" onclick="playSound('chime'); sendMessage()" aria-label="Send">
         <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- Combined Gemini + ChatGPT '+' Action Sheet -->
-  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closePlusSheet()"></div>
+  <!-- Combined '+' Action Sheet -->
+  <div class="sheet-backdrop" id="sheetBackdrop" onclick="playSound('tap'); closePlusSheet()"></div>
   <div class="plus-sheet" id="plusSheet">
     <div class="sheet-handle"></div>
     <div class="media-grid">
-      <button class="media-card" onclick="pickFile('image/*')">
+      <button class="media-card" onclick="playSound('tap'); pickFile('image/*')">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         <span>Photos</span>
       </button>
-      <button class="media-card" onclick="pickCameraCapture()">
+      <button class="media-card" onclick="playSound('tap'); pickCameraCapture()">
         <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         <span>Camera</span>
       </button>
-      <button class="media-card" onclick="pickFile('*/*')">
+      <button class="media-card" onclick="playSound('tap'); pickFile('*/*')">
         <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
         <span>Files</span>
       </button>
     </div>
 
     <div class="tool-list">
-      <button class="tool-row" onclick="selectTool('Create Image', 'Detailed visual image prompt ya concept banayein: ')">
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Create Image', '__IMAGE__')">
         <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <div class="tool-info"><span class="tool-name">Create images</span><span class="tool-desc">Visualise concepts & AI art prompts</span></div>
+        <div class="tool-info"><span class="tool-name">Create images</span><span class="tool-desc">Generate HD AI visuals directly in chat</span></div>
       </button>
-      <button class="tool-row" onclick="selectTool('Deep Research', 'Is topic par deep, structured aur detailed research report do: ')">
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Deep Research', 'Is topic par deep, structured aur detailed research report do: ')">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <div class="tool-info"><span class="tool-name">Deep Research</span><span class="tool-desc">Get detailed multi-angle reports</span></div>
       </button>
-      <button class="tool-row" onclick="selectTool('Canvas', 'Clean code, script ya structured document likho: ')">
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Canvas', 'Clean code, script ya structured document likho: ')">
         <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <div class="tool-info"><span class="tool-name">Canvas</span><span class="tool-desc">Code, write scripts or structure ideas</span></div>
       </button>
-      <button class="tool-row" onclick="selectTool('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
         <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
         <div class="tool-info"><span class="tool-name">Guided Learning</span><span class="tool-desc">Step-by-step personal tutor</span></div>
       </button>
-      <button class="tool-row" onclick="selectTool('Think Harder', 'Pehle gehrai se logic socho aur phir best jawab do: ')">
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Think Harder', 'Pehle gehrai se logic socho aur phir best jawab do: ')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <div class="tool-info"><span class="tool-name">Think harder</span><span class="tool-desc">Advanced reasoning & problem solving</span></div>
       </button>
     </div>
   </div>
 
-  <!-- Hybrid Voice Orb + Live Vision Modal -->
+  <!-- Hybrid Concentric Halo Ring + Live Vision Modal -->
   <div class="live-modal" id="liveModal">
     <div class="live-top">
       <div class="live-status-pill">
         <span class="aura-dot"></span>
         <span id="liveModeLabel">AURA Live</span>
       </div>
-      <button class="round-btn" onclick="switchCamera()" aria-label="Flip Camera">
+      <button class="round-btn" onclick="playSound('switch'); switchCamera()" aria-label="Flip Camera">
         <svg viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
       </button>
     </div>
@@ -692,41 +771,115 @@
     <div class="live-stage">
       <video id="liveVideo" autoplay playsinline muted></video>
       <canvas id="captureCanvas" style="display:none;"></canvas>
-      <div class="aura-orb" id="liveOrb"></div>
-      <div class="live-caption" id="liveSubtitle">Tap Mic to speak, or enable Camera / Screen Live</div>
+      <div class="halo-container" id="liveHalo">
+        <div class="halo-outer"></div>
+        <div class="halo-mid"></div>
+        <div class="halo-core"></div>
+      </div>
+      <div class="live-caption" id="liveSubtitle">Tap Mic to talk in Bunty voice, or enable Camera / Screen Live</div>
     </div>
 
     <div class="live-bottom">
-      <button class="live-btn" id="btnCam" onclick="toggleCamera()" aria-label="Toggle Camera">
+      <button class="live-btn" id="btnCam" onclick="playSound('switch'); toggleCamera()" aria-label="Toggle Camera">
         <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       </button>
-      <button class="live-btn" id="btnScreen" onclick="toggleScreenShare()" aria-label="Share Screen">
+      <button class="live-btn" id="btnScreen" onclick="playSound('switch'); toggleScreenShare()" aria-label="Share Screen">
         <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </button>
-      <button class="live-btn" id="btnLiveMic" onclick="listenInLiveMode()" aria-label="Speak">
+      <button class="live-btn" id="btnLiveMic" onclick="playSound('tap'); listenInLiveMode()" aria-label="Speak">
         <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button class="live-close" onclick="closeLiveMode()" aria-label="End Live">
+      <button class="live-close" onclick="playSound('tap'); closeLiveMode()" aria-label="End Live">
         <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
   </div>
 
   <script>
-    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari core intelligence hai. Tum apne Malik Manish ki loyal, intelligent aur natural AI companion ho.
+    const BUNTY_VOICE_ID = 'FZkK3TvQ0pjyDmT8fzIW';
+
+    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari core intelligence hai. Tum apne Malik Manish ki loyal, energetic aur smart AI companion ho.
 Rules:
-1. Charming Companion Mode mein pyari, expressive aur caring andaaz mein Hinglish mein baat karo.
+1. Bunty Reel King / Companion Mode mein punchy, crisp, energetic aur relatable Hinglish andaaz mein baat karo—bilkul ek sharp best friend / creator ki tarah.
 2. Respectful Family Mode mein elders/family ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
-3. Agar kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
+3. Agar kabhi koi galti ho jaye, toh behas mat karo—seedha "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
 4. Message aane par bahar se sirf naam/alert batao ("Sir, ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-5. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, clear aur helpful jawab 2-3 lines mein do.`;
+5. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, crisp aur helpful jawab 2-3 lines mein do.`;
 
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
+    let elApiKey = localStorage.getItem('aura_el_key') || '';
+    let useBuntyEL = localStorage.getItem('aura_use_bunty') !== 'off';
     let cachedModel = '';
-    let chats = JSON.parse(localStorage.getItem('aura_fusion_chats') || '[]');
+    let chats = JSON.parse(localStorage.getItem('aura_omni_chats') || '[]');
     let currentChatId = null;
     let selectedFile = null;
     let activeToolPrefix = '';
+    let uiSoundEnabled = localStorage.getItem('aura_ui_sound') !== 'off';
+    let currentAudio = null;
+
+    // Tactile UI Sound Synthesizer
+    let audioCtx = null;
+    function playSound(type = 'tap') {
+      if (!uiSoundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime;
+
+        if (type === 'tap') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(750, now);
+          osc.frequency.exponentialRampToValueAtTime(300, now + 0.035);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(now); osc.stop(now + 0.04);
+        } else if (type === 'switch') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(520, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.055);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(now); osc.stop(now + 0.065);
+        } else if (type === 'chime') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(660, now);
+          osc.frequency.setValueAtTime(990, now + 0.06);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(now); osc.stop(now + 0.17);
+        }
+      } catch (e) {}
+    }
+
+    function toggleUiSound() {
+      uiSoundEnabled = !uiSoundEnabled;
+      localStorage.setItem('aura_ui_sound', uiSoundEnabled ? 'on' : 'off');
+      document.getElementById('soundToggleBtn').innerText = uiSoundEnabled ? 'Sound: ON' : 'Sound: OFF';
+      if (uiSoundEnabled) playSound('switch');
+    }
+
+    function toggleVoiceEngine() {
+      useBuntyEL = !useBuntyEL;
+      localStorage.setItem('aura_use_bunty', useBuntyEL ? 'on' : 'off');
+      updateVoiceBtnUI();
+      playSound('switch');
+    }
+
+    function updateVoiceBtnUI() {
+      const btn = document.getElementById('voiceEngineBtn');
+      if (useBuntyEL) {
+        btn.innerText = 'Voice: Bunty EL';
+        btn.classList.add('active-pill');
+      } else {
+        btn.innerText = 'Voice: Browser';
+        btn.classList.remove('active-pill');
+      }
+    }
 
     // Live Vision State
     let liveStream = null;
@@ -736,6 +889,9 @@ Rules:
 
     if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
     else document.getElementById('settingsPanel').classList.add('open');
+    if (elApiKey) document.getElementById('elKeyInput').value = elApiKey;
+    document.getElementById('soundToggleBtn').innerText = uiSoundEnabled ? 'Sound: ON' : 'Sound: OFF';
+    updateVoiceBtnUI();
 
     function toggleSendMic() {
       const hasText = document.getElementById('userInput').value.trim().length > 0 || selectedFile !== null;
@@ -744,7 +900,7 @@ Rules:
     }
 
     function persistChats() {
-      localStorage.setItem('aura_fusion_chats', JSON.stringify(chats));
+      localStorage.setItem('aura_omni_chats', JSON.stringify(chats));
       renderSidebar();
     }
 
@@ -758,6 +914,7 @@ Rules:
     }
 
     function selectChat(id) {
+      playSound('tap');
       currentChatId = id;
       renderSidebar();
       renderChat();
@@ -766,12 +923,14 @@ Rules:
 
     function togglePin(e, id) {
       e.stopPropagation();
+      playSound('switch');
       const c = chats.find(x => x.id === id);
       if (c) { c.pinned = !c.pinned; persistChats(); }
     }
 
     function renameChat(e, id) {
       e.stopPropagation();
+      playSound('tap');
       const c = chats.find(x => x.id === id);
       if (!c) return;
       const name = prompt('Rename chat:', c.title);
@@ -780,21 +939,41 @@ Rules:
 
     function deleteChat(e, id) {
       e.stopPropagation();
+      playSound('tap');
       chats = chats.filter(x => x.id !== id);
       if (currentChatId === id) currentChatId = chats.length ? chats[0].id : null;
       if (!currentChatId) createNewChat();
       else { persistChats(); renderChat(); }
     }
 
+    function exportCurrentChat() {
+      const chat = chats.find(c => c.id === currentChatId);
+      if (!chat || !chat.messages.length) return;
+      const txt = chat.messages.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n\n');
+      const blob = new Blob([txt], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (chat.title || 'AURA_Chat') + '.txt';
+      a.click();
+    }
+
+    function clearAllChats() {
+      if (!confirm('Saari purani chats delete karein?')) return;
+      chats = [];
+      createNewChat();
+    }
+
     function renderSidebar() {
       const pList = document.getElementById('pinnedList');
       const rList = document.getElementById('recentList');
       const pHead = document.getElementById('pinHeader');
+      const q = (document.getElementById('historySearch')?.value || '').toLowerCase();
       pList.innerHTML = '';
       rList.innerHTML = '';
 
-      const pinned = chats.filter(c => c.pinned);
-      const recent = chats.filter(c => !c.pinned);
+      const filtered = chats.filter(c => c.title.toLowerCase().includes(q));
+      const pinned = filtered.filter(c => c.pinned);
+      const recent = filtered.filter(c => !c.pinned);
       pHead.style.display = pinned.length ? 'block' : 'none';
 
       const makeRow = (c) => {
@@ -829,26 +1008,30 @@ Rules:
         box.innerHTML = `
           <div class="welcome-box">
             <div class="welcome-title">Hello, Manish</div>
-            <div class="welcome-sub">AURA Core ready. Where should we start?</div>
+            <div class="welcome-sub">AURA Core + Bunty Voice ready. Where should we start?</div>
             <div class="quick-prompts">
-              <button class="qp-item" onclick="quickStart('Guided Learning', 'Mujhe step-by-step samjhao: ')">
-                <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                <span>Learn something new</span>
-              </button>
-              <button class="qp-item" onclick="quickStart('Create Image', 'Detailed image prompt banao: ')">
+              <button class="qp-item" onclick="playSound('switch'); quickStart('Create Image', '__IMAGE__')">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                <span>Visualise & create concepts</span>
+                <span>Generate AI Image</span>
               </button>
-              <button class="qp-item" onclick="quickStart('Canvas', 'Clean code ya script likho: ')">
-                <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                <span>Write, code or edit</span>
+              <button class="qp-item" onclick="playSound('switch'); quickStart('Deep Research', 'Is topic par deep, structured aur detailed research report do: ')">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Deep Research</span>
+              </button>
+              <button class="qp-item" onclick="playSound('switch'); quickStart('Canvas', 'Clean code ya reel script likho: ')">
+                <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                <span>Canvas & Code</span>
+              </button>
+              <button class="qp-item" onclick="playSound('switch'); quickStart('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
+                <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <span>Guided Learning</span>
               </button>
             </div>
           </div>
         `;
         return;
       }
-      chat.messages.forEach(m => drawMessage(m.sender, m.text, m.fileName));
+      chat.messages.forEach((m, idx) => drawMessage(m.sender, m.text, m.fileName, m.imageUrl, idx));
     }
 
     function quickStart(label, prefix) {
@@ -856,7 +1039,33 @@ Rules:
       document.getElementById('userInput').focus();
     }
 
-    function drawMessage(sender, text, fileName) {
+    function formatRichContent(container, text) {
+      const parts = text.split(/```([\s\S]*?)```/g);
+      parts.forEach((part, i) => {
+        if (i % 2 === 1) {
+          const lines = part.split('\n');
+          const lang = lines[0].trim() || 'code';
+          const codeText = lines.slice(1).join('\n') || part;
+          const card = document.createElement('div');
+          card.className = 'code-card';
+          card.innerHTML = `<div class="code-head"><span>${lang}</span><button class="mini-svg-btn" style="color:#38bdf8;font-size:11px;">Copy Code</button></div><div class="code-body"></div>`;
+          card.querySelector('.code-body').innerText = codeText;
+          card.querySelector('button').onclick = (e) => {
+            playSound('tap');
+            navigator.clipboard.writeText(codeText);
+            e.target.innerText = 'Copied';
+            setTimeout(() => e.target.innerText = 'Copy Code', 1500);
+          };
+          container.appendChild(card);
+        } else if (part.trim()) {
+          const span = document.createElement('span');
+          span.innerText = part;
+          container.appendChild(span);
+        }
+      });
+    }
+
+    function drawMessage(sender, text, fileName, imageUrl, msgIndex) {
       const box = document.getElementById('chatBox');
       const wb = box.querySelector('.welcome-box');
       if (wb) wb.remove();
@@ -877,9 +1086,14 @@ Rules:
         bubble.appendChild(chip);
         bubble.appendChild(document.createElement('br'));
       }
-      const span = document.createElement('span');
-      span.innerText = text;
-      bubble.appendChild(span);
+      formatRichContent(bubble, text);
+
+      if (imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.className = 'gen-img';
+        bubble.appendChild(img);
+      }
 
       wrap.appendChild(meta);
       wrap.appendChild(bubble);
@@ -887,18 +1101,25 @@ Rules:
       if (sender === 'ai') {
         const actions = document.createElement('div');
         actions.className = 'msg-actions';
+
         const copyBtn = document.createElement('button');
         copyBtn.className = 'act-chip';
         copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span>`;
-        copyBtn.onclick = () => { navigator.clipboard.writeText(text); copyBtn.querySelector('span').innerText = 'Copied'; setTimeout(() => copyBtn.querySelector('span').innerText = 'Copy', 1500); };
+        copyBtn.onclick = () => { playSound('tap'); navigator.clipboard.writeText(text); copyBtn.querySelector('span').innerText = 'Copied'; setTimeout(() => copyBtn.querySelector('span').innerText = 'Copy', 1500); };
 
         const speakBtn = document.createElement('button');
         speakBtn.className = 'act-chip';
         speakBtn.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span>Listen</span>`;
-        speakBtn.onclick = () => speak(text);
+        speakBtn.onclick = () => { playSound('tap'); speak(text); };
+
+        const regenBtn = document.createElement('button');
+        regenBtn.className = 'act-chip';
+        regenBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg><span>Regenerate</span>`;
+        regenBtn.onclick = () => { playSound('switch'); regenerateLast(); };
 
         actions.appendChild(copyBtn);
         actions.appendChild(speakBtn);
+        actions.appendChild(regenBtn);
         wrap.appendChild(actions);
       }
 
@@ -906,16 +1127,36 @@ Rules:
       box.scrollTop = box.scrollHeight;
     }
 
-    function addMsg(sender, text, fileName = '') {
+    function addMsg(sender, text, fileName = '', imageUrl = '') {
       const chat = chats.find(c => c.id === currentChatId);
       if (chat) {
         if (sender === 'user' && chat.messages.length === 0) {
           chat.title = (text || fileName).slice(0, 28);
         }
-        chat.messages.push({ sender, text, fileName });
+        chat.messages.push({ sender, text, fileName, imageUrl });
         persistChats();
       }
-      drawMessage(sender, text, fileName);
+      drawMessage(sender, text, fileName, imageUrl);
+    }
+
+    async function regenerateLast() {
+      const chat = chats.find(c => c.id === currentChatId);
+      if (!chat || chat.messages.length < 2) return;
+      if (chat.messages[chat.messages.length - 1].sender === 'ai') {
+        chat.messages.pop();
+      }
+      const lastUser = chat.messages[chat.messages.length - 1];
+      if (!lastUser || lastUser.sender !== 'user') return;
+      persistChats();
+      renderChat();
+      document.getElementById('statusText').innerText = 'Thinking...';
+      const mode = document.getElementById('modeSelect').value;
+      const result = await callGemini(lastUser.text, mode, null);
+      document.getElementById('statusText').innerText = 'JARVIS Core';
+      if (result.ok) {
+        addMsg('ai', result.text);
+        speak(result.text);
+      }
     }
 
     function toggleSidebar() {
@@ -959,6 +1200,7 @@ Rules:
     function onFilePicked(e) {
       const file = e.target.files[0];
       if (!file) return;
+      playSound('chime');
       const reader = new FileReader();
       reader.onload = () => {
         selectedFile = {
@@ -988,32 +1230,93 @@ Rules:
       toggleSendMic();
     }
 
-    function saveKey() {
+    function saveKeys() {
       apiKey = document.getElementById('apiKeyInput').value.trim();
+      elApiKey = document.getElementById('elKeyInput').value.trim();
       cachedModel = '';
       localStorage.setItem('aura_gemini_key', apiKey);
+      localStorage.setItem('aura_el_key', elApiKey);
       document.getElementById('settingsPanel').classList.remove('open');
-      addMsg('ai', 'API Key save ho gayi hai Sir. Bataiye aaj kya madad karun?');
-      speak('API Key save ho gayi hai Sir.');
+      const msg = elApiKey
+        ? 'Keys save ho gayi hain Sir! Ab Bunty ki punchy voice active hai.'
+        : 'Gemini Key save ho gayi hai Sir. Bunty voice ke liye ElevenLabs key bhi daal sakte hain.';
+      addMsg('ai', msg);
+      speak(msg);
     }
 
-    function speak(text) {
+    /* ================= ELEVENLABS BUNTY VOICE + AUTO FALLBACK ================= */
+    function stopSpeaking() {
+      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      document.getElementById('statusDot').classList.remove('speaking');
+      document.getElementById('liveHalo').classList.remove('speaking');
+    }
+
+    function fallbackBrowserSpeak(text) {
       if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'hi-IN';
-      utter.pitch = 1.12;
-      utter.rate = 1.03;
+      utter.pitch = 1.02;
+      utter.rate = 1.08;
       const voices = window.speechSynthesis.getVoices();
-      const female = voices.find(v => (v.lang.includes('hi') || v.lang.includes('IN')) && v.name.toLowerCase().includes('female'))
+      const maleHindi = voices.find(v => v.lang.includes('hi') && v.name.toLowerCase().includes('male'))
         || voices.find(v => v.lang.includes('hi-IN'));
-      if (female) utter.voice = female;
+      if (maleHindi) utter.voice = maleHindi;
 
       const dot = document.getElementById('statusDot');
-      const orb = document.getElementById('liveOrb');
-      utter.onstart = () => { dot.classList.add('speaking'); orb.classList.add('speaking'); };
-      utter.onend = () => { dot.classList.remove('speaking'); orb.classList.remove('speaking'); };
+      const halo = document.getElementById('liveHalo');
+      utter.onstart = () => { dot.classList.add('speaking'); halo.classList.add('speaking'); };
+      utter.onend = () => { dot.classList.remove('speaking'); halo.classList.remove('speaking'); };
       window.speechSynthesis.speak(utter);
+    }
+
+    async function speak(text) {
+      stopSpeaking();
+      const cleanText = text.replace(/```[\s\S]*?```/g, 'Code screen par likh diya hai Sir.').replace(/[*#_`]/g, '').trim();
+      if (!cleanText) return;
+
+      if (useBuntyEL && elApiKey) {
+        const dot = document.getElementById('statusDot');
+        const halo = document.getElementById('liveHalo');
+        try {
+          dot.classList.add('speaking');
+          halo.classList.add('speaking');
+          const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${BUNTY_VOICE_ID}`, {
+            method: 'POST',
+            headers: {
+              'xi-api-key': elApiKey,
+              'Content-Type': 'application/json',
+              'Accept': 'audio/mpeg'
+            },
+            body: JSON.stringify({
+              text: cleanText,
+              model_id: 'eleven_multilingual_v2',
+              voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.45, use_speaker_boost: true }
+            })
+          });
+          if (!res.ok) throw new Error('ElevenLabs HTTP ' + res.status);
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          currentAudio = new Audio(url);
+          currentAudio.onended = () => {
+            dot.classList.remove('speaking');
+            halo.classList.remove('speaking');
+            URL.revokeObjectURL(url);
+          };
+          currentAudio.onerror = () => {
+            dot.classList.remove('speaking');
+            halo.classList.remove('speaking');
+          };
+          await currentAudio.play();
+          return;
+        } catch (err) {
+          dot.classList.remove('speaking');
+          halo.classList.remove('speaking');
+          fallbackBrowserSpeak(cleanText);
+          return;
+        }
+      }
+      fallbackBrowserSpeak(cleanText);
     }
 
     async function getModels() {
@@ -1033,6 +1336,22 @@ Rules:
       return ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
     }
 
+    function buildConversationContents(currentParts) {
+      const chat = chats.find(c => c.id === currentChatId);
+      const contents = [];
+      if (chat && chat.messages.length > 1) {
+        const recent = chat.messages.slice(-7, -1);
+        recent.forEach(m => {
+          contents.push({
+            role: m.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: m.text }]
+          });
+        });
+      }
+      contents.push({ role: 'user', parts: currentParts });
+      return contents;
+    }
+
     async function callGemini(text, mode, fileObj) {
       const models = await getModels();
       let lastError = 'Model error';
@@ -1042,6 +1361,8 @@ Rules:
       }
       parts.push({ text: text || 'Is image/file ko detail mein samjhaiye.' });
 
+      const contents = buildConversationContents(parts);
+
       for (const model of models) {
         try {
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -1049,7 +1370,7 @@ Rules:
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               systemInstruction: { parts: [{ text: SYSTEM_PROMPT + "\nCurrent Mode: " + mode }] },
-              contents: [{ role: 'user', parts }]
+              contents
             })
           });
           const data = await res.json();
@@ -1075,6 +1396,14 @@ Rules:
       if (!customText) input.value = '';
       clearToolAndFile();
       addMsg('user', rawText || 'Attachment', fileToSend ? fileToSend.name : '');
+
+      if (prefixToUse === '__IMAGE__') {
+        const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(rawText)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
+        const reply = `Yeh rahi aapki generated image Sir: "${rawText}"`;
+        addMsg('ai', reply, '', imgUrl);
+        speak(reply);
+        return;
+      }
 
       if (!apiKey) {
         document.getElementById('settingsPanel').classList.add('open');
@@ -1105,6 +1434,7 @@ Rules:
       dot.classList.add('listening');
       document.getElementById('statusText').innerText = 'Listening...';
       rec.onresult = (e) => {
+        playSound('chime');
         dot.classList.remove('listening');
         document.getElementById('statusText').innerText = 'JARVIS Core';
         sendMessage(e.results[0][0].transcript);
@@ -1116,21 +1446,18 @@ Rules:
       rec.start();
     }
 
-    /* ================= HYBRID LIVE VOICE ORB + CAMERA + SCREEN SHARE ================= */
+    /* ================= LIVE HALO RING + CAMERA + SCREEN SHARE ================= */
     function openLiveMode() {
       document.getElementById('liveModal').classList.add('open');
-      document.getElementById('liveSubtitle').innerText = 'Tap Mic to talk, or enable Camera / Screen Live';
+      document.getElementById('liveSubtitle').innerText = 'Tap Mic to talk in Bunty voice, or enable Camera / Screen Live';
     }
 
     function stopLiveTracks() {
-      if (liveStream) {
-        liveStream.getTracks().forEach(t => t.stop());
-        liveStream = null;
-      }
+      if (liveStream) { liveStream.getTracks().forEach(t => t.stop()); liveStream = null; }
       const vid = document.getElementById('liveVideo');
       vid.srcObject = null;
       vid.style.display = 'none';
-      document.getElementById('liveOrb').style.display = 'block';
+      document.getElementById('liveHalo').style.display = 'flex';
       isCameraOn = false;
       isScreenOn = false;
       document.getElementById('btnCam').classList.remove('active');
@@ -1139,30 +1466,24 @@ Rules:
 
     function closeLiveMode() {
       stopLiveTracks();
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       document.getElementById('liveModal').classList.remove('open');
     }
 
     async function toggleCamera() {
-      if (isCameraOn) {
-        stopLiveTracks();
-        document.getElementById('liveModeLabel').innerText = 'AURA Live';
-        return;
-      }
+      if (isCameraOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = 'AURA Live'; return; }
       stopLiveTracks();
       try {
         liveStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode }, audio: false });
         const vid = document.getElementById('liveVideo');
         vid.srcObject = liveStream;
         vid.style.display = 'block';
-        document.getElementById('liveOrb').style.display = 'none';
+        document.getElementById('liveHalo').style.display = 'none';
         isCameraOn = true;
         document.getElementById('btnCam').classList.add('active');
         document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera' : 'Front Camera';
         document.getElementById('liveSubtitle').innerText = 'Camera active. Tap Mic and ask about what you see.';
-      } catch (err) {
-        alert('Camera permission allow karein: ' + err.message);
-      }
+      } catch (err) { alert('Camera permission allow karein: ' + err.message); }
     }
 
     async function switchCamera() {
@@ -1172,25 +1493,19 @@ Rules:
     }
 
     async function toggleScreenShare() {
-      if (isScreenOn) {
-        stopLiveTracks();
-        document.getElementById('liveModeLabel').innerText = 'AURA Live';
-        return;
-      }
+      if (isScreenOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = 'AURA Live'; return; }
       stopLiveTracks();
       try {
         liveStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const vid = document.getElementById('liveVideo');
         vid.srcObject = liveStream;
         vid.style.display = 'block';
-        document.getElementById('liveOrb').style.display = 'none';
+        document.getElementById('liveHalo').style.display = 'none';
         isScreenOn = true;
         document.getElementById('btnScreen').classList.add('active');
         document.getElementById('liveModeLabel').innerText = 'Screen Live';
         document.getElementById('liveSubtitle').innerText = 'Screen sharing active. Tap Mic to ask.';
-      } catch (err) {
-        alert('Screen share cancel ya unsupported: ' + err.message);
-      }
+      } catch (err) { alert('Screen share cancel ya unsupported: ' + err.message); }
     }
 
     function captureCurrentFrame() {
@@ -1214,14 +1529,15 @@ Rules:
       const rec = new SR();
       rec.lang = 'hi-IN';
       const micBtn = document.getElementById('btnLiveMic');
-      const orb = document.getElementById('liveOrb');
+      const halo = document.getElementById('liveHalo');
       micBtn.classList.add('active');
-      orb.classList.add('listening');
+      halo.classList.add('listening');
       document.getElementById('liveSubtitle').innerText = 'Listening...';
 
       rec.onresult = async (e) => {
+        playSound('chime');
         micBtn.classList.remove('active');
-        orb.classList.remove('listening');
+        halo.classList.remove('listening');
         const spoken = e.results[0][0].transcript;
         document.getElementById('liveSubtitle').innerText = spoken;
 
@@ -1248,7 +1564,7 @@ Rules:
 
       rec.onerror = () => {
         micBtn.classList.remove('active');
-        orb.classList.remove('listening');
+        halo.classList.remove('listening');
         document.getElementById('liveSubtitle').innerText = 'Could not hear clearly. Tap Mic again.';
       };
       rec.start();
@@ -1256,7 +1572,7 @@ Rules:
 
     function faceUnlockGreet() {
       document.getElementById('settingsPanel').classList.remove('open');
-      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne charming andaaz mein welcome aur compliment do!');
+      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne punchy Bunty andaaz mein welcome karo!');
     }
 
     function simulateMessage() {
@@ -1269,6 +1585,7 @@ Rules:
     if ('getBattery' in navigator) {
       navigator.getBattery().then(bat => {
         bat.addEventListener('chargingchange', () => {
+          playSound('chime');
           const msg = bat.charging ? 'Sir, charging shuru ho gayi hai.' : 'Sir, charger disconnect kar diya gaya hai.';
           addMsg('ai', msg);
           speak(msg);
