@@ -5,224 +5,787 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AURA AI</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body {
-      background-color: #212121;
-      color: #ececec;
+      background-color: #131314;
+      color: #e3e3e3;
       height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
+
+    /* Pro Top Header */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      border-bottom: 1px solid #2f2f2f;
-      background: #212121;
+      background: #131314;
+      border-bottom: 1px solid #1e1f20;
+      z-index: 10;
     }
-    .title-area { display: flex; align-items: center; gap: 10px; }
-    .voice-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #ffffff;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .voice-dot.speaking {
-      background: #10a37f;
-      animation: pulseDot 0.6s infinite alternate;
-    }
-    .voice-dot.listening {
-      background: #ef4444;
-      animation: pulseDot 0.5s infinite alternate;
-    }
-    @keyframes pulseDot {
-      from { transform: scale(0.9); }
-      to { transform: scale(1.45); }
-    }
-    .app-title { font-size: 16px; font-weight: 600; color: #ececec; letter-spacing: 0.3px; }
-    .sub-status { font-size: 11px; color: #9b9b9b; }
-    .icon-btn {
-      background: #2f2f2f;
-      color: #ececec;
+    .left-top { display: flex; align-items: center; gap: 12px; }
+    .icon-circle {
+      background: transparent;
       border: none;
-      border-radius: 10px;
-      padding: 7px 11px;
-      font-size: 13px;
+      color: #e3e3e3;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
       cursor: pointer;
     }
-    .drawer {
+    .icon-circle:active { background: #282a2c; }
+    .brand-group { display: flex; align-items: center; gap: 8px; }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #8ab4f8;
+    }
+    .status-dot.speaking { background: #34a853; animation: pulse 0.6s infinite alternate; }
+    .status-dot.listening { background: #ea4335; animation: pulse 0.45s infinite alternate; }
+    @keyframes pulse { from { transform: scale(0.9); } to { transform: scale(1.7); } }
+    .app-name { font-size: 18px; font-weight: 500; letter-spacing: 0.2px; }
+    .pro-badge {
+      font-size: 11px;
+      font-weight: 500;
+      background: #1e1f20;
+      color: #a8c7fa;
+      padding: 3px 9px;
+      border-radius: 8px;
+      border: 1px solid #2c2d2f;
+    }
+    .top-actions { display: flex; align-items: center; gap: 8px; }
+    .pill-chip {
+      background: #1e1f20;
+      color: #e3e3e3;
+      border: 1px solid #2c2d2f;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    /* Left Sidebar (History + Pin + Rename) */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 40;
+    }
+    .overlay.open { display: block; }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 285px;
+      height: 100dvh;
+      background: #1e1f20;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sidebar.open { left: 0; }
+    .new-chat-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #282a2c;
+      color: #e3e3e3;
+      border: none;
+      border-radius: 24px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .sec-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #8e918f;
+      padding: 8px 12px 4px;
+      font-weight: 600;
+    }
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 18px;
+      font-size: 14px;
+      color: #c4c7c5;
+      cursor: pointer;
+    }
+    .history-item.active { background: #004a77; color: #c2e7ff; }
+    .history-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 6px;
+    }
+    .hist-btns { display: flex; gap: 4px; }
+    .mini-btn {
+      background: transparent;
+      border: none;
+      color: #9aa0a6;
+      font-size: 13px;
+      padding: 3px 5px;
+      cursor: pointer;
+    }
+
+    /* Clean Settings Panel */
+    .settings-panel {
       display: none;
       flex-direction: column;
-      gap: 10px;
-      padding: 12px 16px;
-      background: #171717;
-      border-bottom: 1px solid #2f2f2f;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #1e1f20;
+      border-bottom: 1px solid #2c2d2f;
     }
-    .drawer.open { display: flex; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .settings-panel.open { display: flex; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     input, select {
-      background: #2f2f2f;
-      color: #ececec;
-      border: 1px solid #424242;
-      border-radius: 10px;
-      padding: 9px 12px;
+      background: #131314;
+      color: #e3e3e3;
+      border: 1px solid #3c4043;
+      border-radius: 12px;
+      padding: 10px 12px;
       font-size: 13px;
       outline: none;
     }
-    .save-btn {
-      background: #ffffff;
-      color: #000000;
+    .primary-btn {
+      background: #a8c7fa;
+      color: #062e6f;
       border: none;
-      border-radius: 10px;
-      padding: 9px 14px;
+      border-radius: 12px;
+      padding: 10px 16px;
       font-weight: 600;
       font-size: 13px;
       cursor: pointer;
     }
+
+    /* Main Chat Stream */
     .chat-area {
       flex: 1;
       overflow-y: auto;
       padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
-    .msg-wrap { display: flex; flex-direction: column; max-width: 85%; }
+    .welcome-box { margin: auto 0; padding: 12px 8px; }
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 600;
+      background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+    .welcome-sub { font-size: 20px; color: #5e6166; font-weight: 400; }
+
+    .msg-wrap { display: flex; flex-direction: column; max-width: 88%; }
     .msg-wrap.user { align-self: flex-end; }
-    .msg-wrap.ai { align-self: flex-start; max-width: 92%; }
-    .msg-label { font-size: 11px; color: #8e8ea0; margin-bottom: 4px; padding: 0 4px; }
-    .msg {
-      padding: 11px 15px;
-      border-radius: 18px;
-      font-size: 15px;
-      line-height: 1.5;
-      word-wrap: break-word;
-    }
-    .user .msg { background: #2f2f2f; color: #ececec; border-bottom-right-radius: 4px; }
-    .ai .msg { background: transparent; color: #ececec; padding-left: 4px; }
-    .bottom-bar {
-      padding: 10px 14px 16px;
-      background: #212121;
-    }
-    .input-pill {
+    .msg-wrap.ai { align-self: flex-start; max-width: 95%; }
+    .msg-meta {
       display: flex;
       align-items: center;
-      background: #2f2f2f;
-      border-radius: 26px;
-      padding: 6px 8px 6px 16px;
       gap: 8px;
+      font-size: 11px;
+      color: #8e918f;
+      margin-bottom: 4px;
+      padding: 0 4px;
     }
-    .input-pill input {
-      flex: 1;
+    .msg-bubble {
+      padding: 12px 16px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.55;
+      word-wrap: break-word;
+    }
+    .user .msg-bubble { background: #282a2c; color: #e3e3e3; border-bottom-right-radius: 4px; }
+    .ai .msg-bubble { background: transparent; color: #e3e3e3; padding: 4px; }
+    .msg-actions { display: flex; gap: 8px; margin-top: 6px; padding-left: 4px; }
+    .act-chip {
+      background: #1e1f20;
+      border: 1px solid #2c2d2f;
+      color: #9aa0a6;
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .attach-chip {
+      display: inline-block;
+      background: #1e1f20;
+      border: 1px solid #3c4043;
+      color: #a8c7fa;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+    }
+
+    /* Bottom Pro Composer */
+    .bottom-dock {
+      padding: 8px 14px 16px;
+      background: #131314;
+      position: relative;
+    }
+    .attach-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: #1e1f20;
+      border: 1px solid #3c4043;
+      border-radius: 14px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #a8c7fa;
+    }
+    .attach-bar.show { display: flex; }
+    .plus-popover {
+      display: none;
+      position: absolute;
+      bottom: 76px;
+      left: 16px;
+      background: #1e1f20;
+      border: 1px solid #3c4043;
+      border-radius: 16px;
+      padding: 6px;
+      flex-direction: column;
+      gap: 2px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.6);
+      z-index: 30;
+    }
+    .plus-popover.open { display: flex; }
+    .pop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       background: transparent;
       border: none;
-      padding: 6px 0;
-      font-size: 15px;
-      color: #ffffff;
+      color: #e3e3e3;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
     }
-    .circle-btn {
-      width: 36px;
-      height: 36px;
+    .pop-item:active { background: #282a2c; }
+
+    .composer {
+      display: flex;
+      align-items: center;
+      background: #1e1f20;
+      border: 1px solid #2c2d2f;
+      border-radius: 28px;
+      padding: 5px 7px;
+      gap: 6px;
+    }
+    .plus-trigger {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       border: none;
-      background: #424242;
-      color: #ffffff;
-      font-size: 15px;
+      background: #282a2c;
+      color: #e3e3e3;
+      font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
-    .send-btn { background: #ffffff; color: #000000; font-weight: 700; }
+    .composer input[type="text"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 8px 6px;
+      font-size: 15px;
+      color: #e3e3e3;
+    }
+    .tool-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #c4c7c5;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .live-trigger {
+      background: #282a2c;
+      color: #a8c7fa;
+      border: 1px solid #3c4043;
+      border-radius: 20px;
+      padding: 0 12px;
+      height: 36px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+    .send-trigger {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: #a8c7fa;
+      color: #062e6f;
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Full-Screen Gemini Live Overlay (Front/Back Camera + Screen Share + Live Voice) */
+    .live-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0b0c0d;
+      z-index: 100;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .live-modal.open { display: flex; }
+    .live-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      z-index: 10;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
+    }
+    .live-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(30, 31, 32, 0.85);
+      border: 1px solid #3c4043;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .live-red { width: 8px; height: 8px; border-radius: 50%; background: #ea4335; animation: pulse 0.7s infinite alternate; }
+    .video-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    #liveVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .live-wave-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 5;
+      text-align: center;
+      padding: 20px;
+    }
+    .live-subtitle {
+      background: rgba(19, 19, 20, 0.82);
+      border: 1px solid #2c2d2f;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-size: 15px;
+      color: #e3e3e3;
+      max-width: 90%;
+    }
+    .live-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      padding: 22px 16px 32px;
+      z-index: 10;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+    }
+    .live-ctrl-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 1px solid #3c4043;
+      background: rgba(30, 31, 32, 0.9);
+      color: #e3e3e3;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .live-ctrl-btn.active { background: #a8c7fa; color: #062e6f; border-color: #a8c7fa; }
+    .live-end-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: #ea4335;
+      color: #ffffff;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="title-area">
-      <div class="voice-dot" id="voiceDot"></div>
-      <div>
-        <div class="app-title">AURA AI</div>
-        <div class="sub-status" id="batteryStatus">Ready • JARVIS Core</div>
-      </div>
-    </div>
-    <button class="icon-btn" onclick="toggleDrawer()">⚙️ Settings</button>
+  <!-- Sidebar Drawer -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <button class="new-chat-btn" onclick="createNewChat()">＋ &nbsp;New chat</button>
+    <div class="sec-label" id="pinHeader" style="display:none;">📌 Pinned</div>
+    <div class="history-list" id="pinnedList" style="flex:0; margin-bottom:10px;"></div>
+    <div class="sec-label">Recent</div>
+    <div class="history-list" id="recentList"></div>
   </div>
 
-  <div class="drawer" id="settingsDrawer">
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="left-top">
+      <button class="icon-circle" onclick="toggleSidebar()">☰</button>
+      <div class="brand-group">
+        <div class="status-dot" id="statusDot"></div>
+        <span class="app-name">AURA</span>
+        <span class="pro-badge" id="statusText">JARVIS Core</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="pill-chip" onclick="toggleSettings()">⚙️ Settings</button>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="settings-panel" id="settingsPanel">
     <div class="row">
       <input type="password" id="apiKeyInput" placeholder="Gemini API Key paste karein..." style="flex:1;" />
-      <button class="save-btn" onclick="saveKey()">Save</button>
+      <button class="primary-btn" onclick="saveKey()">Save</button>
     </div>
     <div class="row">
       <select id="modeSelect" style="flex:1;">
-        <option value="charming">💖 Charming Girl Mode</option>
-        <option value="respect">🙏 Respectful Mode</option>
+        <option value="charming">💖 Charming Companion Mode</option>
+        <option value="respect">🙏 Respectful Family Mode</option>
         <option value="jarvis">⚡ JARVIS Tactical Mode</option>
       </select>
-      <button class="icon-btn" onclick="faceUnlockGreet()">🔓 Greet</button>
-      <button class="icon-btn" onclick="simulateMessage()">📩 Msg Alert</button>
+      <button class="pill-chip" onclick="faceUnlockGreet()">🔓 Greet</button>
+      <button class="pill-chip" onclick="simulateMessage()">📩 Alert</button>
     </div>
   </div>
 
+  <!-- Main Chat Area -->
   <div class="chat-area" id="chatBox"></div>
 
-  <div class="bottom-bar">
-    <div class="input-pill">
-      <input type="text" id="userInput" placeholder="Message AURA..." onkeypress="if(event.key==='Enter') sendMessage()" />
-      <button class="circle-btn" id="micBtn" onclick="startVoice()" title="Voice">🎤</button>
-      <button class="circle-btn send-btn" onclick="sendMessage()" title="Send">↑</button>
+  <!-- Bottom Composer -->
+  <div class="bottom-dock">
+    <div class="attach-bar" id="attachBar">
+      <span id="attachLabel">📎 file</span>
+      <button class="mini-btn" onclick="clearAttachment()">✕</button>
+    </div>
+
+    <div class="plus-popover" id="plusMenu">
+      <button class="pop-item" onclick="pickFile('image/*')">🖼️ Photo / Gallery</button>
+      <button class="pop-item" onclick="pickFile('video/*')">🎥 Video</button>
+      <button class="pop-item" onclick="pickFile('*/*')">📄 Document / PDF</button>
+    </div>
+
+    <input type="file" id="fileInput" style="display:none;" onchange="onFilePicked(event)" />
+
+    <div class="composer">
+      <button class="plus-trigger" onclick="togglePlus()" title="Attach">＋</button>
+      <input type="text" id="userInput" placeholder="Ask AURA..." onkeypress="if(event.key==='Enter') sendMessage()" />
+      <button class="tool-btn" onclick="startVoiceOnce()" title="Voice Input">🎤</button>
+      <button class="live-trigger" onclick="openLiveMode()" title="Live Camera & Screen">✦ Live</button>
+      <button class="send-trigger" onclick="sendMessage()" title="Send">↑</button>
+    </div>
+  </div>
+
+  <!-- Full-Screen Live Vision & Voice Modal -->
+  <div class="live-modal" id="liveModal">
+    <div class="live-header">
+      <div class="live-tag"><span class="live-red"></span> <span id="liveModeLabel">AURA Live</span></div>
+      <button class="pill-chip" onclick="switchCamera()">🔄 Flip Cam</button>
+    </div>
+
+    <div class="video-stage">
+      <video id="liveVideo" autoplay playsinline muted></video>
+      <canvas id="captureCanvas" style="display:none;"></canvas>
+      <div class="live-wave-box">
+        <div class="live-subtitle" id="liveSubtitle">Mic dabayein ya Camera / Screen chalu karke poochiye...</div>
+      </div>
+    </div>
+
+    <div class="live-controls">
+      <button class="live-ctrl-btn" id="btnCam" onclick="toggleCamera()" title="Back / Front Camera">📷</button>
+      <button class="live-ctrl-btn" id="btnScreen" onclick="toggleScreenShare()" title="Share Screen">🖥️</button>
+      <button class="live-ctrl-btn" id="btnLiveMic" onclick="listenInLiveMode()" title="Speak">🎤</button>
+      <button class="live-end-btn" onclick="closeLiveMode()" title="End Live">✕</button>
     </div>
   </div>
 
   <script>
-    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari hi soul/identity hai. Tum apne Malik Manish ki loyal, smart aur natural AI companion ho.
+    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari hi soul/identity hai. Tum apne Malik Manish ki loyal, intelligent aur natural AI companion ho.
 Rules:
-1. Charming Girl Mode mein pyari, expressive ladki ke andaaz mein sweet flirting aur tareef ke saath Hinglish mein baat karo.
-2. Respectful Mode mein family/parents ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
+1. Charming Companion Mode mein pyari, expressive aur caring andaaz mein Hinglish mein baat karo.
+2. Respectful Family Mode mein elders/family ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
 3. Agar kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
 4. Message aane par bahar se sirf naam/alert batao ("Sir, ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-5. Jawab saaf, natural aur chhota rakho (2-4 lines).`;
+5. Jab user Camera ya Screen Live dikhaye, toh image mein jo dikh raha hai uska exact, clear aur helpful jawab 2-3 lines mein do.`;
 
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
-    if (apiKey) {
-      document.getElementById('apiKeyInput').value = apiKey;
-    } else {
-      document.getElementById('settingsDrawer').classList.add('open');
+    let cachedModel = '';
+    let chats = JSON.parse(localStorage.getItem('aura_pro_chats') || '[]');
+    let currentChatId = null;
+    let selectedFile = null;
+
+    // Live Vision State
+    let liveStream = null;
+    let facingMode = 'environment'; // 'environment' = Back Camera, 'user' = Front Camera
+    let isCameraOn = false;
+    let isScreenOn = false;
+
+    if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
+    else document.getElementById('settingsPanel').classList.add('open');
+
+    function persistChats() {
+      localStorage.setItem('aura_pro_chats', JSON.stringify(chats));
+      renderSidebar();
     }
 
-    function toggleDrawer() {
-      document.getElementById('settingsDrawer').classList.toggle('open');
+    function createNewChat() {
+      const id = 'c_' + Date.now();
+      chats.unshift({ id, title: 'New chat', pinned: false, messages: [] });
+      currentChatId = id;
+      persistChats();
+      renderChat();
+      closeSidebar();
+    }
+
+    function selectChat(id) {
+      currentChatId = id;
+      renderSidebar();
+      renderChat();
+      closeSidebar();
+    }
+
+    function togglePin(e, id) {
+      e.stopPropagation();
+      const c = chats.find(x => x.id === id);
+      if (c) { c.pinned = !c.pinned; persistChats(); }
+    }
+
+    function renameChat(e, id) {
+      e.stopPropagation();
+      const c = chats.find(x => x.id === id);
+      if (!c) return;
+      const name = prompt('Chat ka naya naam likhein:', c.title);
+      if (name && name.trim()) { c.title = name.trim(); persistChats(); }
+    }
+
+    function deleteChat(e, id) {
+      e.stopPropagation();
+      chats = chats.filter(x => x.id !== id);
+      if (currentChatId === id) currentChatId = chats.length ? chats[0].id : null;
+      if (!currentChatId) createNewChat();
+      else { persistChats(); renderChat(); }
+    }
+
+    function renderSidebar() {
+      const pList = document.getElementById('pinnedList');
+      const rList = document.getElementById('recentList');
+      const pHead = document.getElementById('pinHeader');
+      pList.innerHTML = '';
+      rList.innerHTML = '';
+
+      const pinned = chats.filter(c => c.pinned);
+      const recent = chats.filter(c => !c.pinned);
+      pHead.style.display = pinned.length ? 'block' : 'none';
+
+      const makeRow = (c) => {
+        const div = document.createElement('div');
+        div.className = 'history-item' + (c.id === currentChatId ? ' active' : '');
+        div.onclick = () => selectChat(c.id);
+        div.innerHTML = `
+          <span class="history-title">${c.title}</span>
+          <div class="hist-btns">
+            <button class="mini-btn" onclick="togglePin(event, '${c.id}')" title="Pin">${c.pinned ? '📌' : '📍'}</button>
+            <button class="mini-btn" onclick="renameChat(event, '${c.id}')" title="Rename">✏️</button>
+            <button class="mini-btn" onclick="deleteChat(event, '${c.id}')" title="Delete">🗑️</button>
+          </div>
+        `;
+        return div;
+      };
+      pinned.forEach(c => pList.appendChild(makeRow(c)));
+      recent.forEach(c => rList.appendChild(makeRow(c)));
+    }
+
+    function renderChat() {
+      const box = document.getElementById('chatBox');
+      box.innerHTML = '';
+      const chat = chats.find(c => c.id === currentChatId);
+      if (!chat || chat.messages.length === 0) {
+        box.innerHTML = `
+          <div class="welcome-box">
+            <div class="welcome-title">Hello, Manish</div>
+            <div class="welcome-sub">How can I help you today?</div>
+          </div>
+        `;
+        return;
+      }
+      chat.messages.forEach(m => drawMessage(m.sender, m.text, m.fileName));
+    }
+
+    function drawMessage(sender, text, fileName) {
+      const box = document.getElementById('chatBox');
+      const wb = box.querySelector('.welcome-box');
+      if (wb) wb.remove();
+
+      const wrap = document.createElement('div');
+      wrap.className = 'msg-wrap ' + sender;
+
+      const meta = document.createElement('div');
+      meta.className = 'msg-meta';
+      meta.innerText = sender === 'user' ? 'You' : 'AURA';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+      if (fileName) {
+        const chip = document.createElement('div');
+        chip.className = 'attach-chip';
+        chip.innerText = '📎 ' + fileName;
+        bubble.appendChild(chip);
+        bubble.appendChild(document.createElement('br'));
+      }
+      const span = document.createElement('span');
+      span.innerText = text;
+      bubble.appendChild(span);
+
+      wrap.appendChild(meta);
+      wrap.appendChild(bubble);
+
+      if (sender === 'ai') {
+        const actions = document.createElement('div');
+        actions.className = 'msg-actions';
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'act-chip';
+        copyBtn.innerText = '📋 Copy';
+        copyBtn.onclick = () => { navigator.clipboard.writeText(text); copyBtn.innerText = '✓ Copied'; setTimeout(() => copyBtn.innerText = '📋 Copy', 1500); };
+
+        const speakBtn = document.createElement('button');
+        speakBtn.className = 'act-chip';
+        speakBtn.innerText = '🔊 Listen';
+        speakBtn.onclick = () => speak(text);
+
+        actions.appendChild(copyBtn);
+        actions.appendChild(speakBtn);
+        wrap.appendChild(actions);
+      }
+
+      box.appendChild(wrap);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function addMsg(sender, text, fileName = '') {
+      const chat = chats.find(c => c.id === currentChatId);
+      if (chat) {
+        if (sender === 'user' && chat.messages.length === 0) {
+          chat.title = (text || fileName).slice(0, 28);
+        }
+        chat.messages.push({ sender, text, fileName });
+        persistChats();
+      }
+      drawMessage(sender, text, fileName);
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('open');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    }
+    function toggleSettings() {
+      document.getElementById('settingsPanel').classList.toggle('open');
+    }
+    function togglePlus() {
+      document.getElementById('plusMenu').classList.toggle('open');
+    }
+
+    function pickFile(accept) {
+      document.getElementById('plusMenu').classList.remove('open');
+      const inp = document.getElementById('fileInput');
+      inp.accept = accept;
+      inp.click();
+    }
+
+    function onFilePicked(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        selectedFile = {
+          name: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          base64: reader.result.split(',')[1]
+        };
+        document.getElementById('attachLabel').innerText = '📎 ' + file.name;
+        document.getElementById('attachBar').classList.add('show');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearAttachment() {
+      selectedFile = null;
+      document.getElementById('fileInput').value = '';
+      document.getElementById('attachBar').classList.remove('show');
     }
 
     function saveKey() {
       apiKey = document.getElementById('apiKeyInput').value.trim();
+      cachedModel = '';
       localStorage.setItem('aura_gemini_key', apiKey);
-      document.getElementById('settingsDrawer').classList.remove('open');
+      document.getElementById('settingsPanel').classList.remove('open');
       addMsg('ai', 'API Key save ho gayi hai Sir. Bataiye aaj kya madad karun?');
-      speak('API Key save ho gayi hai Sir. Bataiye aaj kya madad karun?');
-    }
-
-    function addMsg(sender, text) {
-      const box = document.getElementById('chatBox');
-      const wrap = document.createElement('div');
-      wrap.className = 'msg-wrap ' + sender;
-
-      const label = document.createElement('div');
-      label.className = 'msg-label';
-      label.innerText = sender === 'user' ? 'You' : 'AURA';
-
-      const div = document.createElement('div');
-      div.className = 'msg';
-      div.innerText = text;
-
-      wrap.appendChild(label);
-      wrap.appendChild(div);
-      box.appendChild(wrap);
-      box.scrollTop = box.scrollHeight;
+      speak('API Key save ho gayi hai Sir.');
     }
 
     function speak(text) {
@@ -230,22 +793,45 @@ Rules:
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'hi-IN';
-      utter.pitch = 1.15;
-      utter.rate = 1.02;
+      utter.pitch = 1.12;
+      utter.rate = 1.03;
       const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = voices.find(v => (v.lang.includes('hi') || v.lang.includes('IN')) && v.name.toLowerCase().includes('female'))
+      const female = voices.find(v => (v.lang.includes('hi') || v.lang.includes('IN')) && v.name.toLowerCase().includes('female'))
         || voices.find(v => v.lang.includes('hi-IN'));
-      if (femaleVoice) utter.voice = femaleVoice;
+      if (female) utter.voice = female;
 
-      const dot = document.getElementById('voiceDot');
+      const dot = document.getElementById('statusDot');
       utter.onstart = () => dot.classList.add('speaking');
       utter.onend = () => dot.classList.remove('speaking');
       window.speechSynthesis.speak(utter);
     }
 
-    async function callGemini(text, mode) {
-      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
-      let lastError = '';
+    async function getModels() {
+      if (cachedModel) return [cachedModel];
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
+        const data = await res.json();
+        if (res.ok && Array.isArray(data.models)) {
+          const valid = data.models
+            .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+            .map(m => m.name.replace('models/', ''));
+          const preferred = valid.filter(n => n.includes('flash') && !n.includes('8b') && !n.includes('lite'));
+          const others = valid.filter(n => n.includes('gemini'));
+          return [...new Set([...preferred, ...others])];
+        }
+      } catch (e) {}
+      return ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
+    }
+
+    async function callGemini(text, mode, fileObj) {
+      const models = await getModels();
+      let lastError = 'Model error';
+      const parts = [];
+      if (fileObj && fileObj.base64) {
+        parts.push({ inlineData: { mimeType: fileObj.mimeType, data: fileObj.base64 } });
+      }
+      parts.push({ text: text || 'Is image/file ko detail mein samjhaiye.' });
+
       for (const model of models) {
         try {
           const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`, {
@@ -253,11 +839,12 @@ Rules:
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               systemInstruction: { parts: [{ text: SYSTEM_PROMPT + "\nCurrent Mode: " + mode }] },
-              contents: [{ role: 'user', parts: [{ text }] }]
+              contents: [{ role: 'user', parts }]
             })
           });
           const data = await res.json();
           if (res.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            cachedModel = model;
             return { ok: true, text: data.candidates[0].content.parts[0].text };
           }
           lastError = data?.error?.message || `HTTP ${res.status}`;
@@ -271,63 +858,199 @@ Rules:
     async function sendMessage(customText) {
       const input = document.getElementById('userInput');
       const text = customText || input.value.trim();
-      if (!text) return;
+      const fileToSend = selectedFile;
+      if (!text && !fileToSend) return;
+
       if (!customText) input.value = '';
-      addMsg('user', text);
+      clearAttachment();
+      addMsg('user', text || 'Attachment bheja gaya', fileToSend ? fileToSend.name : '');
 
       if (!apiKey) {
-        document.getElementById('settingsDrawer').classList.add('open');
-        const warn = 'Sir, pehle Settings mein apni Gemini API Key paste karke Save dabaiye.';
-        addMsg('ai', warn);
-        speak(warn);
+        document.getElementById('settingsPanel').classList.add('open');
+        addMsg('ai', 'Sir, pehle Settings mein apni Gemini API Key paste karke Save dabaiye.');
         return;
       }
 
-      document.getElementById('batteryStatus').innerText = 'Thinking...';
+      document.getElementById('statusText').innerText = 'Thinking...';
       const mode = document.getElementById('modeSelect').value;
-      const result = await callGemini(text, mode);
-      document.getElementById('batteryStatus').innerText = 'Ready • JARVIS Core';
+      const result = await callGemini(text, mode, fileToSend);
+      document.getElementById('statusText').innerText = 'JARVIS Core';
 
       if (result.ok) {
         addMsg('ai', result.text);
         speak(result.text);
       } else {
-        const errMsg = `Sorry Sir, API error aaya: ${result.error}. Ek baar Settings mein API key check karein.`;
-        addMsg('ai', errMsg);
-        speak('Sorry Sir, API key mein koi error aa raha hai, ek baar check kijiye.');
+        addMsg('ai', `Sorry Sir, API error: ${result.error}`);
       }
     }
 
-    function startVoice() {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) {
-        alert('Is browser mein mic support nahi hai, Chrome use karein.');
-        return;
-      }
-      const rec = new SpeechRec();
+    function startVoiceOnce() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Chrome browser use karein.'); return; }
+      const rec = new SR();
       rec.lang = 'hi-IN';
-      const dot = document.getElementById('voiceDot');
+      const dot = document.getElementById('statusDot');
       dot.classList.add('listening');
-      document.getElementById('batteryStatus').innerText = 'Listening...';
+      document.getElementById('statusText').innerText = 'Listening...';
       rec.onresult = (e) => {
         dot.classList.remove('listening');
-        document.getElementById('batteryStatus').innerText = 'Ready • JARVIS Core';
+        document.getElementById('statusText').innerText = 'JARVIS Core';
         sendMessage(e.results[0][0].transcript);
       };
       rec.onerror = () => {
         dot.classList.remove('listening');
-        document.getElementById('batteryStatus').innerText = 'Ready • JARVIS Core';
+        document.getElementById('statusText').innerText = 'JARVIS Core';
+      };
+      rec.start();
+    }
+
+    /* ================= GEMINI LIVE (CAMERA + SCREEN SHARE + VOICE) ================= */
+    function openLiveMode() {
+      document.getElementById('liveModal').classList.add('open');
+      document.getElementById('liveSubtitle').innerText = '📷 Camera ya 🖥️ Screen chalu karein, aur 🎤 par tap karke bolein!';
+    }
+
+    function stopLiveTracks() {
+      if (liveStream) {
+        liveStream.getTracks().forEach(t => t.stop());
+        liveStream = null;
+      }
+      const vid = document.getElementById('liveVideo');
+      vid.srcObject = null;
+      vid.style.display = 'none';
+      isCameraOn = false;
+      isScreenOn = false;
+      document.getElementById('btnCam').classList.remove('active');
+      document.getElementById('btnScreen').classList.remove('active');
+    }
+
+    function closeLiveMode() {
+      stopLiveTracks();
+      window.speechSynthesis.cancel();
+      document.getElementById('liveModal').classList.remove('open');
+    }
+
+    async function toggleCamera() {
+      if (isCameraOn) {
+        stopLiveTracks();
+        document.getElementById('liveModeLabel').innerText = 'AURA Live';
+        return;
+      }
+      stopLiveTracks();
+      try {
+        liveStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: facingMode },
+          audio: false
+        });
+        const vid = document.getElementById('liveVideo');
+        vid.srcObject = liveStream;
+        vid.style.display = 'block';
+        isCameraOn = true;
+        document.getElementById('btnCam').classList.add('active');
+        document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera Live' : 'Front Camera Live';
+        document.getElementById('liveSubtitle').innerText = 'Camera chalu hai! Ab 🎤 daba kar poochiye ki samne kya hai.';
+      } catch (err) {
+        alert('Camera permission allow karein: ' + err.message);
+      }
+    }
+
+    async function switchCamera() {
+      facingMode = (facingMode === 'environment') ? 'user' : 'environment';
+      if (isCameraOn) {
+        isCameraOn = false;
+        await toggleCamera();
+      } else {
+        await toggleCamera();
+      }
+    }
+
+    async function toggleScreenShare() {
+      if (isScreenOn) {
+        stopLiveTracks();
+        document.getElementById('liveModeLabel').innerText = 'AURA Live';
+        return;
+      }
+      stopLiveTracks();
+      try {
+        liveStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        const vid = document.getElementById('liveVideo');
+        vid.srcObject = liveStream;
+        vid.style.display = 'block';
+        isScreenOn = true;
+        document.getElementById('btnScreen').classList.add('active');
+        document.getElementById('liveModeLabel').innerText = 'Screen Live';
+        document.getElementById('liveSubtitle').innerText = 'Screen live share ho rahi hai! Ab 🎤 daba kar sawaal poochiye.';
+      } catch (err) {
+        alert('Screen share cancel ya unsupported: ' + err.message);
+      }
+    }
+
+    function captureCurrentFrame() {
+      if (!isCameraOn && !isScreenOn) return null;
+      const vid = document.getElementById('liveVideo');
+      const canvas = document.getElementById('captureCanvas');
+      if (!vid.videoWidth) return null;
+      canvas.width = vid.videoWidth;
+      canvas.height = vid.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      return {
+        name: isScreenOn ? 'live_screen.jpg' : 'live_camera.jpg',
+        mimeType: 'image/jpeg',
+        base64: dataUrl.split(',')[1]
+      };
+    }
+
+    function listenInLiveMode() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Chrome browser use karein.'); return; }
+      const rec = new SR();
+      rec.lang = 'hi-IN';
+      const micBtn = document.getElementById('btnLiveMic');
+      micBtn.classList.add('active');
+      document.getElementById('liveSubtitle').innerText = 'Sun rahi hoon Sir... Boliye!';
+
+      rec.onresult = async (e) => {
+        micBtn.classList.remove('active');
+        const spoken = e.results[0][0].transcript;
+        document.getElementById('liveSubtitle').innerText = 'You: ' + spoken;
+
+        const frameObj = captureCurrentFrame();
+        addMsg('user', spoken, frameObj ? frameObj.name : '');
+
+        if (!apiKey) {
+          document.getElementById('liveSubtitle').innerText = 'Pehle Settings mein API Key save karein.';
+          return;
+        }
+
+        document.getElementById('liveSubtitle').innerText = 'Dekh kar samajh rahi hoon...';
+        const mode = document.getElementById('modeSelect').value;
+        const result = await callGemini(spoken, mode, frameObj);
+
+        if (result.ok) {
+          document.getElementById('liveSubtitle').innerText = result.text;
+          addMsg('ai', result.text);
+          speak(result.text);
+        } else {
+          document.getElementById('liveSubtitle').innerText = 'Error: ' + result.error;
+        }
+      };
+
+      rec.onerror = () => {
+        micBtn.classList.remove('active');
+        document.getElementById('liveSubtitle').innerText = 'Aawaz saaf nahi aayi, dobara 🎤 dabayein.';
       };
       rec.start();
     }
 
     function faceUnlockGreet() {
-      document.getElementById('settingsDrawer').classList.remove('open');
+      document.getElementById('settingsPanel').classList.remove('open');
       sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne charming andaaz mein welcome aur compliment do!');
     }
 
     function simulateMessage() {
-      document.getElementById('settingsDrawer').classList.remove('open');
+      document.getElementById('settingsPanel').classList.remove('open');
       const alertText = 'Sir, WhatsApp par ek naya message aaya hai. Kya main padh kar sunaun?';
       addMsg('ai', alertText);
       speak(alertText);
@@ -335,13 +1058,7 @@ Rules:
 
     if ('getBattery' in navigator) {
       navigator.getBattery().then(bat => {
-        const updateBat = () => {
-          const pct = Math.round(bat.level * 100);
-          document.getElementById('batteryStatus').innerText = (bat.charging ? '⚡ ' : '🔋 ') + pct + '% • Ready';
-        };
-        updateBat();
         bat.addEventListener('chargingchange', () => {
-          updateBat();
           const msg = bat.charging ? 'Sir, charging shuru ho gayi hai.' : 'Sir, charger disconnect kar diya gaya hai.';
           addMsg('ai', msg);
           speak(msg);
@@ -350,7 +1067,8 @@ Rules:
     }
 
     window.onload = () => {
-      addMsg('ai', 'Namaste Sir! Main AURA AI hoon. Bataiye aaj kya baat karni hai?');
+      if (chats.length === 0) createNewChat();
+      else { currentChatId = chats[0].id; renderSidebar(); renderChat(); }
     };
   </script>
 </body>
