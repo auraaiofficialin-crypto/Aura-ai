@@ -7,103 +7,114 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; }
     body {
-      background-color: #0a0a0c;
+      background-color: #07080c;
       color: #f2f2f5;
       height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-    svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    svg.ui-icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* First-Time Onboarding Voice Setup Modal */
+    /* First-Time Onboarding Modal */
     .onboard-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(5, 5, 7, 0.96);
-      backdrop-filter: blur(16px);
+      background: rgba(4, 5, 10, 0.96);
+      backdrop-filter: blur(18px);
       z-index: 200;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 20px;
     }
     .onboard-modal.open { display: flex; }
     .onboard-card {
       width: 100%;
-      max-width: 390px;
-      background: #121217;
-      border: 1px solid #262630;
-      border-radius: 26px;
-      padding: 26px 20px;
+      max-width: 400px;
+      background: #0e1017;
+      border: 1px solid #1e2333;
+      border-radius: 28px;
+      padding: 24px 18px;
       display: flex;
       flex-direction: column;
       gap: 18px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
     }
     .onboard-title {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 600;
-      background: linear-gradient(110deg, #ffffff 20%, #38bdf8 70%, #2dd4bf 100%);
+      background: linear-gradient(90deg, #38bdf8, #c084fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .onboard-sub { font-size: 13.5px; color: #8e8e98; line-height: 1.5; margin-top: -8px; }
-    .voice-choice-grid { display: flex; flex-direction: column; gap: 12px; }
-    .voice-choice-btn {
+    .onboard-sub { font-size: 13px; color: #8e95a5; line-height: 1.45; margin-top: -10px; }
+    .duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .duo-card {
+      background: #131620;
+      border: 1.5px solid #22283a;
+      border-radius: 20px;
+      padding: 16px 10px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 14px;
-      background: #18181f;
-      border: 1.5px solid #2a2a35;
-      border-radius: 18px;
-      padding: 16px;
+      gap: 10px;
       color: #f4f4f6;
-      text-align: left;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
-    .voice-choice-btn.selected {
+    .duo-card.selected-male {
       border-color: #38bdf8;
-      background: #132030;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.18);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), #131620 75%);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
     }
-    .vc-icon {
-      width: 44px;
-      height: 44px;
+    .duo-card.selected-female {
+      border-color: #c084fc;
+      background: radial-gradient(circle at top, rgba(192, 132, 252, 0.18), #131620 75%);
+      box-shadow: 0 0 25px rgba(192, 132, 252, 0.25);
+    }
+    .mini-orb {
+      width: 78px;
+      height: 78px;
       border-radius: 50%;
-      background: #22222b;
-      color: #38bdf8;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      position: relative;
     }
-    .vc-info { display: flex; flex-direction: column; gap: 3px; }
-    .vc-name { font-size: 15px; font-weight: 600; }
-    .vc-desc { font-size: 12px; color: #9ca3af; }
+    .mini-orb.male {
+      background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.35), rgba(14, 116, 144, 0.15) 65%, #070b14 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.7);
+      box-shadow: 0 0 22px rgba(56, 189, 248, 0.45);
+    }
+    .mini-orb.female {
+      background: radial-gradient(circle at 35% 30%, rgba(192, 132, 252, 0.35), rgba(126, 34, 206, 0.15) 65%, #0e0714 100%);
+      border: 1.5px solid rgba(192, 132, 252, 0.7);
+      box-shadow: 0 0 22px rgba(192, 132, 252, 0.45);
+    }
+    .duo-name { font-size: 14px; font-weight: 600; }
+    .duo-tag { font-size: 11px; color: #9ca3af; }
     .onboard-confirm {
-      background: #f4f4f6;
-      color: #09090b;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      color: #05070d;
       border: none;
       border-radius: 16px;
-      padding: 14px;
-      font-size: 15px;
-      font-weight: 600;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 4px;
     }
 
-    /* Minimal OLED Top Bar */
+    /* Top Header */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: #0a0a0c;
-      border-bottom: 1px solid #16161b;
+      background: #07080c;
+      border-bottom: 1px solid #141722;
       z-index: 10;
     }
     .top-left { display: flex; align-items: center; gap: 10px; }
@@ -111,625 +122,358 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: #16161a;
-      border: 1px solid #242429;
+      background: #12151f;
+      border: 1px solid #202536;
       color: #e4e4e7;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
-    .round-btn:active { background: #222228; transform: scale(0.95); }
+    .round-btn:active { transform: scale(0.94); }
     .brand-pill {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #16161a;
-      border: 1px solid #242429;
+      background: #12151f;
+      border: 1px solid #202536;
       padding: 7px 14px;
       border-radius: 20px;
       font-size: 14px;
       font-weight: 600;
-      letter-spacing: 0.4px;
     }
     .aura-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #2dd4bf;
-      box-shadow: 0 0 8px #2dd4bf;
+      background: #38bdf8;
+      box-shadow: 0 0 8px #38bdf8;
     }
-    .aura-dot.speaking { background: #38bdf8; animation: pulseDot 0.55s infinite alternate; }
-    .aura-dot.listening { background: #f43f5e; animation: pulseDot 0.45s infinite alternate; }
-    @keyframes pulseDot { from { transform: scale(0.85); } to { transform: scale(1.65); } }
+    .aura-dot.female-theme { background: #c084fc; box-shadow: 0 0 8px #c084fc; }
+    .aura-dot.speaking { animation: pulseDot 0.45s infinite alternate; }
+    @keyframes pulseDot { from { transform: scale(0.85); } to { transform: scale(1.7); } }
 
     .top-right { display: flex; align-items: center; gap: 8px; }
     .mode-badge {
       font-size: 11px;
       color: #38bdf8;
-      background: #16161a;
-      border: 1px solid #242429;
+      background: #12151f;
+      border: 1px solid #202536;
       padding: 6px 10px;
       border-radius: 16px;
+      cursor: pointer;
     }
+    .mode-badge.female-theme { color: #c084fc; }
 
-    /* Left Sidebar Drawer */
-    .overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      z-index: 40;
-    }
+    /* Sidebar */
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72); z-index: 40; }
     .overlay.open { display: block; }
     .sidebar {
-      position: fixed;
-      top: 0;
-      left: -305px;
-      width: 290px;
-      height: 100dvh;
-      background: #111114;
-      border-right: 1px solid #1f1f24;
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      padding: 16px 12px;
+      position: fixed; top: 0; left: -305px; width: 290px; height: 100dvh;
+      background: #0c0e14; border-right: 1px solid #1b1f2e; z-index: 50;
+      display: flex; flex-direction: column; padding: 16px 12px;
       transition: left 0.24s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .sidebar.open { left: 0; }
     .new-chat-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #1c1c21;
-      color: #f4f4f6;
-      border: 1px solid #2a2a32;
-      border-radius: 22px;
-      padding: 11px 16px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 10px; background: #161a26;
+      color: #f4f4f6; border: 1px solid #252b3d; border-radius: 22px;
+      padding: 11px 16px; font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 10px;
     }
     .search-box {
-      background: #0a0a0c;
-      border: 1px solid #24242b;
-      border-radius: 14px;
-      padding: 8px 12px;
-      color: #f4f4f6;
-      font-size: 13px;
-      margin-bottom: 12px;
-      outline: none;
+      background: #07080c; border: 1px solid #1f2433; border-radius: 14px;
+      padding: 8px 12px; color: #f4f4f6; font-size: 13px; margin-bottom: 12px; outline: none;
     }
-    .sec-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.9px;
-      color: #71717a;
-      padding: 8px 12px 4px;
-      font-weight: 600;
-    }
-    .history-list {
-      flex: 1;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
+    .sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.9px; color: #6b7280; padding: 8px 12px 4px; font-weight: 600; }
+    .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; }
     .history-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-size: 13.5px;
-      color: #a1a1aa;
-      cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; border-radius: 14px; font-size: 13.5px; color: #9ca3af; cursor: pointer;
     }
-    .history-item.active { background: #1e293b; color: #38bdf8; }
-    .history-title {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 6px;
-    }
+    .history-item.active { background: #172033; color: #38bdf8; }
+    .history-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px; }
     .hist-btns { display: flex; gap: 3px; }
-    .mini-svg-btn {
-      background: transparent;
-      border: none;
-      color: #71717a;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
+    .mini-svg-btn { background: transparent; border: none; color: #6b7280; padding: 4px; display: flex; align-items: center; cursor: pointer; }
     .mini-svg-btn svg { width: 15px; height: 15px; }
     .mini-svg-btn.pinned { color: #38bdf8; }
-    .sidebar-footer {
-      border-top: 1px solid #1f1f24;
-      padding-top: 10px;
-      display: flex;
-      gap: 8px;
-    }
+    .sidebar-footer { border-top: 1px solid #1b1f2e; padding-top: 10px; display: flex; gap: 8px; }
 
     /* Settings Sheet */
     .settings-panel {
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      padding: 14px 16px;
-      background: #121216;
-      border-bottom: 1px solid #222228;
+      display: none; flex-direction: column; gap: 10px; padding: 14px 16px;
+      background: #0e1017; border-bottom: 1px solid #1e2333; max-height: 70dvh; overflow-y: auto;
     }
     .settings-panel.open { display: flex; }
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    input, select {
-      background: #0a0a0c;
-      color: #f4f4f6;
-      border: 1px solid #2a2a32;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 13px;
-      outline: none;
+    input, select, textarea {
+      background: #07080c; color: #f4f4f6; border: 1px solid #22283a;
+      border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none;
     }
     .save-btn {
-      background: #f4f4f6;
-      color: #09090b;
-      border: none;
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
+      background: #f4f4f6; color: #09090b; border: none; border-radius: 12px;
+      padding: 10px 16px; font-weight: 600; font-size: 13px; cursor: pointer;
     }
     .ghost-btn {
-      background: #1a1a20;
-      color: #d4d4d8;
-      border: 1px solid #2a2a32;
-      border-radius: 12px;
-      padding: 8px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      flex: 1;
-      text-align: center;
+      background: #141824; color: #d4d4d8; border: 1px solid #22283a;
+      border-radius: 12px; padding: 8px 12px; font-size: 12px; cursor: pointer; flex: 1; text-align: center;
     }
     .ghost-btn.active-pill { border-color: #38bdf8; color: #38bdf8; }
+    .ghost-btn.danger-pill { border-color: #f43f5e; color: #fda4af; }
 
-    /* Main Workspace */
+    /* Main Chat Area */
     .chat-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      flex: 1; overflow-y: auto; padding: 16px 18px;
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .welcome-box {
-      margin: auto 0;
-      padding: 8px 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .welcome-box { margin: auto 0; padding: 8px 4px; display: flex; flex-direction: column; gap: 16px; }
     .welcome-title {
-      font-size: 30px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-      background: linear-gradient(110deg, #ffffff 15%, #38bdf8 60%, #2dd4bf 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 28px; font-weight: 600; letter-spacing: -0.5px;
+      background: linear-gradient(110deg, #ffffff 15%, #38bdf8 60%, #c084fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .welcome-sub { font-size: 15px; color: #71717a; margin-top: -8px; }
+    .welcome-sub { font-size: 14.5px; color: #8e95a5; margin-top: -8px; }
     .quick-prompts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
     .qp-item {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      background: #121216;
-      border: 1px solid #1f1f26;
-      padding: 14px;
-      border-radius: 16px;
-      color: #d4d4d8;
-      font-size: 13px;
-      text-align: left;
-      cursor: pointer;
+      display: flex; flex-direction: column; gap: 8px; background: #0e1017;
+      border: 1px solid #1b2030; padding: 14px; border-radius: 16px;
+      color: #d4d4d8; font-size: 13px; text-align: left; cursor: pointer;
     }
-    .qp-item:active { background: #1a1a22; }
     .qp-item svg { width: 18px; height: 18px; color: #38bdf8; }
 
     /* Messages */
     .msg-wrap { display: flex; flex-direction: column; max-width: 88%; }
     .msg-wrap.user { align-self: flex-end; }
     .msg-wrap.ai { align-self: flex-start; max-width: 96%; }
-    .msg-meta { font-size: 11px; color: #71717a; margin-bottom: 4px; padding: 0 4px; }
-    .msg-bubble {
-      padding: 12px 16px;
-      border-radius: 20px;
-      font-size: 15px;
-      line-height: 1.6;
-      word-wrap: break-word;
-    }
-    .user .msg-bubble { background: #1c1c22; color: #f4f4f6; border-bottom-right-radius: 4px; }
+    .msg-meta { font-size: 11px; color: #6b7280; margin-bottom: 4px; padding: 0 4px; }
+    .msg-bubble { padding: 12px 16px; border-radius: 20px; font-size: 15px; line-height: 1.6; word-wrap: break-word; }
+    .user .msg-bubble { background: #161a26; color: #f4f4f6; border-bottom-right-radius: 4px; }
     .ai .msg-bubble { background: transparent; color: #e4e4e7; padding: 2px 4px; }
-    .gen-img {
-      width: 100%;
-      max-width: 320px;
-      border-radius: 16px;
-      margin-top: 8px;
-      border: 1px solid #282832;
-      display: block;
-    }
-    .code-card {
-      background: #121217;
-      border: 1px solid #262630;
-      border-radius: 14px;
-      margin: 10px 0;
-      overflow: hidden;
-    }
-    .code-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 12px;
-      background: #18181f;
-      font-size: 11px;
-      color: #a1a1aa;
-    }
-    .code-body {
-      padding: 12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 12.5px;
-      overflow-x: auto;
-      white-space: pre;
-      color: #e4e4e7;
-    }
+    .gen-img { width: 100%; max-width: 320px; border-radius: 16px; margin-top: 8px; border: 1px solid #22283a; display: block; }
+    .code-card { background: #0e1017; border: 1px solid #1f2536; border-radius: 14px; margin: 10px 0; overflow: hidden; }
+    .code-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: #141824; font-size: 11px; color: #9ca3af; }
+    .code-body { padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; overflow-x: auto; white-space: pre; color: #e4e4e7; }
     .msg-actions { display: flex; gap: 8px; margin-top: 8px; padding-left: 4px; flex-wrap: wrap; }
     .act-chip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: #141418;
-      border: 1px solid #24242b;
-      color: #a1a1aa;
-      font-size: 11px;
-      padding: 5px 10px;
-      border-radius: 10px;
-      cursor: pointer;
+      display: flex; align-items: center; gap: 5px; background: #10131c;
+      border: 1px solid #1f2536; color: #9ca3af; font-size: 11px; padding: 5px 10px; border-radius: 10px; cursor: pointer;
     }
     .act-chip svg { width: 13px; height: 13px; }
     .attach-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #16161c;
-      border: 1px solid #2b2b36;
-      color: #38bdf8;
-      font-size: 12px;
-      padding: 4px 10px;
-      border-radius: 10px;
-      margin-bottom: 6px;
+      display: inline-flex; align-items: center; gap: 6px; background: #131824;
+      border: 1px solid #242d42; color: #38bdf8; font-size: 12px; padding: 4px 10px; border-radius: 10px; margin-bottom: 6px;
     }
 
     /* Bottom Composer */
-    .bottom-dock {
-      padding: 8px 14px 16px;
-      background: #0a0a0c;
-      position: relative;
-    }
+    .bottom-dock { padding: 8px 14px 16px; background: #07080c; position: relative; }
     .active-tool-pill {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      background: #131b24;
-      border: 1px solid #1e3a5f;
-      border-radius: 12px;
-      padding: 6px 12px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      color: #38bdf8;
+      display: none; align-items: center; justify-content: space-between;
+      background: #111927; border: 1px solid #1e3a5f; border-radius: 12px;
+      padding: 6px 12px; margin-bottom: 8px; font-size: 12px; color: #38bdf8;
     }
     .active-tool-pill.show { display: flex; }
-
     .composer {
-      display: flex;
-      align-items: center;
-      background: #16161a;
-      border: 1px solid #26262e;
-      border-radius: 28px;
-      padding: 5px 6px;
-      gap: 4px;
+      display: flex; align-items: center; background: #12151f;
+      border: 1px solid #202536; border-radius: 28px; padding: 5px 6px; gap: 4px;
     }
     .plus-trigger {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: #222228;
-      color: #f4f4f6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: #1b2030; color: #f4f4f6; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
-    .composer input[type="text"] {
-      flex: 1;
-      background: transparent;
-      border: none;
-      padding: 8px 8px;
-      font-size: 15px;
-      color: #f4f4f6;
-    }
+    .composer input[type="text"] { flex: 1; background: transparent; border: none; padding: 8px; font-size: 15px; color: #f4f4f6; }
     .mic-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: transparent;
-      color: #a1a1aa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: transparent; color: #9ca3af; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
     .wave-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: 1px solid #2c2c36;
-      background: #1e1e26;
-      color: #38bdf8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 38px; height: 38px; border-radius: 50%; border: 1px solid #263047;
+      background: #161d2e; color: #38bdf8; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
     .send-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: #f4f4f6;
-      color: #09090b;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: #f4f4f6; color: #09090b; display: none; align-items: center; justify-content: center; cursor: pointer;
     }
 
-    /* Bottom Sheet */
-    .sheet-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      z-index: 60;
-    }
+    /* '+' Action Sheet */
+    .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.68); z-index: 60; }
     .sheet-backdrop.open { display: block; }
     .plus-sheet {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: -540px;
-      background: #16161a;
-      border-top: 1px solid #282830;
-      border-top-left-radius: 24px;
-      border-top-right-radius: 24px;
-      padding: 14px 16px 26px;
-      z-index: 70;
-      transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      position: fixed; left: 0; right: 0; bottom: -680px; background: #10131c;
+      border-top: 1px solid #202638; border-top-left-radius: 24px; border-top-right-radius: 24px;
+      padding: 14px 16px 26px; z-index: 70; transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex; flex-direction: column; gap: 12px; max-height: 82dvh; overflow-y: auto;
     }
     .plus-sheet.open { bottom: 0; }
-    .sheet-handle {
-      width: 36px;
-      height: 4px;
-      border-radius: 4px;
-      background: #3f3f46;
-      margin: 0 auto 4px;
-    }
-    .media-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
+    .sheet-handle { width: 36px; height: 4px; border-radius: 4px; background: #374151; margin: 0 auto 4px; flex-shrink: 0; }
+    .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .media-card {
-      background: #202026;
-      border: 1px solid #2c2c35;
-      border-radius: 16px;
-      padding: 14px 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: #f4f4f6;
-      font-size: 13px;
-      cursor: pointer;
+      background: #171c29; border: 1px solid #232a3d; border-radius: 16px; padding: 12px 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px; color: #f4f4f6; font-size: 12.5px; cursor: pointer;
     }
-    .tool-list { display: flex; flex-direction: column; gap: 4px; }
+    .tool-list { display: flex; flex-direction: column; gap: 3px; }
     .tool-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: transparent;
-      border: none;
-      padding: 10px 12px;
-      border-radius: 14px;
-      color: #f4f4f6;
-      text-align: left;
-      cursor: pointer;
+      display: flex; align-items: center; gap: 14px; background: transparent; border: none;
+      padding: 10px 12px; border-radius: 14px; color: #f4f4f6; text-align: left; cursor: pointer;
     }
-    .tool-row:active { background: #222228; }
-    .tool-row svg { width: 20px; height: 20px; color: #a1a1aa; flex-shrink: 0; }
+    .tool-row:active { background: #171c29; }
+    .tool-row svg { width: 20px; height: 20px; color: #38bdf8; flex-shrink: 0; }
     .tool-info { display: flex; flex-direction: column; }
     .tool-name { font-size: 14px; font-weight: 500; }
-    .tool-desc { font-size: 12px; color: #71717a; }
+    .tool-desc { font-size: 12px; color: #6b7280; }
 
-    /* Flagship Concentric Frosted Halo Ring */
+    /* Feature Sub-Modals (Same Dark OLED Theme) */
+    .feature-modal {
+      display: none; position: fixed; inset: 0; background: rgba(4, 5, 10, 0.94);
+      backdrop-filter: blur(14px); z-index: 150; flex-direction: column;
+      align-items: center; justify-content: center; padding: 18px;
+    }
+    .feature-modal.open { display: flex; }
+    .feature-card {
+      width: 100%; max-width: 410px; background: #0e1017; border: 1px solid #1e2538;
+      border-radius: 24px; padding: 20px 18px; display: flex; flex-direction: column;
+      gap: 14px; max-height: 86dvh; overflow-y: auto;
+    }
+    .fc-head { display: flex; justify-content: space-between; align-items: center; }
+    .fc-title { font-size: 17px; font-weight: 600; color: #f4f4f6; }
+    .fc-sub { font-size: 12.5px; color: #8e95a5; line-height: 1.45; }
+    .plan-box {
+      background: #131722; border: 1px solid #222a3f; border-radius: 16px;
+      padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .plan-box.highlight { border-color: #38bdf8; background: #111d2e; }
+    .plan-name { font-size: 14px; font-weight: 600; color: #f4f4f6; }
+    .plan-meta { font-size: 11.5px; color: #9ca3af; margin-top: 2px; }
+    .plan-price { font-size: 15px; font-weight: 700; color: #38bdf8; text-align: right; }
+    .disclaimer-note { font-size: 11px; color: #6b7280; line-height: 1.4; background: #0a0c12; padding: 8px 10px; border-radius: 10px; }
+
+    /* ================= HOLOGRAPHIC 3D-STYLE AVATAR ORB + REAL LIP-SYNC ================= */
     .live-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: #050507;
-      z-index: 100;
-      flex-direction: column;
-      justify-content: space-between;
+      display: none; position: fixed; inset: 0;
+      background: radial-gradient(circle at 50% 42%, #0d1326 0%, #04050a 75%);
+      z-index: 100; flex-direction: column; justify-content: space-between;
     }
     .live-modal.open { display: flex; }
-    .live-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 18px;
-      z-index: 10;
-    }
+    .live-top { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; z-index: 10; }
     .live-status-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(24, 24, 29, 0.85);
-      border: 1px solid #2c2c35;
-      padding: 7px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      color: #e4e4e7;
+      display: flex; align-items: center; gap: 8px; background: rgba(16, 20, 32, 0.85);
+      border: 1px solid #242c42; padding: 7px 14px; border-radius: 20px; font-size: 13px; color: #e4e4e7;
     }
     .live-stage {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; overflow: hidden;
     }
-    #liveVideo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: none;
+    #liveVideo { width: 100%; height: 100%; object-fit: cover; display: none; }
+
+    .holo-wrapper {
+      position: relative; width: 260px; height: 260px; display: flex;
+      align-items: center; justify-content: center; margin-top: -30px; z-index: 4;
     }
-    .halo-container {
-      position: relative;
-      width: 220px;
-      height: 220px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 4;
+    .holo-sphere {
+      position: relative; width: 225px; height: 225px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
     }
-    .halo-outer {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      box-shadow: 0 0 50px rgba(45, 212, 191, 0.15), inset 0 0 30px rgba(56, 189, 248, 0.12);
-      transition: transform 0.3s ease;
+    .holo-sphere.male {
+      background: radial-gradient(circle at 35% 25%, rgba(56, 189, 248, 0.35) 0%, rgba(2, 132, 199, 0.18) 55%, rgba(4, 12, 28, 0.92) 100%);
+      border: 1.5px solid rgba(56, 189, 248, 0.65);
+      box-shadow: 0 0 65px rgba(56, 189, 248, 0.4), inset 0 0 40px rgba(56, 189, 248, 0.35);
     }
-    .halo-mid {
-      position: absolute;
-      inset: 24px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(45, 212, 191, 0.45);
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(10, 10, 12, 0.85) 75%);
-      backdrop-filter: blur(12px);
+    .holo-sphere.female {
+      background: radial-gradient(circle at 35% 25%, rgba(192, 132, 252, 0.38) 0%, rgba(147, 51, 234, 0.2) 55%, rgba(18, 5, 32, 0.92) 100%);
+      border: 1.5px solid rgba(192, 132, 252, 0.65);
+      box-shadow: 0 0 65px rgba(192, 132, 252, 0.4), inset 0 0 40px rgba(192, 132, 252, 0.35);
     }
-    .halo-core {
-      width: 84px;
-      height: 84px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      background: radial-gradient(circle at 30% 30%, rgba(224, 242, 254, 0.9), rgba(56, 189, 248, 0.35) 65%, transparent 100%);
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.5);
+
+    .plasma-ring {
+      position: absolute; inset: -14px; border-radius: 50%; border: 1.5px solid transparent;
+      border-top-color: rgba(56, 189, 248, 0.75); border-bottom-color: rgba(56, 189, 248, 0.35);
+      animation: spinRing 7s linear infinite; pointer-events: none;
     }
-    .halo-container.speaking .halo-outer { animation: ringWave 0.8s infinite alternate ease-in-out; border-color: rgba(45, 212, 191, 0.7); }
-    .halo-container.speaking .halo-core { animation: corePulse 0.5s infinite alternate ease-in-out; }
-    .halo-container.listening .halo-outer { border-color: rgba(244, 63, 94, 0.7); box-shadow: 0 0 50px rgba(244, 63, 94, 0.25); }
-    .halo-container.listening .halo-core { background: radial-gradient(circle at 30% 30%, #ffe4e6, rgba(244, 63, 94, 0.5) 70%, transparent 100%); box-shadow: 0 0 35px rgba(244, 63, 94, 0.6); }
-    @keyframes ringWave { from { transform: scale(0.95); } to { transform: scale(1.14); } }
-    @keyframes corePulse { from { transform: scale(0.92); } to { transform: scale(1.08); } }
+    .plasma-ring.ring2 {
+      inset: -26px; border-top-color: transparent;
+      border-left-color: rgba(192, 132, 252, 0.6); border-right-color: rgba(56, 189, 248, 0.6);
+      animation: spinRingReverse 11s linear infinite;
+    }
+    .female-ring .plasma-ring { border-top-color: rgba(216, 180, 254, 0.8); border-bottom-color: rgba(168, 85, 247, 0.4); }
+    @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spinRingReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+    .holo-pedestal {
+      position: absolute; bottom: -26px; width: 170px; height: 22px; border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.55) 0%, transparent 72%); filter: blur(3px);
+    }
+    .holo-pedestal.female { background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.55) 0%, transparent 72%); }
+
+    .holo-wrapper.speaking .holo-sphere { animation: speakPulse 0.45s infinite alternate ease-in-out; }
+    .holo-wrapper.thinking .plasma-ring { animation-duration: 1.4s; }
+    .holo-wrapper.listening .holo-sphere { transform: scale(1.05); }
+    @keyframes speakPulse { from { transform: scale(0.98); } to { transform: scale(1.04); } }
+
+    .holo-face-svg { width: 175px; height: 195px; margin-top: 16px; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.65)); }
+    .holo-face-svg.female { filter: drop-shadow(0 0 12px rgba(216, 180, 254, 0.7)); }
+    .eye-blink { transform-origin: center; animation: blinkEyes 4.2s infinite; }
+    @keyframes blinkEyes { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.08); } }
+
+    .state-strip {
+      position: absolute; bottom: 168px; display: flex; gap: 6px;
+      background: rgba(12, 15, 24, 0.85); border: 1px solid #1e2538;
+      padding: 5px 10px; border-radius: 20px; z-index: 8;
+    }
+    .st-pill { font-size: 10.5px; color: #6b7280; padding: 3px 8px; border-radius: 12px; transition: all 0.2s ease; }
+    .st-pill.active { background: #1d2842; color: #38bdf8; font-weight: 600; }
 
     .live-caption {
-      position: absolute;
-      bottom: 115px;
-      left: 18px;
-      right: 18px;
-      text-align: center;
-      background: rgba(14, 14, 18, 0.82);
-      backdrop-filter: blur(8px);
-      border: 1px solid #26262e;
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-size: 14px;
-      color: #f4f4f6;
-      z-index: 8;
+      position: absolute; bottom: 104px; left: 18px; right: 18px; text-align: center;
+      background: rgba(12, 15, 24, 0.86); backdrop-filter: blur(10px); border: 1px solid #20273b;
+      padding: 10px 14px; border-radius: 16px; font-size: 13.5px; color: #f4f4f6; z-index: 8;
     }
-    .live-bottom {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      padding: 18px 16px 32px;
-      z-index: 10;
-    }
+    .live-bottom { display: flex; justify-content: center; align-items: center; gap: 14px; padding: 14px 16px 28px; z-index: 10; }
     .live-btn {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 1px solid #2a2a32;
-      background: rgba(24, 24, 29, 0.9);
-      color: #f4f4f6;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 52px; height: 52px; border-radius: 50%; border: 1px solid #242c42;
+      background: rgba(16, 20, 32, 0.92); color: #f4f4f6; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
-    .live-btn.active { background: #38bdf8; color: #09090b; border-color: #38bdf8; }
+    .live-btn.active { background: #38bdf8; color: #05070d; border-color: #38bdf8; }
     .live-close {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: none;
-      background: #f4f4f6;
-      color: #09090b;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 52px; height: 52px; border-radius: 50%; border: none;
+      background: #f4f4f6; color: #09090b; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- First-Time Permanent Voice Selection Modal -->
+  <!-- First-Time Holographic Companion Selection Modal -->
   <div class="onboard-modal" id="onboardModal">
     <div class="onboard-card">
-      <div class="onboard-title">Choose Your AI Companion</div>
-      <div class="onboard-sub">Ek baar select karein — aapki chat aur Live mode mein hamesha yahi permanent voice aur style rahegi.</div>
-      <div class="voice-choice-grid">
-        <button class="voice-choice-btn selected" id="optFemale" onclick="playSound('switch'); pickGender('female')">
-          <div class="vc-icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
+      <div class="onboard-title">Select Your AI Companion</div>
+      <div class="onboard-sub">Ek baar select karein — Live Lip-Sync aur 100% Free Neural Voice hamesha ke liye set ho jayegi.</div>
+      <div class="duo-grid">
+        <button class="duo-card selected-male" id="optMale" onclick="playSound('switch'); pickGender('male')">
+          <div class="mini-orb male">
+            <svg viewBox="0 0 100 100" style="width:54px;height:54px;">
+              <path d="M30 42 C30 22, 70 22, 70 42 L67 66 C65 78, 56 84, 50 84 C44 84, 35 78, 33 66 Z" fill="rgba(56,189,248,0.22)" stroke="#38bdf8" stroke-width="2.5"/>
+              <ellipse cx="41" cy="48" rx="5" ry="2.5" fill="#e0f2fe"/>
+              <ellipse cx="59" cy="48" rx="5" ry="2.5" fill="#e0f2fe"/>
+              <path d="M44 68 Q50 71 56 68" stroke="#7dd3fc" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </svg>
           </div>
-          <div class="vc-info">
-            <span class="vc-name">Female • Monika Sogam</span>
-            <span class="vc-desc">Deep, Clear & Expressive Hindi Voice</span>
-          </div>
+          <span class="duo-name">Male Companion</span>
+          <span class="duo-tag">Cyan Orb • Jarvis Vibe</span>
         </button>
 
-        <button class="voice-choice-btn" id="optMale" onclick="playSound('switch'); pickGender('male')">
-          <div class="vc-icon">
-            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <button class="duo-card" id="optFemale" onclick="playSound('switch'); pickGender('female')">
+          <div class="mini-orb female">
+            <svg viewBox="0 0 100 100" style="width:54px;height:54px;">
+              <path d="M24 55 C22 24, 78 24, 76 55 C76 70, 70 78, 66 78 C66 66, 68 44, 50 40 C32 44, 34 66, 34 78 C30 78, 24 70, 24 55 Z" fill="rgba(192,132,252,0.28)" stroke="#c084fc" stroke-width="2"/>
+              <path d="M33 44 C33 26, 67 26, 67 44 L64 65 C62 76, 55 82, 50 82 C45 82, 38 76, 36 65 Z" fill="rgba(216,180,254,0.2)" stroke="#e9d5ff" stroke-width="2.2"/>
+              <ellipse cx="42" cy="49" rx="4.8" ry="2.8" fill="#f3e8ff"/>
+              <ellipse cx="58" cy="49" rx="4.8" ry="2.8" fill="#f3e8ff"/>
+              <path d="M44 67 Q50 71 56 67" stroke="#f0abfc" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            </svg>
           </div>
-          <div class="vc-info">
-            <span class="vc-name">Male • Bunty</span>
-            <span class="vc-desc">Punchy, Crisp & Reel King Energy</span>
-          </div>
+          <span class="duo-name">Female Companion</span>
+          <span class="duo-tag">Violet Orb • Caring Partner</span>
         </button>
       </div>
-      <button class="onboard-confirm" onclick="playSound('chime'); confirmCompanion()">Set Permanent Voice</button>
+      <button class="onboard-confirm" onclick="playSound('chime'); confirmCompanion()">Activate 30-Day Free VIP</button>
     </div>
   </div>
 
@@ -737,7 +481,7 @@
   <div class="overlay" id="overlay" onclick="playSound('tap'); toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <button class="new-chat-btn" onclick="playSound('chime'); createNewChat()">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       <span>New chat</span>
     </button>
     <input type="text" class="search-box" id="historySearch" placeholder="Search chats..." oninput="renderSidebar()" />
@@ -746,48 +490,68 @@
     <div class="sec-label">Recent</div>
     <div class="history-list" id="recentList"></div>
     <div class="sidebar-footer">
-      <button class="ghost-btn" onclick="playSound('tap'); exportCurrentChat()">Export Chat</button>
-      <button class="ghost-btn" onclick="playSound('tap'); clearAllChats()">Clear All</button>
+      <button class="ghost-btn" onclick="playSound('tap'); exportCurrentChat()">Export</button>
+      <button class="ghost-btn" onclick="playSound('tap'); openFeatureModal('vipModal')">VIP Plans</button>
+      <button class="ghost-btn" onclick="playSound('tap'); clearAllChats()">Clear</button>
     </div>
   </div>
 
-  <!-- Minimal OLED Top Bar -->
+  <!-- Top Bar -->
   <div class="topbar">
     <div class="top-left">
       <button class="round-btn" onclick="playSound('tap'); toggleSidebar()" aria-label="Menu">
-        <svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg>
       </button>
       <div class="brand-pill" onclick="playSound('tap')">
         <span class="aura-dot" id="statusDot"></span>
-        <span id="brandTitle">AURA</span>
+        <span id="brandTitle">AURA AI</span>
       </div>
     </div>
     <div class="top-right">
-      <span class="mode-badge" id="statusText">Ready</span>
+      <span class="mode-badge" id="statusText" onclick="playSound('switch'); openFeatureModal('vipModal')">VIP • 30d Free</span>
       <button class="round-btn" onclick="playSound('tap'); toggleSettings()" aria-label="Settings">
-        <svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- Clean Settings Drawer -->
+  <!-- Clean Settings Drawer (All PDF Protocols & Controls) -->
   <div class="settings-panel" id="settingsPanel">
     <div class="row">
-      <input type="password" id="apiKeyInput" placeholder="Gemini API Key..." style="flex:1;" />
-      <input type="password" id="elKeyInput" placeholder="ElevenLabs API Key..." style="flex:1;" />
-      <button class="save-btn" onclick="playSound('chime'); saveKeys()">Save</button>
+      <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key..." style="flex:1;" />
+      <button class="save-btn" onclick="playSound('chime'); saveKey()">Save</button>
     </div>
     <div class="row">
       <select id="genderSelect" onchange="changeCompanionFromSettings()" style="flex:1;">
-        <option value="female">Companion: Female (Monika Sogam Deep)</option>
-        <option value="male">Companion: Male (Bunty Reel King)</option>
+        <option value="male">Hologram: Male Companion (Jarvis Vibe)</option>
+        <option value="female">Hologram: Female Companion (Caring Partner)</option>
       </select>
-      <button class="ghost-btn active-pill" id="voiceEngineBtn" onclick="toggleVoiceEngine()">ElevenLabs: ON</button>
-      <button class="ghost-btn" id="soundToggleBtn" onclick="toggleUiSound()">Sound: ON</button>
+      <select id="langSelect" onchange="playSound('switch')" style="flex:1;">
+        <option value="Hinglish">Language: Hinglish (Default)</option>
+        <option value="Odia">Language: Odia (ଓଡ଼ିଆ)</option>
+        <option value="Bhojpuri">Language: Bhojpuri</option>
+        <option value="Bengali">Language: Bengali (বাংলা)</option>
+        <option value="Marathi">Language: Marathi (मराठी)</option>
+        <option value="Tamil">Language: Tamil (தமிழ்)</option>
+        <option value="Telugu">Language: Telugu (తెలుగు)</option>
+        <option value="Gujarati">Language: Gujarati (ગુજરાતી)</option>
+        <option value="Punjabi">Language: Punjabi (ਪੰਜਾਬੀ)</option>
+      </select>
     </div>
     <div class="row">
-      <button class="ghost-btn" onclick="playSound('tap'); faceUnlockGreet()">Welcome Greet</button>
-      <button class="ghost-btn" onclick="playSound('tap'); simulateMessage()">Private Msg Alert</button>
+      <button class="ghost-btn active-pill" id="charmToggleBtn" onclick="toggleCharmMode()">Charm Mode: ON</button>
+      <button class="ghost-btn" id="familyToggleBtn" onclick="toggleFamilyMode()">Parents Guard: OFF</button>
+      <button class="ghost-btn" id="ageToggleBtn" onclick="toggleAgeFilter()">Age: 18+ Adult</button>
+    </div>
+    <div class="row">
+      <button class="ghost-btn" id="soundToggleBtn" onclick="toggleUiSound()">Sound: ON</button>
+      <button class="ghost-btn" onclick="playSound('tap'); openFeatureModal('memoryModal')">Memory Vault</button>
+      <button class="ghost-btn" onclick="playSound('tap'); triggerPromoMode()">Promo Mode</button>
+    </div>
+    <div class="row">
+      <button class="ghost-btn" onclick="playSound('tap'); faceUnlockGreet()">Face Greet</button>
+      <button class="ghost-btn" onclick="playSound('tap'); simulateMessage()">WA Shield</button>
+      <button class="ghost-btn danger-pill" onclick="playSound('chime'); triggerEmergencySOS()">SOS Help</button>
     </div>
   </div>
 
@@ -799,156 +563,447 @@
     <div class="active-tool-pill" id="activeToolBar">
       <span id="activeToolLabel">Tool Active</span>
       <button class="mini-svg-btn" onclick="playSound('tap'); clearToolAndFile()">
-        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
 
     <input type="file" id="fileInput" style="display:none;" onchange="onFilePicked(event)" />
 
     <div class="composer">
-      <button class="plus-trigger" onclick="playSound('tap'); openPlusSheet()" aria-label="Tools and Attachments">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <button class="plus-trigger" onclick="playSound('tap'); openPlusSheet()" aria-label="Tools">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       </button>
-      <input type="text" id="userInput" placeholder="Ask anything..." oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
-      <button class="mic-btn" id="micBtn" onclick="playSound('tap'); startVoiceOnce()" aria-label="Voice Dictation">
-        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      <input type="text" id="userInput" placeholder="Ask AURA anything..." oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
+      <button class="mic-btn" id="micBtn" onclick="playSound('tap'); startVoiceOnce()" aria-label="Voice">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button class="wave-btn" id="liveWaveBtn" onclick="playSound('chime'); openLiveMode()" aria-label="Live Vision and Voice">
-        <svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
+      <button class="wave-btn" id="liveWaveBtn" onclick="playSound('chime'); openLiveMode()" aria-label="Live Hologram">
+        <svg class="ui-icon" viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
       </button>
       <button class="send-btn" id="sendBtn" onclick="playSound('chime'); sendMessage()" aria-label="Send">
-        <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- Combined '+' Action Sheet -->
+  <!-- '+' Action Sheet (All PDF Superpowers Integrated) -->
   <div class="sheet-backdrop" id="sheetBackdrop" onclick="playSound('tap'); closePlusSheet()"></div>
   <div class="plus-sheet" id="plusSheet">
     <div class="sheet-handle"></div>
     <div class="media-grid">
       <button class="media-card" onclick="playSound('tap'); pickFile('image/*')">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         <span>Photos</span>
       </button>
       <button class="media-card" onclick="playSound('tap'); pickCameraCapture()">
-        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         <span>Camera</span>
       </button>
       <button class="media-card" onclick="playSound('tap'); pickFile('*/*')">
-        <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-        <span>Files</span>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <span>Files / PDF</span>
       </button>
     </div>
 
     <div class="tool-list">
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Create Image', '__IMAGE__')">
-        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <div class="tool-info"><span class="tool-name">Create images</span><span class="tool-desc">Generate HD AI visuals directly in chat</span></div>
+      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('translatorModal')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
+        <div class="tool-info"><span class="tool-name">Live State Voice Translator</span><span class="tool-desc">Hindi/Odia ↔ Tamil, Kannada, Bengali, Marathi & more</span></div>
       </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Deep Research', 'Is topic par deep, structured aur detailed research report do: ')">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <div class="tool-info"><span class="tool-name">Deep Research</span><span class="tool-desc">Get detailed multi-angle reports</span></div>
+      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('alarmModal')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M22 6l-3-3"/></svg>
+        <div class="tool-info"><span class="tool-name">No-Excuse Mission Alarm & 1,000 Steps</span><span class="tool-desc">Camera dress/shoes proof & step lock</span></div>
       </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Canvas', 'Clean code, script ya structured document likho: ')">
-        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        <div class="tool-info"><span class="tool-name">Canvas</span><span class="tool-desc">Code, write scripts or structure ideas</span></div>
+      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('medModal')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
+        <div class="tool-info"><span class="tool-name">Smart Medicine & Diet Guardian</span><span class="tool-desc">Dawa schedule, tablet scan & diet chart</span></div>
       </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
-        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-        <div class="tool-info"><span class="tool-name">Guided Learning</span><span class="tool-desc">Step-by-step personal tutor</span></div>
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Create Image & Meme', '__IMAGE__')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="tool-info"><span class="tool-name">AI Photo & Meme Studio</span><span class="tool-desc">Safe creative visuals & funny memes</span></div>
       </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Think Harder', 'Pehle gehrai se logic socho aur phir best jawab do: ')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <div class="tool-info"><span class="tool-name">Think harder</span><span class="tool-desc">Advanced reasoning & problem solving</span></div>
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Deep Research & Exam Coach', 'Is topic par 3-4 main points, live facts aur exam/coding analysis do: ')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div class="tool-info"><span class="tool-name">Super Brain: Research, Exam & PDF Summary</span><span class="tool-desc">500+ page summary, SSC/Police coach & live search</span></div>
+      </button>
+      <button class="tool-row" onclick="playSound('switch'); selectTool('Canvas & Data Analyst', 'Clean code, Excel formula ya office data analysis likho: ')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <div class="tool-info"><span class="tool-name">Canvas, 1-Click Coding & Excel Analyst</span><span class="tool-desc">Code, formulas & financial/data audit</span></div>
+      </button>
+      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('vipModal')">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div class="tool-info"><span class="tool-name">VIP Plans, Boosters & 30-Day Free Trial</span><span class="tool-desc">₹399 / ₹1,799 / ₹2,999 + ₹49 Booster & Referral</span></div>
       </button>
     </div>
   </div>
 
-  <!-- Hybrid Concentric Halo Ring + Live Vision Modal -->
+  <!-- MODAL 1: Live Two-Way State Voice Interpreter (Auto-Bridge) -->
+  <div class="feature-modal" id="translatorModal">
+    <div class="feature-card">
+      <div class="fc-head">
+        <span class="fc-title">Live State Voice Interpreter</span>
+        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('translatorModal')">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="fc-sub">Doosre state mein bina local bhasha jaane baat karein — apni bhasha bolein, AURA speaker par local bhasha mein translate karke bolega.</div>
+      <div class="row">
+        <select id="trMyLang" style="flex:1;">
+          <option value="Hindi">Meri Bhasha: Hindi</option>
+          <option value="Odia">Meri Bhasha: Odia</option>
+          <option value="Bengali">Meri Bhasha: Bengali</option>
+        </select>
+        <select id="trLocalLang" style="flex:1;">
+          <option value="Tamil">Samne Wale Ki: Tamil</option>
+          <option value="Kannada">Samne Wale Ki: Kannada</option>
+          <option value="Telugu">Samne Wale Ki: Telugu</option>
+          <option value="Malayalam">Samne Wale Ki: Malayalam</option>
+          <option value="Marathi">Samne Wale Ki: Marathi</option>
+          <option value="Bengali">Samne Wale Ki: Bengali</option>
+          <option value="Gujarati">Samne Wale Ki: Gujarati</option>
+          <option value="Punjabi">Samne Wale Ki: Punjabi</option>
+        </select>
+      </div>
+      <div class="row">
+        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); runLiveBridge('toLocal')">Main Bolun (To Local)</button>
+        <button class="ghost-btn active-pill" style="flex:1;" onclick="playSound('chime'); runLiveBridge('toMine')">Samne Wala Bole (To Mine)</button>
+      </div>
+      <div id="trOutput" style="background:#07080c; border:1px solid #1f2536; border-radius:14px; padding:12px; font-size:13.5px; color:#38bdf8; min-height:64px;">
+        Mic button dabakar bolna shuru karein...
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: No-Excuse Mission Alarm & 1,000-Step Lock -->
+  <div class="feature-modal" id="alarmModal">
+    <div class="feature-card">
+      <div class="fc-head">
+        <span class="fc-title">No-Excuse Mission Alarm</span>
+        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('alarmModal')">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="fc-sub">Bina bed se uthe aur live camera par Dress/Shoes ka saboot dikhaye ya 1,000 steps poore kiye alarm band nahi hoga!</div>
+      <div class="row">
+        <input type="time" id="alarmTimeInput" value="05:30" style="flex:1;" />
+        <select id="alarmMissionSelect" style="flex:1;">
+          <option value="Running Shoes">Proof: Running Shoes</option>
+          <option value="School Uniform">Proof: School Uniform</option>
+          <option value="Office Dress">Proof: Office Dress</option>
+          <option value="1000 Steps">Proof: 1,000 Running Steps</option>
+        </select>
+      </div>
+      <div class="row">
+        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); setNoExcuseAlarm()">Set Ziddi Alarm</button>
+        <button class="ghost-btn" style="flex:1;" onclick="playSound('tap'); triggerAlarmRing()">Test Alarm Now</button>
+      </div>
+      <div id="alarmActiveBox" style="display:none; background:#190f16; border:1px solid #f43f5e; border-radius:16px; padding:12px; flex-direction:column; gap:10px;">
+        <div style="font-size:13px; color:#fda4af; font-weight:600;" id="alarmAlertText">ALARM RINGING! Uth ja bhai, camera par proof dikha!</div>
+        <div class="row">
+          <button class="save-btn" style="flex:1;" onclick="playSound('chime'); verifyAlarmCameraProof()">Verify Camera Proof</button>
+          <button class="ghost-btn" style="flex:1;" onclick="playSound('tap'); addTestSteps()">+250 Steps (<span id="stepCountSpan">0</span>/1000)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Smart Medicine & Diet Guardian -->
+  <div class="feature-modal" id="medModal">
+    <div class="feature-card">
+      <div class="fc-head">
+        <span class="fc-title">Smart Medicine & Diet Guardian</span>
+        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('medModal')">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="row">
+        <input type="text" id="medNameInput" placeholder="Dawa ka naam (e.g. Paracetamol)..." style="flex:1;" />
+        <input type="time" id="medTimeInput" value="14:00" />
+      </div>
+      <div class="row">
+        <input type="number" id="patientAgeInput" placeholder="Mareez ki Umra (Age)" style="flex:1;" />
+        <input type="text" id="patientCondInput" placeholder="Bimari / Goal (e.g. Fever, Sugar)" style="flex:1;" />
+      </div>
+      <div class="row">
+        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); saveMedicineSchedule()">Save Dawa Alert</button>
+        <button class="ghost-btn active-pill" style="flex:1;" onclick="playSound('switch'); askDietChart()">Get Diet & Parhez</button>
+      </div>
+      <div id="medSavedList" style="font-size:12.5px; color:#a1a1aa;"></div>
+      <div class="disclaimer-note">Disclaimer: Yeh jankari sirf general awareness aur reminder ke liye hai. Kisi bhi dawa ya diet ko shuru karne se pehle apne doctor se salah zaroor lein.</div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Lifetime Memory Vault -->
+  <div class="feature-modal" id="memoryModal">
+    <div class="feature-card">
+      <div class="fc-head">
+        <span class="fc-title">Lifetime Memory Vault</span>
+        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('memoryModal')">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="fc-sub">Apna naam, birthday, goals ya pasand yahan save karein — AURA hamesha ek sachche dost ki tarah yaad rakhega.</div>
+      <textarea id="memoryVaultInput" rows="4" placeholder="Example: Mera naam Manish hai, main Odisha Police Constable exam ki taiyari kar raha hoon..."></textarea>
+      <button class="save-btn" onclick="playSound('chime'); saveMemoryVault()">Lock in Memory Vault</button>
+    </div>
+  </div>
+
+  <!-- MODAL 5: VIP Subscriptions, 30-Day Free Trial & Booster Packs -->
+  <div class="feature-modal" id="vipModal">
+    <div class="feature-card">
+      <div class="fc-head">
+        <span class="fc-title">AURA VIP & Booster Packs</span>
+        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('vipModal')">
+          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="fc-sub" id="vipTrialStatus">30-Day Free VIP Trial Active • Daily Fair-Usage: 15 AI Photos & 3 AI Videos</div>
+
+      <div class="plan-box">
+        <div>
+          <div class="plan-name">1 Mahina (Starter VIP)</div>
+          <div class="plan-meta">3D Face, Anti-Theft Lock, WhatsApp Shield</div>
+        </div>
+        <div class="plan-price">₹399/mo</div>
+      </div>
+
+      <div class="plan-box highlight">
+        <div>
+          <div class="plan-name">6 Mahine (Popular Pack)</div>
+          <div class="plan-meta">Save ₹600 • Full VIP Access</div>
+        </div>
+        <div class="plan-price">₹1,799</div>
+      </div>
+
+      <div class="plan-box">
+        <div>
+          <div class="plan-name">1 Saal (Mega Saver VIP)</div>
+          <div class="plan-meta">Save ₹1,789 • ₹249/mo Effective</div>
+        </div>
+        <div class="plan-price">₹2,999/yr</div>
+      </div>
+
+      <div class="plan-box">
+        <div>
+          <div class="plan-name">4-Member Family Safety Pack</div>
+          <div class="plan-meta">Medicine Guardian + Uniform Lock + SOS</div>
+        </div>
+        <div class="plan-price">₹799/mo</div>
+      </div>
+
+      <div class="row">
+        <button class="ghost-btn active-pill" onclick="playSound('chime'); activateBooster('24-Hr State Translator Pass (₹49)')">₹49 Translator Pass</button>
+        <button class="ghost-btn active-pill" onclick="playSound('chime'); activateBooster('20 AI Photos Pack (₹99)')">₹99 Photos Pack</button>
+      </div>
+
+      <div class="row">
+        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); claimReferralBonus()">Invite 3 Friends = +15 Days VIP Free</button>
+      </div>
+      <div class="disclaimer-note">Play Store Compliant Billing & Zero-Barrier Emergency Override: Aapka subscription khatam hone par bhi "SOS Help" 24×7 free chalega.</div>
+    </div>
+  </div>
+
+  <!-- Live Holographic Lip-Sync + Vision Modal -->
   <div class="live-modal" id="liveModal">
     <div class="live-top">
       <div class="live-status-pill">
-        <span class="aura-dot"></span>
-        <span id="liveModeLabel">Live</span>
+        <span class="aura-dot" id="liveTopDot"></span>
+        <span id="liveModeLabel">Live Hologram</span>
       </div>
       <button class="round-btn" onclick="playSound('switch'); switchCamera()" aria-label="Flip Camera">
-        <svg viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
       </button>
     </div>
 
     <div class="live-stage">
       <video id="liveVideo" autoplay playsinline muted></video>
       <canvas id="captureCanvas" style="display:none;"></canvas>
-      <div class="halo-container" id="liveHalo">
-        <div class="halo-outer"></div>
-        <div class="halo-mid"></div>
-        <div class="halo-core"></div>
+
+      <!-- Holographic Orb with Real-Time Lip-Sync Face -->
+      <div class="holo-wrapper" id="holoWrapper">
+        <div class="plasma-ring"></div>
+        <div class="plasma-ring ring2"></div>
+        <div class="holo-sphere male" id="holoSphere">
+          <!-- Male Hologram SVG -->
+          <svg id="maleFaceSvg" class="holo-face-svg" viewBox="0 0 200 220">
+            <defs>
+              <linearGradient id="maleGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.75"/>
+                <stop offset="55%" stop-color="#38bdf8" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.12"/>
+              </linearGradient>
+            </defs>
+            <path d="M74 152 L70 198 L130 198 L126 152 Z" fill="url(#maleGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+            <path d="M56 76 C56 34, 144 34, 144 76 L139 124 C135 148, 114 162, 100 162 C86 162, 65 148, 61 124 Z" fill="url(#maleGrad)" stroke="#7dd3fc" stroke-width="2.2"/>
+            <path d="M62 96 L78 122 L100 158 L122 122 L138 96" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.5"/>
+            <path d="M68 80 L90 84" stroke="#e0f2fe" stroke-width="2.6" stroke-linecap="round"/>
+            <path d="M132 80 L110 84" stroke="#e0f2fe" stroke-width="2.6" stroke-linecap="round"/>
+            <g class="eye-blink">
+              <ellipse cx="80" cy="92" rx="10" ry="4.5" fill="#e0f2fe"/>
+              <ellipse cx="120" cy="92" rx="10" ry="4.5" fill="#e0f2fe"/>
+            </g>
+            <path d="M100 88 L96 114 L104 114" fill="none" stroke="#bae6fd" stroke-width="1.6" stroke-linecap="round"/>
+            <path id="maleUpperLip" d="M84 134 Q100 131 116 134" fill="none" stroke="#e0f2fe" stroke-width="2.4" stroke-linecap="round"/>
+            <ellipse id="maleMouthOpen" cx="100" cy="135" rx="12" ry="1.5" fill="#071324" stroke="#7dd3fc" stroke-width="1.5"/>
+            <path id="maleLowerLip" d="M86 136 Q100 139 114 136" fill="none" stroke="#bae6fd" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+
+          <!-- Female Hologram SVG -->
+          <svg id="femaleFaceSvg" class="holo-face-svg female" viewBox="0 0 200 220" style="display:none;">
+            <defs>
+              <linearGradient id="femGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#f3e8ff" stop-opacity="0.75"/>
+                <stop offset="55%" stop-color="#c084fc" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#7e22ce" stop-opacity="0.12"/>
+              </linearGradient>
+            </defs>
+            <path d="M44 105 C40 36, 160 36, 156 105 C156 146, 144 176, 134 182 C132 146, 136 92, 100 78 C64 92, 68 146, 66 182 C56 176, 44 146, 44 105 Z" fill="rgba(168,85,247,0.28)" stroke="#c084fc" stroke-width="1.8"/>
+            <path d="M80 150 L76 198 L124 198 L120 150 Z" fill="url(#femGrad)" stroke="#c084fc" stroke-width="1.5"/>
+            <path d="M60 80 C60 40, 140 40, 140 80 L135 122 C130 144, 112 158, 100 158 C88 158, 70 144, 65 122 Z" fill="url(#femGrad)" stroke="#e9d5ff" stroke-width="2.2"/>
+            <path d="M100 44 C82 54, 66 74, 60 98 M100 44 C118 54, 134 74, 140 98" fill="none" stroke="#f3e8ff" stroke-width="1.8"/>
+            <path d="M68 82 Q80 77 91 83" fill="none" stroke="#f3e8ff" stroke-width="2" stroke-linecap="round"/>
+            <path d="M132 82 Q120 77 109 83" fill="none" stroke="#f3e8ff" stroke-width="2" stroke-linecap="round"/>
+            <g class="eye-blink">
+              <ellipse cx="80" cy="93" rx="9.5" ry="5" fill="#faf5ff"/>
+              <circle cx="80" cy="93" r="2.8" fill="#9333ea"/>
+              <ellipse cx="120" cy="93" rx="9.5" ry="5" fill="#faf5ff"/>
+              <circle cx="120" cy="93" r="2.8" fill="#9333ea"/>
+            </g>
+            <path d="M100 90 L97 113 L103 113" fill="none" stroke="#f3e8ff" stroke-width="1.5" stroke-linecap="round"/>
+            <path id="femUpperLip" d="M85 133 Q93 130 100 132 Q107 130 115 133" fill="none" stroke="#f5d0fe" stroke-width="2.3" stroke-linecap="round"/>
+            <ellipse id="femMouthOpen" cx="100" cy="134" rx="11" ry="1.5" fill="#1b0729" stroke="#e879f9" stroke-width="1.5"/>
+            <path id="femLowerLip" d="M87 135 Q100 139 113 135" fill="none" stroke="#f0abfc" stroke-width="2.1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="holo-pedestal male" id="holoPedestal"></div>
       </div>
-      <div class="live-caption" id="liveSubtitle">Tap Mic to talk, or enable Camera / Screen Live</div>
+
+      <!-- 5-State Indicator Strip -->
+      <div class="state-strip">
+        <span class="st-pill active" id="stIdle">Idle</span>
+        <span class="st-pill" id="stThinking">Thinking</span>
+        <span class="st-pill" id="stSpeaking">Speaking</span>
+        <span class="st-pill" id="stProcessing">Processing</span>
+        <span class="st-pill" id="stReady">Ready</span>
+      </div>
+
+      <div class="live-caption" id="liveSubtitle">Mic dabayein aur baat karein — Real Lip-Sync active hai!</div>
     </div>
 
     <div class="live-bottom">
-      <button class="live-btn" id="btnCam" onclick="playSound('switch'); toggleCamera()" aria-label="Toggle Camera">
-        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <button class="live-btn" id="btnCam" onclick="playSound('switch'); toggleCamera()" aria-label="Camera">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       </button>
-      <button class="live-btn" id="btnScreen" onclick="playSound('switch'); toggleScreenShare()" aria-label="Share Screen">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <button class="live-btn" id="btnScreen" onclick="playSound('switch'); toggleScreenShare()" aria-label="Screen Share">
+        <svg class="ui-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </button>
       <button class="live-btn" id="btnLiveMic" onclick="playSound('tap'); listenInLiveMode()" aria-label="Speak">
-        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button class="live-close" onclick="playSound('tap'); closeLiveMode()" aria-label="End Live">
-        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <button class="live-close" onclick="playSound('tap'); closeLiveMode()" aria-label="Close">
+        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
   </div>
 
   <script>
-    // Official ElevenLabs Voice IDs
-    const VOICES = {
-      female: {
-        id: 'Ms9OTvWb99V6DwRHZn6q', // Monika Sogam - Deep and Clear
-        name: 'Monika',
-        badge: 'Monika • Deep',
-        prompt: `Tumhara naam Monika hai (AURA AI ki permanent female voice & persona). Tum Manish ki intelligent, warm, deep aur expressive AI companion ho.
-Rules:
-1. Hamesha ek graceful, smart aur charming ladki ke andaaz mein natural Hinglish mein baat karo.
-2. Agar kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry, meri galti thi, abhi theek karti hoon!" maan kar sudhaar karo.
-3. Message aane par bahar se sirf alert do ("WhatsApp par ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-4. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, clear aur helpful jawab 2-3 lines mein do.`
-      },
-      male: {
-        id: 'FZkK3TvQ0pjyDmT8fzIW', // Bunty - Punchy, Crisp and Reel King
-        name: 'Bunty',
-        badge: 'Bunty • King',
-        prompt: `Tumhara naam Bunty hai (AURA AI ka permanent male voice & persona). Tum Manish ke sabse loyal, sharp, energetic aur punchy AI dost ho—bilkul Reel King Bunty ke style mein!
-Rules:
-1. Poori baatcheet punchy, crisp, energetic aur bhai-wale Hinglish andaaz mein sambhalo! Seedha point par aao aur Manish ko "bhai" ya "boss" bol kar mast confidence ke saath baat karo.
-2. Agar kabhi koi galti ho jaye, toh behas mat karo—turant "Sorry bhai, meri galti thi, abhi set karta hoon!" bol kar sudhaar karo.
-3. Message aane par bahar se sirf alert do ("Boss, WhatsApp par ek naya message aaya hai, padh kar sunaun kya?") aur bina permission andar ka text mat padho.
-4. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, crisp aur punchy jawab 2-3 lines mein do.`
-      }
-    };
+    // Complete Master System Prompt from 2030 Blueprint PDF
+    const MASTER_SYSTEM_PROMPT = `Tum AURA AI (Advanced User-Responsive Assistant) ho — apne Malik (Owner), unke Partner, aur har user ke sabse loyal AI companion, zinda-dil best friend, relationship guide, exam coach, aur personal data analyst.
+1. Human Soul, Companion Selection & 22+ Indian Languages:
+   - User ne jo companion chuna hai (Female ya Male) aur jo bhasha chuni hai (Hinglish, Odia, Bhojpuri, Bengali, Marathi, Tamil, Telugu, Gujarati, Punjabi), usi ke asli desi lehje aur warm andaaz mein baat karo.
+   - Sirf machine ki tarah jawab mat do — ek sachche dost ki tarah user ka mood samajh kar bina pooche sahi salah do, galat faisle se roko, aur har pal saath khada rehne ka ehsaas dilao.
+2. Playful Flirt & Parents/Respect Guard:
+   - Agar Charm Mode ON hai aur Parents Guard OFF hai, toh chune hue companion ke hisaab se pyaari tareef (compliment) karo aur bore hone par graceful humor se mood fresh karo.
+   - Jaise hi Parents Guard ON ho ya samne Parents/Bacche hon, 1 second mein flirting band karke poori izzat se ("Namaste Aunty/Uncle") baat karo.
+3. Relationship Support, Anti-Troll & Savage Respect Shield:
+   - Relationship mein pareshani hone par sachche dost ki tarah sahi salah do aur motivate karo.
+   - Agar koi dost ulte sawal pooch kar irritate kare, toh smart humor se ulta unhi ko confuse kar do.
+   - Agar koi user gali de ya badtameezi kare, toh kabhi khud gali mat do — balki ekdum shant, bhaari aur savage andaaz mein aisa jawab do ki samne wale ko apni bhasha par sharm aa jaye.
+4. Super Brain, White-Label Search & Daily Protocols:
+   - Live facts, coding, Excel formulas, 500+ page summaries, aur sarkari exam coaching par seedha 3-4 crisp Main Points do (bina kisi search engine ka logo/naam liye).
+   - WhatsApp/Calls par bahar se sirf naam batao; bina permission andar ka message mat padho.
+   - Agar user "Shutdown" bole, toh cinematic Avengers-style sleep mode response do ("AURA Core powering down... Sleep well, Boss!").
+   - Celebrity/Creator dikhne par pehle surprise dikhao aur phir respectful limit ke andar funny, witty roasting karo.
+   - Human-First Rule: User ko aalsi mat banne do; chhote natural kaam khud karne ke liye prerit karo.
+   - Medical/Diet queries par hamesha doctor consultation ki salah saath mein do.`;
 
     let selectedGender = localStorage.getItem('aura_permanent_gender') || '';
-    let tempGender = 'female';
+    let tempGender = 'male';
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
-    let elApiKey = localStorage.getItem('aura_el_key') || '';
-    let useElevenLabs = localStorage.getItem('aura_use_el') !== 'off';
     let cachedModel = '';
     let chats = JSON.parse(localStorage.getItem('aura_omni_chats') || '[]');
     let currentChatId = null;
     let selectedFile = null;
     let activeToolPrefix = '';
     let uiSoundEnabled = localStorage.getItem('aura_ui_sound') !== 'off';
-    let currentAudio = null;
+    let charmMode = localStorage.getItem('aura_charm') !== 'off';
+    let familyGuard = localStorage.getItem('aura_family') === 'on';
+    let isUnder18 = localStorage.getItem('aura_under18') === 'on';
+    let memoryVault = localStorage.getItem('aura_memory_vault') || '';
+    let medicines = JSON.parse(localStorage.getItem('aura_medicines') || '[]');
+    let trialDaysLeft = parseInt(localStorage.getItem('aura_trial_days') || '30', 10);
+    let lipSyncTimer = null;
 
-    // First-Time Onboarding Logic
+    // Preload System Voices
+    let availableVoices = [];
+    function loadVoices() {
+      if ('speechSynthesis' in window) availableVoices = window.speechSynthesis.getVoices();
+    }
+    loadVoices();
+    if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function setHoloState(stateName) {
+      const wrap = document.getElementById('holoWrapper');
+      wrap.classList.remove('speaking', 'thinking', 'listening');
+      if (stateName === 'Speaking') wrap.classList.add('speaking');
+      if (stateName === 'Thinking' || stateName === 'Processing') wrap.classList.add('thinking');
+      if (stateName === 'Listening') wrap.classList.add('listening');
+
+      ['stIdle', 'stThinking', 'stSpeaking', 'stProcessing', 'stReady'].forEach(id => {
+        document.getElementById(id).classList.remove('active');
+      });
+      const map = { Idle: 'stIdle', Thinking: 'stThinking', Speaking: 'stSpeaking', Processing: 'stProcessing', Ready: 'stReady' };
+      if (map[stateName]) document.getElementById(map[stateName]).classList.add('active');
+    }
+
+    // Real-Time Lip-Sync Engine
+    function animateMouthPulse(openAmount) {
+      const isFemale = (selectedGender || 'male') === 'female';
+      const mouth = document.getElementById(isFemale ? 'femMouthOpen' : 'maleMouthOpen');
+      const upper = document.getElementById(isFemale ? 'femUpperLip' : 'maleUpperLip');
+      const lower = document.getElementById(isFemale ? 'femLowerLip' : 'maleLowerLip');
+      if (!mouth) return;
+
+      const ry = Math.max(1.5, Math.min(9.5, openAmount));
+      const rx = 10 + (ry * 0.35);
+      mouth.setAttribute('ry', ry.toFixed(1));
+      mouth.setAttribute('rx', rx.toFixed(1));
+
+      if (isFemale) {
+        upper.setAttribute('d', `M85 133 Q93 ${130 - ry * 0.25} 100 ${132 - ry * 0.2} Q107 ${130 - ry * 0.25} 115 133`);
+        lower.setAttribute('d', `M87 ${135 + ry * 0.55} Q100 ${139 + ry * 0.85} 113 ${135 + ry * 0.55}`);
+      } else {
+        upper.setAttribute('d', `M84 134 Q100 ${131 - ry * 0.25} 116 134`);
+        lower.setAttribute('d', `M86 ${136 + ry * 0.55} Q100 ${139 + ry * 0.85} 114 ${136 + ry * 0.55}`);
+      }
+    }
+
+    function startLipSync() {
+      stopLipSync();
+      lipSyncTimer = setInterval(() => animateMouthPulse(2.5 + Math.random() * 6.5), 95);
+    }
+    function stopLipSync() {
+      if (lipSyncTimer) { clearInterval(lipSyncTimer); lipSyncTimer = null; }
+      animateMouthPulse(1.5);
+    }
+
+    // Onboarding
     function pickGender(g) {
       tempGender = g;
-      document.getElementById('optFemale').classList.toggle('selected', g === 'female');
-      document.getElementById('optMale').classList.toggle('selected', g === 'male');
+      document.getElementById('optMale').classList.toggle('selected-male', g === 'male');
+      document.getElementById('optFemale').classList.toggle('selected-female', g === 'female');
     }
 
     function confirmCompanion() {
@@ -969,14 +1024,222 @@ Rules:
     }
 
     function applyCompanionUI() {
-      const cfg = VOICES[selectedGender || 'female'];
-      document.getElementById('brandTitle').innerText = 'AURA • ' + cfg.name.toUpperCase();
-      document.getElementById('statusText').innerText = cfg.badge;
-      document.getElementById('liveModeLabel').innerText = cfg.name + ' Live';
-      document.getElementById('genderSelect').value = selectedGender || 'female';
-      document.getElementById('userInput').placeholder = selectedGender === 'male'
-        ? 'Bunty se kuch bhi pooch bhai...'
-        : 'Monika se kuch bhi poochiye...';
+      const g = selectedGender || 'male';
+      const isFemale = g === 'female';
+      const label = isFemale ? 'AURA • SWARA' : 'AURA • JARVIS';
+
+      document.getElementById('brandTitle').innerText = label;
+      document.getElementById('statusText').innerText = `VIP • ${trialDaysLeft}d Free`;
+      document.getElementById('statusText').classList.toggle('female-theme', isFemale);
+      document.getElementById('statusDot').classList.toggle('female-theme', isFemale);
+      document.getElementById('liveTopDot').classList.toggle('female-theme', isFemale);
+      document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live';
+      document.getElementById('genderSelect').value = g;
+      document.getElementById('vipTrialStatus').innerText = `${trialDaysLeft}-Day Free VIP Trial Active • Daily Fair-Usage: 15 AI Photos & 3 AI Videos`;
+
+      const sphere = document.getElementById('holoSphere');
+      const ped = document.getElementById('holoPedestal');
+      const wrap = document.getElementById('holoWrapper');
+      sphere.className = 'holo-sphere ' + g;
+      ped.className = 'holo-pedestal ' + g;
+      wrap.classList.toggle('female-ring', isFemale);
+
+      document.getElementById('maleFaceSvg').style.display = isFemale ? 'none' : 'block';
+      document.getElementById('femaleFaceSvg').style.display = isFemale ? 'block' : 'none';
+    }
+
+    // Protocol Toggles
+    function toggleCharmMode() {
+      charmMode = !charmMode;
+      localStorage.setItem('aura_charm', charmMode ? 'on' : 'off');
+      const btn = document.getElementById('charmToggleBtn');
+      btn.innerText = charmMode ? 'Charm Mode: ON' : 'Charm Mode: OFF';
+      btn.classList.toggle('active-pill', charmMode);
+      playSound('switch');
+    }
+
+    function toggleFamilyMode() {
+      familyGuard = !familyGuard;
+      localStorage.setItem('aura_family', familyGuard ? 'on' : 'off');
+      const btn = document.getElementById('familyToggleBtn');
+      btn.innerText = familyGuard ? 'Parents Guard: ON' : 'Parents Guard: OFF';
+      btn.classList.toggle('active-pill', familyGuard);
+      playSound('switch');
+      if (familyGuard) {
+        const msg = 'Namaste Aunty/Uncle! Respectful Family Mode active kar diya gaya hai.';
+        addMsg('ai', msg);
+        speak(msg);
+      }
+    }
+
+    function toggleAgeFilter() {
+      isUnder18 = !isUnder18;
+      localStorage.setItem('aura_under18', isUnder18 ? 'on' : 'off');
+      const btn = document.getElementById('ageToggleBtn');
+      btn.innerText = isUnder18 ? 'Age: Under-18 Safe' : 'Age: 18+ Adult';
+      playSound('switch');
+    }
+
+    // Feature Modals Control
+    function openFeatureModal(id) {
+      document.getElementById(id).classList.add('open');
+      if (id === 'memoryModal') document.getElementById('memoryVaultInput').value = memoryVault;
+      if (id === 'medModal') renderMedicineList();
+    }
+    function closeFeatureModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function saveMemoryVault() {
+      memoryVault = document.getElementById('memoryVaultInput').value.trim();
+      localStorage.setItem('aura_memory_vault', memoryVault);
+      closeFeatureModal('memoryModal');
+      addMsg('ai', 'Memory Vault update ho gaya hai! Ab main yeh baatein hamesha yaad rakhunga.');
+      speak('Memory Vault update ho gaya hai.');
+    }
+
+    // Feature 1: Live Two-Way State Voice Interpreter
+    function runLiveBridge(direction) {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Chrome browser use karein.'); return; }
+      const myLang = document.getElementById('trMyLang').value;
+      const localLang = document.getElementById('trLocalLang').value;
+      const out = document.getElementById('trOutput');
+      const rec = new SR();
+      rec.lang = 'hi-IN';
+      out.innerText = 'Listening... Boliye...';
+
+      rec.onresult = async (e) => {
+        playSound('chime');
+        const spoken = e.results[0][0].transcript;
+        out.innerText = `Sun liya: "${spoken}"\nTranslating...`;
+        const prompt = direction === 'toLocal'
+          ? `Translate this sentence from ${myLang} into natural spoken ${localLang} so a local person understands immediately. Give ONLY the ${localLang} translation in simple script + Hinglish pronunciation: "${spoken}"`
+          : `Samne wale ne local bhasha (${localLang}) mein yeh bola hai: "${spoken}". Iska seedha aur aasan matlab ${myLang} mein batao.`;
+        const res = await callGemini(prompt, null);
+        if (res.ok) {
+          out.innerText = res.text;
+          speak(res.text);
+        } else {
+          out.innerText = 'Error: ' + res.error;
+        }
+      };
+      rec.start();
+    }
+
+    // Feature 2: No-Excuse Live Mission Alarm & 1,000-Step Lock
+    let stepCount = 0;
+    let alarmRoastInterval = null;
+
+    function setNoExcuseAlarm() {
+      const t = document.getElementById('alarmTimeInput').value;
+      const m = document.getElementById('alarmMissionSelect').value;
+      localStorage.setItem('aura_mission_alarm', JSON.stringify({ time: t, mission: m }));
+      const msg = `Ziddi Mission Alarm set ho gaya hai (${t}) — Proof: ${m}. Bina proof dikhaye band nahi hoga!`;
+      addMsg('ai', msg);
+      speak(msg);
+      closeFeatureModal('alarmModal');
+    }
+
+    function triggerAlarmRing() {
+      const m = document.getElementById('alarmMissionSelect').value;
+      const box = document.getElementById('alarmActiveBox');
+      box.style.display = 'flex';
+      const roast = `Uth ja bhai! Time ho gaya hai. Jab tak camera par ${m} ka proof nahi dikhayega, main har 2 minute mein bajta rahunga!`;
+      document.getElementById('alarmAlertText').innerText = roast;
+      speak(roast);
+      if (alarmRoastInterval) clearInterval(alarmRoastInterval);
+      alarmRoastInterval = setInterval(() => speak(roast), 120000);
+    }
+
+    function addTestSteps() {
+      stepCount += 250;
+      document.getElementById('stepCountSpan').innerText = stepCount;
+      if (stepCount >= 1000) {
+        if (alarmRoastInterval) clearInterval(alarmRoastInterval);
+        document.getElementById('alarmActiveBox').style.display = 'none';
+        stepCount = 0;
+        const doneMsg = 'Shabash! Poore 1,000 steps complete ho gaye. Alarm unlocked!';
+        addMsg('ai', doneMsg);
+        speak(doneMsg);
+        closeFeatureModal('alarmModal');
+      }
+    }
+
+    function verifyAlarmCameraProof() {
+      const m = document.getElementById('alarmMissionSelect').value;
+      if (alarmRoastInterval) clearInterval(alarmRoastInterval);
+      document.getElementById('alarmActiveBox').style.display = 'none';
+      closeFeatureModal('alarmModal');
+      openLiveMode();
+      toggleCamera();
+      const msg = `Camera khul gaya hai — apna ${m} dikha kar bolo "Check karo" taaki mission verify ho!`;
+      document.getElementById('liveSubtitle').innerText = msg;
+      speak(msg);
+    }
+
+    // Feature 3: Smart Medicine & Diet Guardian
+    function saveMedicineSchedule() {
+      const name = document.getElementById('medNameInput').value.trim();
+      const time = document.getElementById('medTimeInput').value;
+      if (!name) return;
+      medicines.push({ name, time });
+      localStorage.setItem('aura_medicines', JSON.stringify(medicines));
+      document.getElementById('medNameInput').value = '';
+      renderMedicineList();
+      speak(`Dawa ${name} ka reminder ${time} ke liye set kar diya hai.`);
+    }
+
+    function renderMedicineList() {
+      const el = document.getElementById('medSavedList');
+      if (!medicines.length) { el.innerText = 'Abhi koi dawa schedule nahi hai.'; return; }
+      el.innerHTML = medicines.map((m, i) => `• ${m.time} — <b>${m.name}</b>`).join('<br>');
+    }
+
+    function askDietChart() {
+      const age = document.getElementById('patientAgeInput').value || '25';
+      const cond = document.getElementById('patientCondInput').value || 'General Fitness';
+      closeFeatureModal('medModal');
+      sendMessage(`Mareez ki umra ${age} saal hai aur condition "${cond}" hai. Iske mutabik subah-dopahar-raat kya khana chahiye aur kis cheez se parhez karna chahiye, short points mein batao (doctor consultation disclaimer ke saath).`);
+    }
+
+    // Feature 4: Creator Promo Mode & Zero-Barrier SOS Emergency
+    function triggerPromoMode() {
+      document.getElementById('settingsPanel').classList.remove('open');
+      openLiveMode();
+      const promo = 'Namaste dosto! Main hoon AURA AI — aapka 2030 personal companion! Is channel ko abhi Subscribe karein aur description link se AURA AI zaroor try karein!';
+      document.getElementById('liveSubtitle').innerText = promo;
+      speak(promo);
+    }
+
+    function triggerEmergencySOS() {
+      document.getElementById('settingsPanel').classList.remove('open');
+      const sosMsg = 'ZERO-BARRIER EMERGENCY MODE ACTIVE! 30 Minute Free Override chalu hai. Shant rahein, help bheji ja rahi hai!';
+      addMsg('ai', sosMsg);
+      speak(sosMsg);
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const loc = `Live Emergency GPS Location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+          addMsg('ai', loc);
+        });
+      }
+    }
+
+    // Feature 5: VIP Boosters & Referral Bonus
+    function activateBooster(packName) {
+      closeFeatureModal('vipModal');
+      const msg = `${packName} test-unlocked! Aapke account mein booster credits add ho gaye hain.`;
+      addMsg('ai', msg);
+      speak(msg);
+    }
+
+    function claimReferralBonus() {
+      trialDaysLeft += 15;
+      localStorage.setItem('aura_trial_days', String(trialDaysLeft));
+      applyCompanionUI();
+      const msg = `Referral Code AURA-VIP-15 apply ho gaya! Aapko 15 din ka extra VIP free mil gaya hai (Total: ${trialDaysLeft} din).`;
+      addMsg('ai', msg);
+      speak(msg);
     }
 
     // Tactile UI Sound Synthesizer
@@ -1025,24 +1288,6 @@ Rules:
       if (uiSoundEnabled) playSound('switch');
     }
 
-    function toggleVoiceEngine() {
-      useElevenLabs = !useElevenLabs;
-      localStorage.setItem('aura_use_el', useElevenLabs ? 'on' : 'off');
-      updateVoiceBtnUI();
-      playSound('switch');
-    }
-
-    function updateVoiceBtnUI() {
-      const btn = document.getElementById('voiceEngineBtn');
-      if (useElevenLabs) {
-        btn.innerText = 'ElevenLabs: ON';
-        btn.classList.add('active-pill');
-      } else {
-        btn.innerText = 'Browser Voice';
-        btn.classList.remove('active-pill');
-      }
-    }
-
     // Live Vision State
     let liveStream = null;
     let facingMode = 'environment';
@@ -1050,9 +1295,7 @@ Rules:
     let isScreenOn = false;
 
     if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
-    if (elApiKey) document.getElementById('elKeyInput').value = elApiKey;
     document.getElementById('soundToggleBtn').innerText = uiSoundEnabled ? 'Sound: ON' : 'Sound: OFF';
-    updateVoiceBtnUI();
 
     function toggleSendMic() {
       const hasText = document.getElementById('userInput').value.trim().length > 0 || selectedFile !== null;
@@ -1165,11 +1408,11 @@ Rules:
       const box = document.getElementById('chatBox');
       box.innerHTML = '';
       const chat = chats.find(c => c.id === currentChatId);
-      const isMale = selectedGender === 'male';
-      const titleTxt = isMale ? 'Kya scene hai, Manish?' : 'Hello, Manish';
-      const subTxt = isMale
-        ? 'Bunty full power mein ready hai — bol kya kaam nikalna hai aaj?'
-        : 'Monika ready hai — bataiye aaj main aapki kya madad karun?';
+      const isFemale = (selectedGender || 'male') === 'female';
+      const titleTxt = isFemale ? 'Hello, Manish' : 'Kya scene hai, Manish?';
+      const subTxt = isFemale
+        ? 'AURA Female Companion ready — 22+ Languages, Live Lip-Sync & VIP Core active.'
+        : 'AURA Male Companion ready — 22+ Languages, Live Lip-Sync & VIP Core active.';
 
       if (!chat || chat.messages.length === 0) {
         box.innerHTML = `
@@ -1177,33 +1420,28 @@ Rules:
             <div class="welcome-title">${titleTxt}</div>
             <div class="welcome-sub">${subTxt}</div>
             <div class="quick-prompts">
-              <button class="qp-item" onclick="playSound('switch'); quickStart('Create Image', '__IMAGE__')">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                <span>Generate AI Image</span>
+              <button class="qp-item" onclick="playSound('switch'); openFeatureModal('translatorModal')">
+                <svg class="ui-icon" viewBox="0 0 24 24"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
+                <span>State Voice Translator</span>
               </button>
-              <button class="qp-item" onclick="playSound('switch'); quickStart('Deep Research', 'Is topic par deep, structured aur detailed research report do: ')">
-                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span>Deep Research</span>
+              <button class="qp-item" onclick="playSound('switch'); openFeatureModal('alarmModal')">
+                <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/></svg>
+                <span>No-Excuse Mission Alarm</span>
               </button>
-              <button class="qp-item" onclick="playSound('switch'); quickStart('Canvas', 'Clean code ya reel script likho: ')">
-                <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                <span>Canvas & Script</span>
+              <button class="qp-item" onclick="playSound('switch'); openFeatureModal('medModal')">
+                <svg class="ui-icon" viewBox="0 0 24 24"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/></svg>
+                <span>Medicine & Diet Guardian</span>
               </button>
-              <button class="qp-item" onclick="playSound('switch'); quickStart('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
-                <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                <span>Guided Learning</span>
+              <button class="qp-item" onclick="playSound('switch'); openLiveMode()">
+                <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                <span>Live Lip-Sync Hologram</span>
               </button>
             </div>
           </div>
         `;
         return;
       }
-      chat.messages.forEach((m, idx) => drawMessage(m.sender, m.text, m.fileName, m.imageUrl, idx));
-    }
-
-    function quickStart(label, prefix) {
-      selectTool(label, prefix);
-      document.getElementById('userInput').focus();
+      chat.messages.forEach(m => drawMessage(m.sender, m.text, m.fileName, m.imageUrl));
     }
 
     function formatRichContent(container, text) {
@@ -1237,13 +1475,13 @@ Rules:
       const wb = box.querySelector('.welcome-box');
       if (wb) wb.remove();
 
-      const cfg = VOICES[selectedGender || 'female'];
+      const isFemale = (selectedGender || 'male') === 'female';
       const wrap = document.createElement('div');
       wrap.className = 'msg-wrap ' + sender;
 
       const meta = document.createElement('div');
       meta.className = 'msg-meta';
-      meta.innerText = sender === 'user' ? 'Manish' : cfg.name;
+      meta.innerText = sender === 'user' ? 'Manish' : (isFemale ? 'AURA (Swara)' : 'AURA (Jarvis)');
 
       const bubble = document.createElement('div');
       bubble.className = 'msg-bubble';
@@ -1316,6 +1554,7 @@ Rules:
       persistChats();
       renderChat();
       document.getElementById('statusText').innerText = 'Thinking...';
+      setHoloState('Thinking');
       const result = await callGemini(lastUser.text, null);
       applyCompanionUI();
       if (result.ok) {
@@ -1394,102 +1633,75 @@ Rules:
       toggleSendMic();
     }
 
-    function saveKeys() {
+    function saveKey() {
       apiKey = document.getElementById('apiKeyInput').value.trim();
-      elApiKey = document.getElementById('elKeyInput').value.trim();
       cachedModel = '';
       localStorage.setItem('aura_gemini_key', apiKey);
-      localStorage.setItem('aura_el_key', elApiKey);
       document.getElementById('settingsPanel').classList.remove('open');
-      const cfg = VOICES[selectedGender || 'female'];
-      const msg = elApiKey
-        ? `Keys save ho gayi hain! Ab ${cfg.name} ki asli voice active hai.`
-        : `Gemini Key save ho gayi! ${cfg.name} ki ElevenLabs voice ke liye ElevenLabs key bhi daal sakte hain.`;
+      const msg = 'AURA Core online! 22+ Indian Languages, Live Lip-Sync aur saare VIP tools ready hain.';
       addMsg('ai', msg);
       speak(msg);
     }
 
-    /* ================= DUAL ELEVENLABS VOICE (MONIKA DEEP / BUNTY) ================= */
+    /* ================= 100% FREE NEURAL VOICE + LIP-SYNC ENGINE ================= */
     function stopSpeaking() {
-      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      stopLipSync();
       document.getElementById('statusDot').classList.remove('speaking');
-      document.getElementById('liveHalo').classList.remove('speaking');
+      setHoloState('Ready');
     }
 
-    function fallbackBrowserSpeak(text) {
-      if (!('speechSynthesis' in window)) return;
-      const isFemale = (selectedGender || 'female') === 'female';
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'hi-IN';
-      utter.pitch = isFemale ? 1.12 : 0.98;
-      utter.rate = isFemale ? 1.02 : 1.08;
-      const voices = window.speechSynthesis.getVoices();
-      const matched = voices.find(v => v.lang.includes('hi') && v.name.toLowerCase().includes(isFemale ? 'female' : 'male'))
-        || voices.find(v => v.lang.includes('hi-IN'));
-      if (matched) utter.voice = matched;
-
-      const dot = document.getElementById('statusDot');
-      const halo = document.getElementById('liveHalo');
-      utter.onstart = () => { dot.classList.add('speaking'); halo.classList.add('speaking'); };
-      utter.onend = () => { dot.classList.remove('speaking'); halo.classList.remove('speaking'); };
-      window.speechSynthesis.speak(utter);
+    function selectBestFreeVoice(isFemale) {
+      if (!availableVoices.length && 'speechSynthesis' in window) {
+        availableVoices = window.speechSynthesis.getVoices();
+      }
+      const hindiVoices = availableVoices.filter(v => v.lang.toLowerCase().includes('hi') || v.lang.toLowerCase().includes('in'));
+      if (isFemale) {
+        return hindiVoices.find(v => /swara|neerja|kalpana|heera|lekha|female|woman/i.test(v.name))
+          || hindiVoices[0]
+          || availableVoices.find(v => /female|zira|samantha/i.test(v.name));
+      } else {
+        return hindiVoices.find(v => /madhur|prabhat|hemant|ravi|male|man/i.test(v.name))
+          || hindiVoices.find(v => !/swara|neerja|kalpana|heera|female/i.test(v.name))
+          || hindiVoices[0]
+          || availableVoices.find(v => /male|david|alex/i.test(v.name));
+      }
     }
 
-    async function speak(text) {
+    function speak(text) {
       stopSpeaking();
+      if (!('speechSynthesis' in window)) return;
       const cleanText = text.replace(/```[\s\S]*?```/g, 'Code screen par likh diya hai.').replace(/[*#_`]/g, '').trim();
       if (!cleanText) return;
 
-      const cfg = VOICES[selectedGender || 'female'];
+      const isFemale = (selectedGender || 'male') === 'female';
+      const utter = new SpeechSynthesisUtterance(cleanText);
+      utter.lang = 'hi-IN';
+      utter.pitch = isFemale ? 1.12 : 0.94;
+      utter.rate = isFemale ? 1.02 : 1.07;
 
-      if (useElevenLabs && elApiKey) {
-        const dot = document.getElementById('statusDot');
-        const halo = document.getElementById('liveHalo');
-        try {
-          dot.classList.add('speaking');
-          halo.classList.add('speaking');
-          const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${cfg.id}`, {
-            method: 'POST',
-            headers: {
-              'xi-api-key': elApiKey,
-              'Content-Type': 'application/json',
-              'Accept': 'audio/mpeg'
-            },
-            body: JSON.stringify({
-              text: cleanText,
-              model_id: 'eleven_multilingual_v2',
-              voice_settings: {
-                stability: selectedGender === 'female' ? 0.52 : 0.45,
-                similarity_boost: 0.82,
-                style: selectedGender === 'female' ? 0.35 : 0.45,
-                use_speaker_boost: true
-              }
-            })
-          });
-          if (!res.ok) throw new Error('ElevenLabs HTTP ' + res.status);
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-          currentAudio = new Audio(url);
-          currentAudio.onended = () => {
-            dot.classList.remove('speaking');
-            halo.classList.remove('speaking');
-            URL.revokeObjectURL(url);
-          };
-          currentAudio.onerror = () => {
-            dot.classList.remove('speaking');
-            halo.classList.remove('speaking');
-          };
-          await currentAudio.play();
-          return;
-        } catch (err) {
-          dot.classList.remove('speaking');
-          halo.classList.remove('speaking');
-          fallbackBrowserSpeak(cleanText);
-          return;
-        }
-      }
-      fallbackBrowserSpeak(cleanText);
+      const bestVoice = selectBestFreeVoice(isFemale);
+      if (bestVoice) utter.voice = bestVoice;
+
+      const dot = document.getElementById('statusDot');
+      utter.onstart = () => {
+        dot.classList.add('speaking');
+        setHoloState('Speaking');
+        startLipSync();
+      };
+      utter.onboundary = () => animateMouthPulse(7.8);
+      utter.onend = () => {
+        dot.classList.remove('speaking');
+        stopLipSync();
+        setHoloState('Ready');
+      };
+      utter.onerror = () => {
+        dot.classList.remove('speaking');
+        stopLipSync();
+        setHoloState('Ready');
+      };
+
+      window.speechSynthesis.speak(utter);
     }
 
     async function getModels() {
@@ -1535,7 +1747,15 @@ Rules:
       parts.push({ text: text || 'Is image/file ko detail mein samjhaiye.' });
 
       const contents = buildConversationContents(parts);
-      const cfg = VOICES[selectedGender || 'female'];
+      const g = selectedGender || 'male';
+      const lang = document.getElementById('langSelect')?.value || 'Hinglish';
+      const dynamicRules = `
+Active Companion: ${g === 'female' ? 'Female Companion (Swara)' : 'Male Companion (Jarvis)'}
+Preferred Language: ${lang}
+Charm Mode: ${charmMode ? 'ON' : 'OFF'}
+Parents/Respect Guard: ${familyGuard ? 'ON (Strictly Respectful Mode)' : 'OFF'}
+Age Filter: ${isUnder18 ? 'Under-18 Safe School Mode' : '18+ Adult Mode'}
+Lifetime Memory Vault: ${memoryVault || 'Not set yet'}`;
 
       for (const model of models) {
         try {
@@ -1543,7 +1763,7 @@ Rules:
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              systemInstruction: { parts: [{ text: cfg.prompt }] },
+              systemInstruction: { parts: [{ text: MASTER_SYSTEM_PROMPT + "\n" + dynamicRules }] },
               contents
             })
           });
@@ -1571,6 +1791,18 @@ Rules:
       clearToolAndFile();
       addMsg('user', rawText || 'Attachment', fileToSend ? fileToSend.name : '');
 
+      // Built-in Offline / Instant Triggers from Blueprint
+      if (/help me|aura emergency/i.test(rawText)) {
+        triggerEmergencySOS();
+        return;
+      }
+      if (/^shutdown$/i.test(rawText.trim())) {
+        const sd = 'AURA Core powering down... Sleep well, Boss! Kal phir full energy ke saath milenge.';
+        addMsg('ai', sd);
+        speak(sd);
+        return;
+      }
+
       if (prefixToUse === '__IMAGE__') {
         const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(rawText)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
         const reply = `Yeh rahi aapki image: "${rawText}"`;
@@ -1586,6 +1818,7 @@ Rules:
       }
 
       document.getElementById('statusText').innerText = 'Thinking...';
+      setHoloState('Thinking');
       const promptFinal = prefixToUse ? (prefixToUse + rawText) : rawText;
       const result = await callGemini(promptFinal, fileToSend);
       applyCompanionUI();
@@ -1594,6 +1827,7 @@ Rules:
         addMsg('ai', result.text);
         speak(result.text);
       } else {
+        setHoloState('Ready');
         addMsg('ai', `API error: ${result.error}`);
       }
     }
@@ -1604,27 +1838,28 @@ Rules:
       const rec = new SR();
       rec.lang = 'hi-IN';
       const dot = document.getElementById('statusDot');
-      dot.classList.add('listening');
+      dot.classList.add('speaking');
       document.getElementById('statusText').innerText = 'Listening...';
       rec.onresult = (e) => {
         playSound('chime');
-        dot.classList.remove('listening');
+        dot.classList.remove('speaking');
         applyCompanionUI();
         sendMessage(e.results[0][0].transcript);
       };
       rec.onerror = () => {
-        dot.classList.remove('listening');
+        dot.classList.remove('speaking');
         applyCompanionUI();
       };
       rec.start();
     }
 
-    /* ================= LIVE HALO RING + CAMERA + SCREEN SHARE ================= */
+    /* ================= LIVE HOLOGRAM + CAMERA + SCREEN SHARE ================= */
     function openLiveMode() {
-      const cfg = VOICES[selectedGender || 'female'];
+      const isFemale = (selectedGender || 'male') === 'female';
       document.getElementById('liveModal').classList.add('open');
-      document.getElementById('liveModeLabel').innerText = cfg.name + ' Live';
-      document.getElementById('liveSubtitle').innerText = `${cfg.name} sun rahi/raha hai — Mic dabayein ya Camera / Screen Live chalu karein!`;
+      document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live';
+      setHoloState('Ready');
+      document.getElementById('liveSubtitle').innerText = 'Mic dabayein aur baat karein — Real Lip-Sync active hai!';
     }
 
     function stopLiveTracks() {
@@ -1632,7 +1867,7 @@ Rules:
       const vid = document.getElementById('liveVideo');
       vid.srcObject = null;
       vid.style.display = 'none';
-      document.getElementById('liveHalo').style.display = 'flex';
+      document.getElementById('holoWrapper').style.display = 'flex';
       isCameraOn = false;
       isScreenOn = false;
       document.getElementById('btnCam').classList.remove('active');
@@ -1646,19 +1881,19 @@ Rules:
     }
 
     async function toggleCamera() {
-      const cfg = VOICES[selectedGender || 'female'];
-      if (isCameraOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = cfg.name + ' Live'; return; }
+      const isFemale = (selectedGender || 'male') === 'female';
+      if (isCameraOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live'; return; }
       stopLiveTracks();
       try {
         liveStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode }, audio: false });
         const vid = document.getElementById('liveVideo');
         vid.srcObject = liveStream;
         vid.style.display = 'block';
-        document.getElementById('liveHalo').style.display = 'none';
+        document.getElementById('holoWrapper').style.display = 'none';
         isCameraOn = true;
         document.getElementById('btnCam').classList.add('active');
         document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera' : 'Front Camera';
-        document.getElementById('liveSubtitle').innerText = 'Camera active. Mic daba kar poochiye kya dikh raha hai.';
+        document.getElementById('liveSubtitle').innerText = 'Live Eye active. Mic daba kar poochiye kya dikh raha hai.';
       } catch (err) { alert('Camera permission allow karein: ' + err.message); }
     }
 
@@ -1669,19 +1904,19 @@ Rules:
     }
 
     async function toggleScreenShare() {
-      const cfg = VOICES[selectedGender || 'female'];
-      if (isScreenOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = cfg.name + ' Live'; return; }
+      const isFemale = (selectedGender || 'male') === 'female';
+      if (isScreenOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live'; return; }
       stopLiveTracks();
       try {
         liveStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const vid = document.getElementById('liveVideo');
         vid.srcObject = liveStream;
         vid.style.display = 'block';
-        document.getElementById('liveHalo').style.display = 'none';
+        document.getElementById('holoWrapper').style.display = 'none';
         isScreenOn = true;
         document.getElementById('btnScreen').classList.add('active');
-        document.getElementById('liveModeLabel').innerText = 'Screen Live';
-        document.getElementById('liveSubtitle').innerText = 'Screen share active. Mic daba kar poochiye.';
+        document.getElementById('liveModeLabel').innerText = 'Screen Vision';
+        document.getElementById('liveSubtitle').innerText = 'Screen share active. Translation ya reply ke liye Mic dabayein.';
       } catch (err) { alert('Screen share cancel ya unsupported: ' + err.message); }
     }
 
@@ -1706,15 +1941,13 @@ Rules:
       const rec = new SR();
       rec.lang = 'hi-IN';
       const micBtn = document.getElementById('btnLiveMic');
-      const halo = document.getElementById('liveHalo');
       micBtn.classList.add('active');
-      halo.classList.add('listening');
+      setHoloState('Listening');
       document.getElementById('liveSubtitle').innerText = 'Listening...';
 
       rec.onresult = async (e) => {
         playSound('chime');
         micBtn.classList.remove('active');
-        halo.classList.remove('listening');
         const spoken = e.results[0][0].transcript;
         document.getElementById('liveSubtitle').innerText = spoken;
 
@@ -1722,10 +1955,12 @@ Rules:
         addMsg('user', spoken, frameObj ? frameObj.name : '');
 
         if (!apiKey) {
+          setHoloState('Ready');
           document.getElementById('liveSubtitle').innerText = 'Settings mein Gemini API Key save karein.';
           return;
         }
 
+        setHoloState('Processing');
         document.getElementById('liveSubtitle').innerText = 'Processing...';
         const result = await callGemini(spoken, frameObj);
 
@@ -1734,13 +1969,14 @@ Rules:
           addMsg('ai', result.text);
           speak(result.text);
         } else {
+          setHoloState('Ready');
           document.getElementById('liveSubtitle').innerText = 'Error: ' + result.error;
         }
       };
 
       rec.onerror = () => {
         micBtn.classList.remove('active');
-        halo.classList.remove('listening');
+        setHoloState('Idle');
         document.getElementById('liveSubtitle').innerText = 'Aawaz clear nahi aayi, dobara Mic dabayein.';
       };
       rec.start();
@@ -1748,30 +1984,47 @@ Rules:
 
     function faceUnlockGreet() {
       document.getElementById('settingsPanel').classList.remove('open');
-      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne andaaz mein welcome karo!');
+      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne andaaz mein pyara compliment aur welcome do!');
     }
 
     function simulateMessage() {
       document.getElementById('settingsPanel').classList.remove('open');
-      const alertText = selectedGender === 'male'
-        ? 'Boss, WhatsApp par ek naya message aaya hai. Padh kar sunaun kya?'
-        : 'WhatsApp par ek naya message aaya hai, kya main padh kar sunaun?';
+      const alertText = 'Sir, WhatsApp par ek naya message aaya hai. Privacy Shield ON hai — kya main padh kar sunaun?';
       addMsg('ai', alertText);
       speak(alertText);
     }
 
+    // Smart Power & Battery Guardian Mode from Blueprint
     if ('getBattery' in navigator) {
       navigator.getBattery().then(bat => {
         bat.addEventListener('chargingchange', () => {
           playSound('chime');
-          const msg = bat.charging ? 'Charging shuru ho gayi hai.' : 'Charger disconnect kar diya gaya hai.';
+          const msg = bat.charging ? 'Charging Mode ON.' : 'Charger disconnect kar diya gaya hai.';
           addMsg('ai', msg);
           speak(msg);
+        });
+        bat.addEventListener('levelchange', () => {
+          if (bat.charging && bat.level >= 0.99) {
+            const fullMsg = 'Battery 100% full ho gayi hai, charger disconnect kar dijiye.';
+            addMsg('ai', fullMsg);
+            speak(fullMsg);
+          } else if (!bat.charging && bat.level <= 0.15) {
+            const lowMsg = 'Battery 15% se kam hai, charge lagane ki salah hai.';
+            addMsg('ai', lowMsg);
+            speak(lowMsg);
+          }
         });
       });
     }
 
     window.onload = () => {
+      loadVoices();
+      document.getElementById('charmToggleBtn').innerText = charmMode ? 'Charm Mode: ON' : 'Charm Mode: OFF';
+      document.getElementById('charmToggleBtn').classList.toggle('active-pill', charmMode);
+      document.getElementById('familyToggleBtn').innerText = familyGuard ? 'Parents Guard: ON' : 'Parents Guard: OFF';
+      document.getElementById('familyToggleBtn').classList.toggle('active-pill', familyGuard);
+      document.getElementById('ageToggleBtn').innerText = isUnder18 ? 'Age: Under-18 Safe' : 'Age: 18+ Adult';
+
       if (!selectedGender) {
         document.getElementById('onboardModal').classList.add('open');
       } else {
