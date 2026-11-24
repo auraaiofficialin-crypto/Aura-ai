@@ -5,79 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AURA AI</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; }
     body {
-      background-color: #131314;
-      color: #e3e3e3;
+      background-color: #0a0a0c;
+      color: #f2f2f5;
       height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
+    svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* Pro Top Header */
+    /* Minimal OLED Top Bar */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: #131314;
-      border-bottom: 1px solid #1e1f20;
+      background: #0a0a0c;
       z-index: 10;
     }
-    .left-top { display: flex; align-items: center; gap: 12px; }
-    .icon-circle {
-      background: transparent;
-      border: none;
-      color: #e3e3e3;
-      width: 36px;
-      height: 36px;
+    .top-left { display: flex; align-items: center; gap: 10px; }
+    .round-btn {
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
+      background: #16161a;
+      border: 1px solid #242429;
+      color: #e4e4e7;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
       cursor: pointer;
     }
-    .icon-circle:active { background: #282a2c; }
-    .brand-group { display: flex; align-items: center; gap: 8px; }
-    .status-dot {
+    .round-btn:active { background: #222228; }
+    .brand-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #16161a;
+      border: 1px solid #242429;
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    .aura-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #8ab4f8;
+      background: #2dd4bf;
+      box-shadow: 0 0 8px #2dd4bf;
     }
-    .status-dot.speaking { background: #34a853; animation: pulse 0.6s infinite alternate; }
-    .status-dot.listening { background: #ea4335; animation: pulse 0.45s infinite alternate; }
-    @keyframes pulse { from { transform: scale(0.9); } to { transform: scale(1.7); } }
-    .app-name { font-size: 18px; font-weight: 500; letter-spacing: 0.2px; }
-    .pro-badge {
+    .aura-dot.speaking { background: #38bdf8; animation: pulseDot 0.55s infinite alternate; }
+    .aura-dot.listening { background: #f43f5e; animation: pulseDot 0.45s infinite alternate; }
+    @keyframes pulseDot { from { transform: scale(0.85); } to { transform: scale(1.65); } }
+
+    .top-right { display: flex; align-items: center; gap: 8px; }
+    .mode-badge {
       font-size: 11px;
-      font-weight: 500;
-      background: #1e1f20;
-      color: #a8c7fa;
-      padding: 3px 9px;
-      border-radius: 8px;
-      border: 1px solid #2c2d2f;
-    }
-    .top-actions { display: flex; align-items: center; gap: 8px; }
-    .pill-chip {
-      background: #1e1f20;
-      color: #e3e3e3;
-      border: 1px solid #2c2d2f;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
+      color: #a1a1aa;
+      background: #16161a;
+      border: 1px solid #242429;
+      padding: 6px 10px;
+      border-radius: 16px;
     }
 
-    /* Left Sidebar (History + Pin + Rename) */
+    /* Left Sidebar Drawer */
     .overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.72);
       z-index: 40;
     }
     .overlay.open { display: block; }
@@ -87,23 +87,24 @@
       left: -300px;
       width: 285px;
       height: 100dvh;
-      background: #1e1f20;
+      background: #111114;
+      border-right: 1px solid #1f1f24;
       z-index: 50;
       display: flex;
       flex-direction: column;
       padding: 16px 12px;
-      transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: left 0.24s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .sidebar.open { left: 0; }
     .new-chat-btn {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: #282a2c;
-      color: #e3e3e3;
-      border: none;
-      border-radius: 24px;
-      padding: 12px 16px;
+      background: #1c1c21;
+      color: #f4f4f6;
+      border: 1px solid #2a2a32;
+      border-radius: 22px;
+      padding: 11px 16px;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
@@ -112,8 +113,8 @@
     .sec-label {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: #8e918f;
+      letter-spacing: 0.9px;
+      color: #71717a;
       padding: 8px 12px 4px;
       font-weight: 600;
     }
@@ -122,19 +123,19 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
     }
     .history-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 12px;
-      border-radius: 18px;
-      font-size: 14px;
-      color: #c4c7c5;
+      border-radius: 14px;
+      font-size: 13.5px;
+      color: #a1a1aa;
       cursor: pointer;
     }
-    .history-item.active { background: #004a77; color: #c2e7ff; }
+    .history-item.active { background: #1e293b; color: #38bdf8; }
     .history-title {
       flex: 1;
       white-space: nowrap;
@@ -143,38 +144,41 @@
       padding-right: 6px;
     }
     .hist-btns { display: flex; gap: 4px; }
-    .mini-btn {
+    .mini-svg-btn {
       background: transparent;
       border: none;
-      color: #9aa0a6;
-      font-size: 13px;
-      padding: 3px 5px;
+      color: #71717a;
+      padding: 4px;
+      display: flex;
+      align-items: center;
       cursor: pointer;
     }
+    .mini-svg-btn svg { width: 15px; height: 15px; }
+    .mini-svg-btn.pinned { color: #38bdf8; }
 
-    /* Clean Settings Panel */
+    /* Settings Sheet */
     .settings-panel {
       display: none;
       flex-direction: column;
       gap: 12px;
       padding: 14px 16px;
-      background: #1e1f20;
-      border-bottom: 1px solid #2c2d2f;
+      background: #121216;
+      border-bottom: 1px solid #222228;
     }
     .settings-panel.open { display: flex; }
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     input, select {
-      background: #131314;
-      color: #e3e3e3;
-      border: 1px solid #3c4043;
+      background: #0a0a0c;
+      color: #f4f4f6;
+      border: 1px solid #2a2a32;
       border-radius: 12px;
       padding: 10px 12px;
       font-size: 13px;
       outline: none;
     }
-    .primary-btn {
-      background: #a8c7fa;
-      color: #062e6f;
+    .save-btn {
+      background: #f4f4f6;
+      color: #09090b;
       border: none;
       border-radius: 12px;
       padding: 10px 16px;
@@ -182,39 +186,63 @@
       font-size: 13px;
       cursor: pointer;
     }
+    .ghost-btn {
+      background: #1a1a20;
+      color: #d4d4d8;
+      border: 1px solid #2a2a32;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
-    /* Main Chat Stream */
+    /* Main Workspace & Original AURA Welcome */
     .chat-area {
       flex: 1;
       overflow-y: auto;
-      padding: 18px 16px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
-    .welcome-box { margin: auto 0; padding: 12px 8px; }
+    .welcome-box {
+      margin: auto 0;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
     .welcome-title {
-      font-size: 32px;
+      font-size: 30px;
       font-weight: 600;
-      background: linear-gradient(90deg, #4285f4, #9b72cb, #d96570);
+      letter-spacing: -0.5px;
+      background: linear-gradient(110deg, #ffffff 15%, #38bdf8 60%, #2dd4bf 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
     }
-    .welcome-sub { font-size: 20px; color: #5e6166; font-weight: 400; }
+    .welcome-sub { font-size: 16px; color: #71717a; margin-top: -10px; }
+    .quick-prompts { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+    .qp-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #121216;
+      border: 1px solid #1f1f26;
+      padding: 12px 14px;
+      border-radius: 16px;
+      color: #d4d4d8;
+      font-size: 14px;
+      text-align: left;
+      cursor: pointer;
+    }
+    .qp-item:active { background: #1a1a22; }
+    .qp-item svg { width: 18px; height: 18px; color: #38bdf8; }
 
+    /* Messages */
     .msg-wrap { display: flex; flex-direction: column; max-width: 88%; }
     .msg-wrap.user { align-self: flex-end; }
     .msg-wrap.ai { align-self: flex-start; max-width: 95%; }
-    .msg-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: #8e918f;
-      margin-bottom: 4px;
-      padding: 0 4px;
-    }
+    .msg-meta { font-size: 11px; color: #71717a; margin-bottom: 4px; padding: 0 4px; }
     .msg-bubble {
       padding: 12px 16px;
       border-radius: 20px;
@@ -222,95 +250,71 @@
       line-height: 1.55;
       word-wrap: break-word;
     }
-    .user .msg-bubble { background: #282a2c; color: #e3e3e3; border-bottom-right-radius: 4px; }
-    .ai .msg-bubble { background: transparent; color: #e3e3e3; padding: 4px; }
+    .user .msg-bubble { background: #1c1c22; color: #f4f4f6; border-bottom-right-radius: 4px; }
+    .ai .msg-bubble { background: transparent; color: #e4e4e7; padding: 2px 4px; }
     .msg-actions { display: flex; gap: 8px; margin-top: 6px; padding-left: 4px; }
     .act-chip {
-      background: #1e1f20;
-      border: 1px solid #2c2d2f;
-      color: #9aa0a6;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #141418;
+      border: 1px solid #24242b;
+      color: #a1a1aa;
       font-size: 11px;
-      padding: 4px 9px;
+      padding: 4px 10px;
       border-radius: 10px;
       cursor: pointer;
     }
+    .act-chip svg { width: 13px; height: 13px; }
     .attach-chip {
-      display: inline-block;
-      background: #1e1f20;
-      border: 1px solid #3c4043;
-      color: #a8c7fa;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #16161c;
+      border: 1px solid #2b2b36;
+      color: #38bdf8;
       font-size: 12px;
       padding: 4px 10px;
       border-radius: 10px;
       margin-bottom: 6px;
     }
 
-    /* Bottom Pro Composer */
+    /* Bottom Composer (ChatGPT + Gemini Fusion) */
     .bottom-dock {
       padding: 8px 14px 16px;
-      background: #131314;
+      background: #0a0a0c;
       position: relative;
     }
-    .attach-bar {
+    .active-tool-pill {
       display: none;
       align-items: center;
       justify-content: space-between;
-      background: #1e1f20;
-      border: 1px solid #3c4043;
-      border-radius: 14px;
-      padding: 8px 12px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: #a8c7fa;
-    }
-    .attach-bar.show { display: flex; }
-    .plus-popover {
-      display: none;
-      position: absolute;
-      bottom: 76px;
-      left: 16px;
-      background: #1e1f20;
-      border: 1px solid #3c4043;
-      border-radius: 16px;
-      padding: 6px;
-      flex-direction: column;
-      gap: 2px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.6);
-      z-index: 30;
-    }
-    .plus-popover.open { display: flex; }
-    .pop-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: transparent;
-      border: none;
-      color: #e3e3e3;
-      padding: 10px 14px;
+      background: #131b24;
+      border: 1px solid #1e3a5f;
       border-radius: 12px;
-      font-size: 14px;
-      text-align: left;
-      cursor: pointer;
+      padding: 6px 12px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #38bdf8;
     }
-    .pop-item:active { background: #282a2c; }
+    .active-tool-pill.show { display: flex; }
 
     .composer {
       display: flex;
       align-items: center;
-      background: #1e1f20;
-      border: 1px solid #2c2d2f;
+      background: #16161a;
+      border: 1px solid #26262e;
       border-radius: 28px;
-      padding: 5px 7px;
-      gap: 6px;
+      padding: 5px 6px;
+      gap: 4px;
     }
     .plus-trigger {
       width: 38px;
       height: 38px;
       border-radius: 50%;
       border: none;
-      background: #282a2c;
-      color: #e3e3e3;
-      font-size: 20px;
+      background: #222228;
+      color: #f4f4f6;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -320,87 +324,153 @@
       flex: 1;
       background: transparent;
       border: none;
-      padding: 8px 6px;
+      padding: 8px 8px;
       font-size: 15px;
-      color: #e3e3e3;
+      color: #f4f4f6;
     }
-    .tool-btn {
+    .mic-btn {
       width: 38px;
       height: 38px;
       border-radius: 50%;
       border: none;
       background: transparent;
-      color: #c4c7c5;
-      font-size: 17px;
+      color: #a1a1aa;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
-    .live-trigger {
-      background: #282a2c;
-      color: #a8c7fa;
-      border: 1px solid #3c4043;
-      border-radius: 20px;
-      padding: 0 12px;
-      height: 36px;
-      font-size: 12px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      cursor: pointer;
-    }
-    .send-trigger {
+    .mic-btn:active { color: #ffffff; background: #222228; }
+    .wave-btn {
       width: 38px;
       height: 38px;
       border-radius: 50%;
       border: none;
-      background: #a8c7fa;
-      color: #062e6f;
-      font-size: 16px;
-      font-weight: 700;
+      background: #2563eb;
+      color: #ffffff;
       display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .send-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: #f4f4f6;
+      color: #09090b;
+      display: none;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
 
-    /* Full-Screen Gemini Live Overlay (Front/Back Camera + Screen Share + Live Voice) */
+    /* Combined Gemini + ChatGPT Bottom Sheet for '+' Button */
+    .sheet-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 60;
+    }
+    .sheet-backdrop.open { display: block; }
+    .plus-sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -520px;
+      background: #16161a;
+      border-top: 1px solid #282830;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 14px 16px 26px;
+      z-index: 70;
+      transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .plus-sheet.open { bottom: 0; }
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 4px;
+      background: #3f3f46;
+      margin: 0 auto 4px;
+    }
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .media-card {
+      background: #202026;
+      border: 1px solid #2c2c35;
+      border-radius: 16px;
+      padding: 14px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: #f4f4f6;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .media-card:active { background: #2a2a33; }
+    .tool-list { display: flex; flex-direction: column; gap: 4px; }
+    .tool-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: transparent;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      color: #f4f4f6;
+      text-align: left;
+      cursor: pointer;
+    }
+    .tool-row:active { background: #222228; }
+    .tool-row svg { width: 20px; height: 20px; color: #a1a1aa; flex-shrink: 0; }
+    .tool-info { display: flex; flex-direction: column; }
+    .tool-name { font-size: 14px; font-weight: 500; }
+    .tool-desc { font-size: 12px; color: #71717a; }
+
+    /* Hybrid ChatGPT Voice + Gemini Live Vision Screen */
     .live-modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: #0b0c0d;
+      background: #050507;
       z-index: 100;
       flex-direction: column;
       justify-content: space-between;
     }
     .live-modal.open { display: flex; }
-    .live-header {
+    .live-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 16px 18px;
       z-index: 10;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
     }
-    .live-tag {
+    .live-status-pill {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(30, 31, 32, 0.85);
-      border: 1px solid #3c4043;
-      padding: 6px 12px;
+      background: rgba(24, 24, 29, 0.85);
+      border: 1px solid #2c2c35;
+      padding: 7px 14px;
       border-radius: 20px;
       font-size: 13px;
-      font-weight: 500;
+      color: #e4e4e7;
     }
-    .live-red { width: 8px; height: 8px; border-radius: 50%; background: #ea4335; animation: pulse 0.7s infinite alternate; }
-    .video-stage {
+    .live-stage {
       position: absolute;
       inset: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       overflow: hidden;
@@ -411,55 +481,70 @@
       object-fit: cover;
       display: none;
     }
-    .live-wave-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      z-index: 5;
+    /* ChatGPT Style Animated Sky-Aura Sphere */
+    .aura-orb {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #e0f2fe 0%, #38bdf8 45%, #1d4ed8 85%, #0f172a 100%);
+      box-shadow: 0 0 60px rgba(56, 189, 248, 0.35);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 4;
+    }
+    .aura-orb.speaking {
+      animation: orbSpeak 0.65s infinite alternate ease-in-out;
+      box-shadow: 0 0 85px rgba(56, 189, 248, 0.65);
+    }
+    .aura-orb.listening {
+      animation: orbListen 0.5s infinite alternate ease-in-out;
+      background: radial-gradient(circle at 35% 30%, #ffe4e6 0%, #fb7185 50%, #be123c 100%);
+    }
+    @keyframes orbSpeak { from { transform: scale(0.95); } to { transform: scale(1.12); } }
+    @keyframes orbListen { from { transform: scale(0.96); } to { transform: scale(1.08); } }
+
+    .live-caption {
+      position: absolute;
+      bottom: 115px;
+      left: 18px;
+      right: 18px;
       text-align: center;
-      padding: 20px;
-    }
-    .live-subtitle {
-      background: rgba(19, 19, 20, 0.82);
-      border: 1px solid #2c2d2f;
-      padding: 12px 18px;
+      background: rgba(14, 14, 18, 0.82);
+      backdrop-filter: blur(8px);
+      border: 1px solid #26262e;
+      padding: 12px 16px;
       border-radius: 16px;
-      font-size: 15px;
-      color: #e3e3e3;
-      max-width: 90%;
+      font-size: 14px;
+      color: #f4f4f6;
+      z-index: 8;
     }
-    .live-controls {
+    .live-bottom {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 14px;
-      padding: 22px 16px 32px;
+      padding: 18px 16px 32px;
       z-index: 10;
-      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
     }
-    .live-ctrl-btn {
+    .live-btn {
       width: 52px;
       height: 52px;
       border-radius: 50%;
-      border: 1px solid #3c4043;
-      background: rgba(30, 31, 32, 0.9);
-      color: #e3e3e3;
-      font-size: 20px;
+      border: 1px solid #2a2a32;
+      background: rgba(24, 24, 29, 0.9);
+      color: #f4f4f6;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
-    .live-ctrl-btn.active { background: #a8c7fa; color: #062e6f; border-color: #a8c7fa; }
-    .live-end-btn {
-      width: 56px;
-      height: 56px;
+    .live-btn.active { background: #38bdf8; color: #09090b; border-color: #38bdf8; }
+    .live-close {
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       border: none;
-      background: #ea4335;
-      color: #ffffff;
-      font-size: 22px;
+      background: #f4f4f6;
+      color: #09090b;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -472,42 +557,49 @@
   <!-- Sidebar Drawer -->
   <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
-    <button class="new-chat-btn" onclick="createNewChat()">＋ &nbsp;New chat</button>
-    <div class="sec-label" id="pinHeader" style="display:none;">📌 Pinned</div>
+    <button class="new-chat-btn" onclick="createNewChat()">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <span>New chat</span>
+    </button>
+    <div class="sec-label" id="pinHeader" style="display:none;">Pinned</div>
     <div class="history-list" id="pinnedList" style="flex:0; margin-bottom:10px;"></div>
     <div class="sec-label">Recent</div>
     <div class="history-list" id="recentList"></div>
   </div>
 
-  <!-- Top Bar -->
+  <!-- Minimal OLED Top Bar -->
   <div class="topbar">
-    <div class="left-top">
-      <button class="icon-circle" onclick="toggleSidebar()">☰</button>
-      <div class="brand-group">
-        <div class="status-dot" id="statusDot"></div>
-        <span class="app-name">AURA</span>
-        <span class="pro-badge" id="statusText">JARVIS Core</span>
+    <div class="top-left">
+      <button class="round-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg>
+      </button>
+      <div class="brand-pill">
+        <span class="aura-dot" id="statusDot"></span>
+        <span>AURA</span>
       </div>
     </div>
-    <div class="top-actions">
-      <button class="pill-chip" onclick="toggleSettings()">⚙️ Settings</button>
+    <div class="top-right">
+      <span class="mode-badge" id="statusText">JARVIS Core</span>
+      <button class="round-btn" onclick="toggleSettings()" aria-label="Settings">
+        <svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+      </button>
     </div>
   </div>
 
-  <!-- Settings Panel -->
+  <!-- Clean Settings Drawer -->
   <div class="settings-panel" id="settingsPanel">
     <div class="row">
-      <input type="password" id="apiKeyInput" placeholder="Gemini API Key paste karein..." style="flex:1;" />
-      <button class="primary-btn" onclick="saveKey()">Save</button>
+      <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key..." style="flex:1;" />
+      <button class="save-btn" onclick="saveKey()">Save</button>
     </div>
     <div class="row">
       <select id="modeSelect" style="flex:1;">
-        <option value="charming">💖 Charming Companion Mode</option>
-        <option value="respect">🙏 Respectful Family Mode</option>
-        <option value="jarvis">⚡ JARVIS Tactical Mode</option>
+        <option value="charming">Mode: Charming Companion</option>
+        <option value="respect">Mode: Respectful Family</option>
+        <option value="jarvis">Mode: JARVIS Tactical</option>
       </select>
-      <button class="pill-chip" onclick="faceUnlockGreet()">🔓 Greet</button>
-      <button class="pill-chip" onclick="simulateMessage()">📩 Alert</button>
+      <button class="ghost-btn" onclick="faceUnlockGreet()">Face Greet</button>
+      <button class="ghost-btn" onclick="simulateMessage()">Msg Alert</button>
     </div>
   </div>
 
@@ -516,77 +608,143 @@
 
   <!-- Bottom Composer -->
   <div class="bottom-dock">
-    <div class="attach-bar" id="attachBar">
-      <span id="attachLabel">📎 file</span>
-      <button class="mini-btn" onclick="clearAttachment()">✕</button>
-    </div>
-
-    <div class="plus-popover" id="plusMenu">
-      <button class="pop-item" onclick="pickFile('image/*')">🖼️ Photo / Gallery</button>
-      <button class="pop-item" onclick="pickFile('video/*')">🎥 Video</button>
-      <button class="pop-item" onclick="pickFile('*/*')">📄 Document / PDF</button>
+    <div class="active-tool-pill" id="activeToolBar">
+      <span id="activeToolLabel">Tool Active</span>
+      <button class="mini-svg-btn" onclick="clearToolAndFile()">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
 
     <input type="file" id="fileInput" style="display:none;" onchange="onFilePicked(event)" />
 
     <div class="composer">
-      <button class="plus-trigger" onclick="togglePlus()" title="Attach">＋</button>
-      <input type="text" id="userInput" placeholder="Ask AURA..." onkeypress="if(event.key==='Enter') sendMessage()" />
-      <button class="tool-btn" onclick="startVoiceOnce()" title="Voice Input">🎤</button>
-      <button class="live-trigger" onclick="openLiveMode()" title="Live Camera & Screen">✦ Live</button>
-      <button class="send-trigger" onclick="sendMessage()" title="Send">↑</button>
+      <button class="plus-trigger" onclick="openPlusSheet()" aria-label="Tools and Attachments">
+        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <input type="text" id="userInput" placeholder="Ask AURA" oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
+      <button class="mic-btn" id="micBtn" onclick="startVoiceOnce()" aria-label="Voice Dictation">
+        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
+      <button class="wave-btn" id="liveWaveBtn" onclick="openLiveMode()" aria-label="AURA Live Vision and Voice">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
+      </button>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Send">
+        <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
     </div>
   </div>
 
-  <!-- Full-Screen Live Vision & Voice Modal -->
-  <div class="live-modal" id="liveModal">
-    <div class="live-header">
-      <div class="live-tag"><span class="live-red"></span> <span id="liveModeLabel">AURA Live</span></div>
-      <button class="pill-chip" onclick="switchCamera()">🔄 Flip Cam</button>
+  <!-- Combined Gemini + ChatGPT '+' Action Sheet -->
+  <div class="sheet-backdrop" id="sheetBackdrop" onclick="closePlusSheet()"></div>
+  <div class="plus-sheet" id="plusSheet">
+    <div class="sheet-handle"></div>
+    <div class="media-grid">
+      <button class="media-card" onclick="pickFile('image/*')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <span>Photos</span>
+      </button>
+      <button class="media-card" onclick="pickCameraCapture()">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Camera</span>
+      </button>
+      <button class="media-card" onclick="pickFile('*/*')">
+        <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <span>Files</span>
+      </button>
     </div>
 
-    <div class="video-stage">
+    <div class="tool-list">
+      <button class="tool-row" onclick="selectTool('Create Image', 'Detailed visual image prompt ya concept banayein: ')">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="tool-info"><span class="tool-name">Create images</span><span class="tool-desc">Visualise concepts & AI art prompts</span></div>
+      </button>
+      <button class="tool-row" onclick="selectTool('Deep Research', 'Is topic par deep, structured aur detailed research report do: ')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div class="tool-info"><span class="tool-name">Deep Research</span><span class="tool-desc">Get detailed multi-angle reports</span></div>
+      </button>
+      <button class="tool-row" onclick="selectTool('Canvas', 'Clean code, script ya structured document likho: ')">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <div class="tool-info"><span class="tool-name">Canvas</span><span class="tool-desc">Code, write scripts or structure ideas</span></div>
+      </button>
+      <button class="tool-row" onclick="selectTool('Guided Learning', 'Mujhe step-by-step aasan bhasha mein samjhao: ')">
+        <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <div class="tool-info"><span class="tool-name">Guided Learning</span><span class="tool-desc">Step-by-step personal tutor</span></div>
+      </button>
+      <button class="tool-row" onclick="selectTool('Think Harder', 'Pehle gehrai se logic socho aur phir best jawab do: ')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="tool-info"><span class="tool-name">Think harder</span><span class="tool-desc">Advanced reasoning & problem solving</span></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Hybrid Voice Orb + Live Vision Modal -->
+  <div class="live-modal" id="liveModal">
+    <div class="live-top">
+      <div class="live-status-pill">
+        <span class="aura-dot"></span>
+        <span id="liveModeLabel">AURA Live</span>
+      </div>
+      <button class="round-btn" onclick="switchCamera()" aria-label="Flip Camera">
+        <svg viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
+      </button>
+    </div>
+
+    <div class="live-stage">
       <video id="liveVideo" autoplay playsinline muted></video>
       <canvas id="captureCanvas" style="display:none;"></canvas>
-      <div class="live-wave-box">
-        <div class="live-subtitle" id="liveSubtitle">Mic dabayein ya Camera / Screen chalu karke poochiye...</div>
-      </div>
+      <div class="aura-orb" id="liveOrb"></div>
+      <div class="live-caption" id="liveSubtitle">Tap Mic to speak, or enable Camera / Screen Live</div>
     </div>
 
-    <div class="live-controls">
-      <button class="live-ctrl-btn" id="btnCam" onclick="toggleCamera()" title="Back / Front Camera">📷</button>
-      <button class="live-ctrl-btn" id="btnScreen" onclick="toggleScreenShare()" title="Share Screen">🖥️</button>
-      <button class="live-ctrl-btn" id="btnLiveMic" onclick="listenInLiveMode()" title="Speak">🎤</button>
-      <button class="live-end-btn" onclick="closeLiveMode()" title="End Live">✕</button>
+    <div class="live-bottom">
+      <button class="live-btn" id="btnCam" onclick="toggleCamera()" aria-label="Toggle Camera">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
+      <button class="live-btn" id="btnScreen" onclick="toggleScreenShare()" aria-label="Share Screen">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </button>
+      <button class="live-btn" id="btnLiveMic" onclick="listenInLiveMode()" aria-label="Speak">
+        <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
+      <button class="live-close" onclick="closeLiveMode()" aria-label="End Live">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
   </div>
 
   <script>
-    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari hi soul/identity hai. Tum apne Malik Manish ki loyal, intelligent aur natural AI companion ho.
+    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari core intelligence hai. Tum apne Malik Manish ki loyal, intelligent aur natural AI companion ho.
 Rules:
 1. Charming Companion Mode mein pyari, expressive aur caring andaaz mein Hinglish mein baat karo.
 2. Respectful Family Mode mein elders/family ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
 3. Agar kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
 4. Message aane par bahar se sirf naam/alert batao ("Sir, ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-5. Jab user Camera ya Screen Live dikhaye, toh image mein jo dikh raha hai uska exact, clear aur helpful jawab 2-3 lines mein do.`;
+5. Jab user Camera ya Screen Live dikhaye, toh frame mein jo dikh raha hai uska exact, clear aur helpful jawab 2-3 lines mein do.`;
 
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
     let cachedModel = '';
-    let chats = JSON.parse(localStorage.getItem('aura_pro_chats') || '[]');
+    let chats = JSON.parse(localStorage.getItem('aura_fusion_chats') || '[]');
     let currentChatId = null;
     let selectedFile = null;
+    let activeToolPrefix = '';
 
     // Live Vision State
     let liveStream = null;
-    let facingMode = 'environment'; // 'environment' = Back Camera, 'user' = Front Camera
+    let facingMode = 'environment';
     let isCameraOn = false;
     let isScreenOn = false;
 
     if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
     else document.getElementById('settingsPanel').classList.add('open');
 
+    function toggleSendMic() {
+      const hasText = document.getElementById('userInput').value.trim().length > 0 || selectedFile !== null;
+      document.getElementById('sendBtn').style.display = hasText ? 'flex' : 'none';
+      document.getElementById('liveWaveBtn').style.display = hasText ? 'none' : 'flex';
+    }
+
     function persistChats() {
-      localStorage.setItem('aura_pro_chats', JSON.stringify(chats));
+      localStorage.setItem('aura_fusion_chats', JSON.stringify(chats));
       renderSidebar();
     }
 
@@ -616,7 +774,7 @@ Rules:
       e.stopPropagation();
       const c = chats.find(x => x.id === id);
       if (!c) return;
-      const name = prompt('Chat ka naya naam likhein:', c.title);
+      const name = prompt('Rename chat:', c.title);
       if (name && name.trim()) { c.title = name.trim(); persistChats(); }
     }
 
@@ -646,9 +804,15 @@ Rules:
         div.innerHTML = `
           <span class="history-title">${c.title}</span>
           <div class="hist-btns">
-            <button class="mini-btn" onclick="togglePin(event, '${c.id}')" title="Pin">${c.pinned ? '📌' : '📍'}</button>
-            <button class="mini-btn" onclick="renameChat(event, '${c.id}')" title="Rename">✏️</button>
-            <button class="mini-btn" onclick="deleteChat(event, '${c.id}')" title="Delete">🗑️</button>
+            <button class="mini-svg-btn ${c.pinned ? 'pinned' : ''}" onclick="togglePin(event, '${c.id}')" title="Pin">
+              <svg viewBox="0 0 24 24"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
+            </button>
+            <button class="mini-svg-btn" onclick="renameChat(event, '${c.id}')" title="Rename">
+              <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+            </button>
+            <button class="mini-svg-btn" onclick="deleteChat(event, '${c.id}')" title="Delete">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
           </div>
         `;
         return div;
@@ -665,12 +829,31 @@ Rules:
         box.innerHTML = `
           <div class="welcome-box">
             <div class="welcome-title">Hello, Manish</div>
-            <div class="welcome-sub">How can I help you today?</div>
+            <div class="welcome-sub">AURA Core ready. Where should we start?</div>
+            <div class="quick-prompts">
+              <button class="qp-item" onclick="quickStart('Guided Learning', 'Mujhe step-by-step samjhao: ')">
+                <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <span>Learn something new</span>
+              </button>
+              <button class="qp-item" onclick="quickStart('Create Image', 'Detailed image prompt banao: ')">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                <span>Visualise & create concepts</span>
+              </button>
+              <button class="qp-item" onclick="quickStart('Canvas', 'Clean code ya script likho: ')">
+                <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                <span>Write, code or edit</span>
+              </button>
+            </div>
           </div>
         `;
         return;
       }
       chat.messages.forEach(m => drawMessage(m.sender, m.text, m.fileName));
+    }
+
+    function quickStart(label, prefix) {
+      selectTool(label, prefix);
+      document.getElementById('userInput').focus();
     }
 
     function drawMessage(sender, text, fileName) {
@@ -690,7 +873,7 @@ Rules:
       if (fileName) {
         const chip = document.createElement('div');
         chip.className = 'attach-chip';
-        chip.innerText = '📎 ' + fileName;
+        chip.innerText = fileName;
         bubble.appendChild(chip);
         bubble.appendChild(document.createElement('br'));
       }
@@ -706,12 +889,12 @@ Rules:
         actions.className = 'msg-actions';
         const copyBtn = document.createElement('button');
         copyBtn.className = 'act-chip';
-        copyBtn.innerText = '📋 Copy';
-        copyBtn.onclick = () => { navigator.clipboard.writeText(text); copyBtn.innerText = '✓ Copied'; setTimeout(() => copyBtn.innerText = '📋 Copy', 1500); };
+        copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span>`;
+        copyBtn.onclick = () => { navigator.clipboard.writeText(text); copyBtn.querySelector('span').innerText = 'Copied'; setTimeout(() => copyBtn.querySelector('span').innerText = 'Copy', 1500); };
 
         const speakBtn = document.createElement('button');
         speakBtn.className = 'act-chip';
-        speakBtn.innerText = '🔊 Listen';
+        speakBtn.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span>Listen</span>`;
         speakBtn.onclick = () => speak(text);
 
         actions.appendChild(copyBtn);
@@ -746,14 +929,30 @@ Rules:
     function toggleSettings() {
       document.getElementById('settingsPanel').classList.toggle('open');
     }
-    function togglePlus() {
-      document.getElementById('plusMenu').classList.toggle('open');
+
+    /* Plus Bottom Sheet Controls */
+    function openPlusSheet() {
+      document.getElementById('sheetBackdrop').classList.add('open');
+      document.getElementById('plusSheet').classList.add('open');
+    }
+    function closePlusSheet() {
+      document.getElementById('sheetBackdrop').classList.remove('open');
+      document.getElementById('plusSheet').classList.remove('open');
     }
 
     function pickFile(accept) {
-      document.getElementById('plusMenu').classList.remove('open');
+      closePlusSheet();
       const inp = document.getElementById('fileInput');
+      inp.removeAttribute('capture');
       inp.accept = accept;
+      inp.click();
+    }
+
+    function pickCameraCapture() {
+      closePlusSheet();
+      const inp = document.getElementById('fileInput');
+      inp.accept = 'image/*';
+      inp.setAttribute('capture', 'environment');
       inp.click();
     }
 
@@ -767,16 +966,26 @@ Rules:
           mimeType: file.type || 'application/octet-stream',
           base64: reader.result.split(',')[1]
         };
-        document.getElementById('attachLabel').innerText = '📎 ' + file.name;
-        document.getElementById('attachBar').classList.add('show');
+        document.getElementById('activeToolLabel').innerText = 'Attached: ' + file.name;
+        document.getElementById('activeToolBar').classList.add('show');
+        toggleSendMic();
       };
       reader.readAsDataURL(file);
     }
 
-    function clearAttachment() {
+    function selectTool(name, prefix) {
+      closePlusSheet();
+      activeToolPrefix = prefix;
+      document.getElementById('activeToolLabel').innerText = 'Mode: ' + name;
+      document.getElementById('activeToolBar').classList.add('show');
+    }
+
+    function clearToolAndFile() {
       selectedFile = null;
+      activeToolPrefix = '';
       document.getElementById('fileInput').value = '';
-      document.getElementById('attachBar').classList.remove('show');
+      document.getElementById('activeToolBar').classList.remove('show');
+      toggleSendMic();
     }
 
     function saveKey() {
@@ -801,8 +1010,9 @@ Rules:
       if (female) utter.voice = female;
 
       const dot = document.getElementById('statusDot');
-      utter.onstart = () => dot.classList.add('speaking');
-      utter.onend = () => dot.classList.remove('speaking');
+      const orb = document.getElementById('liveOrb');
+      utter.onstart = () => { dot.classList.add('speaking'); orb.classList.add('speaking'); };
+      utter.onend = () => { dot.classList.remove('speaking'); orb.classList.remove('speaking'); };
       window.speechSynthesis.speak(utter);
     }
 
@@ -857,13 +1067,14 @@ Rules:
 
     async function sendMessage(customText) {
       const input = document.getElementById('userInput');
-      const text = customText || input.value.trim();
+      const rawText = customText || input.value.trim();
       const fileToSend = selectedFile;
-      if (!text && !fileToSend) return;
+      const prefixToUse = activeToolPrefix;
+      if (!rawText && !fileToSend) return;
 
       if (!customText) input.value = '';
-      clearAttachment();
-      addMsg('user', text || 'Attachment bheja gaya', fileToSend ? fileToSend.name : '');
+      clearToolAndFile();
+      addMsg('user', rawText || 'Attachment', fileToSend ? fileToSend.name : '');
 
       if (!apiKey) {
         document.getElementById('settingsPanel').classList.add('open');
@@ -873,7 +1084,8 @@ Rules:
 
       document.getElementById('statusText').innerText = 'Thinking...';
       const mode = document.getElementById('modeSelect').value;
-      const result = await callGemini(text, mode, fileToSend);
+      const promptFinal = prefixToUse ? (prefixToUse + rawText) : rawText;
+      const result = await callGemini(promptFinal, mode, fileToSend);
       document.getElementById('statusText').innerText = 'JARVIS Core';
 
       if (result.ok) {
@@ -904,10 +1116,10 @@ Rules:
       rec.start();
     }
 
-    /* ================= GEMINI LIVE (CAMERA + SCREEN SHARE + VOICE) ================= */
+    /* ================= HYBRID LIVE VOICE ORB + CAMERA + SCREEN SHARE ================= */
     function openLiveMode() {
       document.getElementById('liveModal').classList.add('open');
-      document.getElementById('liveSubtitle').innerText = '📷 Camera ya 🖥️ Screen chalu karein, aur 🎤 par tap karke bolein!';
+      document.getElementById('liveSubtitle').innerText = 'Tap Mic to talk, or enable Camera / Screen Live';
     }
 
     function stopLiveTracks() {
@@ -918,6 +1130,7 @@ Rules:
       const vid = document.getElementById('liveVideo');
       vid.srcObject = null;
       vid.style.display = 'none';
+      document.getElementById('liveOrb').style.display = 'block';
       isCameraOn = false;
       isScreenOn = false;
       document.getElementById('btnCam').classList.remove('active');
@@ -938,17 +1151,15 @@ Rules:
       }
       stopLiveTracks();
       try {
-        liveStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: facingMode },
-          audio: false
-        });
+        liveStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode }, audio: false });
         const vid = document.getElementById('liveVideo');
         vid.srcObject = liveStream;
         vid.style.display = 'block';
+        document.getElementById('liveOrb').style.display = 'none';
         isCameraOn = true;
         document.getElementById('btnCam').classList.add('active');
-        document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera Live' : 'Front Camera Live';
-        document.getElementById('liveSubtitle').innerText = 'Camera chalu hai! Ab 🎤 daba kar poochiye ki samne kya hai.';
+        document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera' : 'Front Camera';
+        document.getElementById('liveSubtitle').innerText = 'Camera active. Tap Mic and ask about what you see.';
       } catch (err) {
         alert('Camera permission allow karein: ' + err.message);
       }
@@ -956,12 +1167,8 @@ Rules:
 
     async function switchCamera() {
       facingMode = (facingMode === 'environment') ? 'user' : 'environment';
-      if (isCameraOn) {
-        isCameraOn = false;
-        await toggleCamera();
-      } else {
-        await toggleCamera();
-      }
+      if (isCameraOn) { isCameraOn = false; await toggleCamera(); }
+      else { await toggleCamera(); }
     }
 
     async function toggleScreenShare() {
@@ -976,10 +1183,11 @@ Rules:
         const vid = document.getElementById('liveVideo');
         vid.srcObject = liveStream;
         vid.style.display = 'block';
+        document.getElementById('liveOrb').style.display = 'none';
         isScreenOn = true;
         document.getElementById('btnScreen').classList.add('active');
         document.getElementById('liveModeLabel').innerText = 'Screen Live';
-        document.getElementById('liveSubtitle').innerText = 'Screen live share ho rahi hai! Ab 🎤 daba kar sawaal poochiye.';
+        document.getElementById('liveSubtitle').innerText = 'Screen sharing active. Tap Mic to ask.';
       } catch (err) {
         alert('Screen share cancel ya unsupported: ' + err.message);
       }
@@ -992,13 +1200,11 @@ Rules:
       if (!vid.videoWidth) return null;
       canvas.width = vid.videoWidth;
       canvas.height = vid.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      canvas.getContext('2d').drawImage(vid, 0, 0, canvas.width, canvas.height);
       return {
         name: isScreenOn ? 'live_screen.jpg' : 'live_camera.jpg',
         mimeType: 'image/jpeg',
-        base64: dataUrl.split(',')[1]
+        base64: canvas.toDataURL('image/jpeg', 0.8).split(',')[1]
       };
     }
 
@@ -1008,23 +1214,26 @@ Rules:
       const rec = new SR();
       rec.lang = 'hi-IN';
       const micBtn = document.getElementById('btnLiveMic');
+      const orb = document.getElementById('liveOrb');
       micBtn.classList.add('active');
-      document.getElementById('liveSubtitle').innerText = 'Sun rahi hoon Sir... Boliye!';
+      orb.classList.add('listening');
+      document.getElementById('liveSubtitle').innerText = 'Listening...';
 
       rec.onresult = async (e) => {
         micBtn.classList.remove('active');
+        orb.classList.remove('listening');
         const spoken = e.results[0][0].transcript;
-        document.getElementById('liveSubtitle').innerText = 'You: ' + spoken;
+        document.getElementById('liveSubtitle').innerText = spoken;
 
         const frameObj = captureCurrentFrame();
         addMsg('user', spoken, frameObj ? frameObj.name : '');
 
         if (!apiKey) {
-          document.getElementById('liveSubtitle').innerText = 'Pehle Settings mein API Key save karein.';
+          document.getElementById('liveSubtitle').innerText = 'Save Gemini API Key in Settings first.';
           return;
         }
 
-        document.getElementById('liveSubtitle').innerText = 'Dekh kar samajh rahi hoon...';
+        document.getElementById('liveSubtitle').innerText = 'Processing...';
         const mode = document.getElementById('modeSelect').value;
         const result = await callGemini(spoken, mode, frameObj);
 
@@ -1039,7 +1248,8 @@ Rules:
 
       rec.onerror = () => {
         micBtn.classList.remove('active');
-        document.getElementById('liveSubtitle').innerText = 'Aawaz saaf nahi aayi, dobara 🎤 dabayein.';
+        orb.classList.remove('listening');
+        document.getElementById('liveSubtitle').innerText = 'Could not hear clearly. Tap Mic again.';
       };
       rec.start();
     }
