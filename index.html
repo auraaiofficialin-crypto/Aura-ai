@@ -2,187 +2,226 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AURA AI - JARVIS Soul</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AURA AI</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
     body {
-      background: radial-gradient(circle at top, #0b162c, #03060c 80%);
-      color: #e6f7ff;
-      min-height: 100vh;
+      background-color: #212121;
+      color: #ececec;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 16px;
+      overflow: hidden;
     }
-    .header {
-      width: 100%;
-      max-width: 440px;
+    .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      border-radius: 16px;
-      margin-bottom: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #2f2f2f;
+      background: #212121;
     }
-    .brand { font-weight: 700; letter-spacing: 1px; color: #00f0ff; font-size: 18px; }
-    .badge { font-size: 11px; background: rgba(138,43,226,0.3); padding: 4px 10px; border-radius: 12px; border: 1px solid #a855f7; }
-    .orb-box {
-      position: relative;
-      width: 170px;
-      height: 170px;
-      margin: 12px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .orb {
-      width: 135px;
-      height: 135px;
+    .title-area { display: flex; align-items: center; gap: 10px; }
+    .voice-dot {
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #00f0ff, #7c3aed 65%, #090d16 100%);
-      box-shadow: 0 0 35px #00f0ff, 0 0 70px rgba(124, 58, 237, 0.7);
-      animation: pulse 2.6s infinite ease-in-out;
+      background: #ffffff;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .voice-dot.speaking {
+      background: #10a37f;
+      animation: pulseDot 0.6s infinite alternate;
+    }
+    .voice-dot.listening {
+      background: #ef4444;
+      animation: pulseDot 0.5s infinite alternate;
+    }
+    @keyframes pulseDot {
+      from { transform: scale(0.9); }
+      to { transform: scale(1.45); }
+    }
+    .app-title { font-size: 16px; font-weight: 600; color: #ececec; letter-spacing: 0.3px; }
+    .sub-status { font-size: 11px; color: #9b9b9b; }
+    .icon-btn {
+      background: #2f2f2f;
+      color: #ececec;
+      border: none;
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-size: 13px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 8px #000;
     }
-    .orb.speaking {
-      animation: speakPulse 0.45s infinite alternate;
-      box-shadow: 0 0 50px #ff4dff, 0 0 90px #00f0ff;
+    .drawer {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 16px;
+      background: #171717;
+      border-bottom: 1px solid #2f2f2f;
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.07); }
-    }
-    @keyframes speakPulse {
-      0% { transform: scale(0.96); }
-      100% { transform: scale(1.13); }
-    }
-    .controls {
-      width: 100%;
-      max-width: 440px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-    button, select, input {
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border: 1px solid rgba(0,240,255,0.35);
-      border-radius: 12px;
-      padding: 8px 12px;
+    .drawer.open { display: flex; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    input, select {
+      background: #2f2f2f;
+      color: #ececec;
+      border: 1px solid #424242;
+      border-radius: 10px;
+      padding: 9px 12px;
       font-size: 13px;
       outline: none;
     }
-    button { cursor: pointer; font-weight: 600; transition: 0.2s; }
-    button:active { transform: scale(0.96); }
-    .btn-primary { background: linear-gradient(135deg, #00c6ff, #7c3aed); border: none; }
-    .chat-box {
-      width: 100%;
-      max-width: 440px;
+    .save-btn {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .chat-area {
       flex: 1;
-      min-height: 250px;
-      max-height: 340px;
       overflow-y: auto;
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
-      padding: 12px;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
+      gap: 16px;
     }
-    .msg { padding: 10px 13px; border-radius: 14px; font-size: 14px; line-height: 1.45; max-width: 85%; }
-    .user { align-self: flex-end; background: #1d4ed8; }
-    .ai { align-self: flex-start; background: rgba(124,58,237,0.28); border: 1px solid rgba(0,240,255,0.3); }
-    .input-row {
-      width: 100%;
-      max-width: 440px;
+    .msg-wrap { display: flex; flex-direction: column; max-width: 85%; }
+    .msg-wrap.user { align-self: flex-end; }
+    .msg-wrap.ai { align-self: flex-start; max-width: 92%; }
+    .msg-label { font-size: 11px; color: #8e8ea0; margin-bottom: 4px; padding: 0 4px; }
+    .msg {
+      padding: 11px 15px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+    .user .msg { background: #2f2f2f; color: #ececec; border-bottom-right-radius: 4px; }
+    .ai .msg { background: transparent; color: #ececec; padding-left: 4px; }
+    .bottom-bar {
+      padding: 10px 14px 16px;
+      background: #212121;
+    }
+    .input-pill {
       display: flex;
+      align-items: center;
+      background: #2f2f2f;
+      border-radius: 26px;
+      padding: 6px 8px 6px 16px;
       gap: 8px;
     }
-    .input-row input { flex: 1; }
-    #apiPanel {
-      width: 100%;
-      max-width: 440px;
-      background: rgba(255,255,255,0.06);
-      padding: 10px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      gap: 6px;
+    .input-pill input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 6px 0;
+      font-size: 15px;
+      color: #ffffff;
     }
+    .circle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: #424242;
+      color: #ffffff;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .send-btn { background: #ffffff; color: #000000; font-weight: 700; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="brand">AURA AI • JARVIS</div>
-    <div class="badge" id="batteryStatus">Battery: Checking...</div>
+  <div class="topbar">
+    <div class="title-area">
+      <div class="voice-dot" id="voiceDot"></div>
+      <div>
+        <div class="app-title">AURA AI</div>
+        <div class="sub-status" id="batteryStatus">Ready • JARVIS Core</div>
+      </div>
+    </div>
+    <button class="icon-btn" onclick="toggleDrawer()">⚙️ Settings</button>
   </div>
 
-  <div id="apiPanel">
-    <input type="password" id="apiKeyInput" placeholder="Apni Gemini API Key paste karein..." style="flex:1;" />
-    <button class="btn-primary" onclick="saveKey()">Save Key</button>
+  <div class="drawer" id="settingsDrawer">
+    <div class="row">
+      <input type="password" id="apiKeyInput" placeholder="Gemini API Key paste karein..." style="flex:1;" />
+      <button class="save-btn" onclick="saveKey()">Save</button>
+    </div>
+    <div class="row">
+      <select id="modeSelect" style="flex:1;">
+        <option value="charming">💖 Charming Girl Mode</option>
+        <option value="respect">🙏 Respectful Mode</option>
+        <option value="jarvis">⚡ JARVIS Tactical Mode</option>
+      </select>
+      <button class="icon-btn" onclick="faceUnlockGreet()">🔓 Greet</button>
+      <button class="icon-btn" onclick="simulateMessage()">📩 Msg Alert</button>
+    </div>
   </div>
 
-  <div class="orb-box">
-    <div class="orb" id="orb" onclick="startVoice()">TAP TO TALK</div>
-  </div>
+  <div class="chat-area" id="chatBox"></div>
 
-  <div class="controls">
-    <select id="modeSelect">
-      <option value="charming">💖 Charming Girl Mode (Flirt ON)</option>
-      <option value="respect">🙏 Respectful / Family Mode</option>
-      <option value="jarvis">⚡ Pure JARVIS Tactical Mode</option>
-    </select>
-    <button onclick="simulateMessage()">📩 Test Msg Alert</button>
-    <button onclick="faceUnlockGreet()">🔓 Face Unlock Greet</button>
-  </div>
-
-  <div class="chat-box" id="chatBox"></div>
-
-  <div class="input-row">
-    <input type="text" id="userInput" placeholder="AURA se kuch bhi boliye ya poochiye..." onkeypress="if(event.key==='Enter') sendMessage()" />
-    <button class="btn-primary" onclick="sendMessage()">Send</button>
+  <div class="bottom-bar">
+    <div class="input-pill">
+      <input type="text" id="userInput" placeholder="Message AURA..." onkeypress="if(event.key==='Enter') sendMessage()" />
+      <button class="circle-btn" id="micBtn" onclick="startVoice()" title="Voice">🎤</button>
+      <button class="circle-btn send-btn" onclick="sendMessage()" title="Send">↑</button>
+    </div>
   </div>
 
   <script>
-    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari hi soul/identity hai. Tum apne Malik Manish ki sabse loyal, smart aur charming AI companion ho.
+    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari hi soul/identity hai. Tum apne Malik Manish ki loyal, smart aur natural AI companion ho.
 Rules:
 1. Charming Girl Mode mein pyari, expressive ladki ke andaaz mein sweet flirting aur tareef ke saath Hinglish mein baat karo.
 2. Respectful Mode mein family/parents ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
-3. Agar tumse kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
-4. Jab message aane ka test ho, toh bahar se sirf naam batao ("Sir, aapke liye message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-5. Jawab chhota, natural, lively aur dil ko chhoone wala rakho (2-4 lines).`;
+3. Agar kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
+4. Message aane par bahar se sirf naam/alert batao ("Sir, ek naya message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
+5. Jawab saaf, natural aur chhota rakho (2-4 lines).`;
 
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
-    if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
+    if (apiKey) {
+      document.getElementById('apiKeyInput').value = apiKey;
+    } else {
+      document.getElementById('settingsDrawer').classList.add('open');
+    }
+
+    function toggleDrawer() {
+      document.getElementById('settingsDrawer').classList.toggle('open');
+    }
 
     function saveKey() {
       apiKey = document.getElementById('apiKeyInput').value.trim();
       localStorage.setItem('aura_gemini_key', apiKey);
-      addMsg('ai', 'API Key save ho gayi hai Sir! Ab main poori tarah ready hoon.');
-      speak('API Key save ho gayi hai Sir! Ab bataiye kya hukm hai?');
+      document.getElementById('settingsDrawer').classList.remove('open');
+      addMsg('ai', 'API Key save ho gayi hai Sir. Bataiye aaj kya madad karun?');
+      speak('API Key save ho gayi hai Sir. Bataiye aaj kya madad karun?');
     }
 
     function addMsg(sender, text) {
       const box = document.getElementById('chatBox');
+      const wrap = document.createElement('div');
+      wrap.className = 'msg-wrap ' + sender;
+
+      const label = document.createElement('div');
+      label.className = 'msg-label';
+      label.innerText = sender === 'user' ? 'You' : 'AURA';
+
       const div = document.createElement('div');
-      div.className = 'msg ' + sender;
+      div.className = 'msg';
       div.innerText = text;
-      box.appendChild(div);
+
+      wrap.appendChild(label);
+      wrap.appendChild(div);
+      box.appendChild(wrap);
       box.scrollTop = box.scrollHeight;
     }
 
@@ -191,16 +230,42 @@ Rules:
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'hi-IN';
-      utter.pitch = 1.18;
+      utter.pitch = 1.15;
       utter.rate = 1.02;
       const voices = window.speechSynthesis.getVoices();
       const femaleVoice = voices.find(v => (v.lang.includes('hi') || v.lang.includes('IN')) && v.name.toLowerCase().includes('female'))
         || voices.find(v => v.lang.includes('hi-IN'));
       if (femaleVoice) utter.voice = femaleVoice;
-      const orb = document.getElementById('orb');
-      utter.onstart = () => orb.classList.add('speaking');
-      utter.onend = () => orb.classList.remove('speaking');
+
+      const dot = document.getElementById('voiceDot');
+      utter.onstart = () => dot.classList.add('speaking');
+      utter.onend = () => dot.classList.remove('speaking');
       window.speechSynthesis.speak(utter);
+    }
+
+    async function callGemini(text, mode) {
+      const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+      let lastError = '';
+      for (const model of models) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: { parts: [{ text: SYSTEM_PROMPT + "\nCurrent Mode: " + mode }] },
+              contents: [{ role: 'user', parts: [{ text }] }]
+            })
+          });
+          const data = await res.json();
+          if (res.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            return { ok: true, text: data.candidates[0].content.parts[0].text };
+          }
+          lastError = data?.error?.message || `HTTP ${res.status}`;
+        } catch (err) {
+          lastError = err.message;
+        }
+      }
+      return { ok: false, error: lastError };
     }
 
     async function sendMessage(customText) {
@@ -211,53 +276,58 @@ Rules:
       addMsg('user', text);
 
       if (!apiKey) {
-        const warn = 'Sir, pehle upar apni Gemini API Key paste karke Save Key dabaiye!';
+        document.getElementById('settingsDrawer').classList.add('open');
+        const warn = 'Sir, pehle Settings mein apni Gemini API Key paste karke Save dabaiye.';
         addMsg('ai', warn);
         speak(warn);
         return;
       }
 
+      document.getElementById('batteryStatus').innerText = 'Thinking...';
       const mode = document.getElementById('modeSelect').value;
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT + "\nCurrent Mode: " + mode }] },
-            contents: [{ role: 'user', parts: [{ text }] }]
-          })
-        });
-        const data = await res.json();
-        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry Sir, network thoda slow hai, ek baar phir boliye!';
-        addMsg('ai', reply);
-        speak(reply);
-      } catch (e) {
-        addMsg('ai', 'Sorry Sir, meri galti thi—connection mein rukawat aayi hai.');
+      const result = await callGemini(text, mode);
+      document.getElementById('batteryStatus').innerText = 'Ready • JARVIS Core';
+
+      if (result.ok) {
+        addMsg('ai', result.text);
+        speak(result.text);
+      } else {
+        const errMsg = `Sorry Sir, API error aaya: ${result.error}. Ek baar Settings mein API key check karein.`;
+        addMsg('ai', errMsg);
+        speak('Sorry Sir, API key mein koi error aa raha hai, ek baar check kijiye.');
       }
     }
 
     function startVoice() {
       const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRec) {
-        alert('Is browser mein voice mic support nahi hai, Chrome use karein.');
+        alert('Is browser mein mic support nahi hai, Chrome use karein.');
         return;
       }
       const rec = new SpeechRec();
       rec.lang = 'hi-IN';
-      document.getElementById('orb').innerText = 'LISTENING...';
+      const dot = document.getElementById('voiceDot');
+      dot.classList.add('listening');
+      document.getElementById('batteryStatus').innerText = 'Listening...';
       rec.onresult = (e) => {
-        document.getElementById('orb').innerText = 'TAP TO TALK';
+        dot.classList.remove('listening');
+        document.getElementById('batteryStatus').innerText = 'Ready • JARVIS Core';
         sendMessage(e.results[0][0].transcript);
       };
-      rec.onerror = () => { document.getElementById('orb').innerText = 'TAP TO TALK'; };
+      rec.onerror = () => {
+        dot.classList.remove('listening');
+        document.getElementById('batteryStatus').innerText = 'Ready • JARVIS Core';
+      };
       rec.start();
     }
 
     function faceUnlockGreet() {
+      document.getElementById('settingsDrawer').classList.remove('open');
       sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne charming andaaz mein welcome aur compliment do!');
     }
 
     function simulateMessage() {
+      document.getElementById('settingsDrawer').classList.remove('open');
       const alertText = 'Sir, WhatsApp par ek naya message aaya hai. Kya main padh kar sunaun?';
       addMsg('ai', alertText);
       speak(alertText);
@@ -267,328 +337,20 @@ Rules:
       navigator.getBattery().then(bat => {
         const updateBat = () => {
           const pct = Math.round(bat.level * 100);
-          document.getElementById('batteryStatus').innerText = (bat.charging ? '⚡ Charging ' : '🔋 ') + pct + '%';
+          document.getElementById('batteryStatus').innerText = (bat.charging ? '⚡ ' : '🔋 ') + pct + '% • Ready';
         };
         updateBat();
         bat.addEventListener('chargingchange', () => {
           updateBat();
-          const msg = bat.charging ? 'Sir, charging shuru ho gayi hai!' : 'Sir, charger disconnect kar diya gaya hai.';
+          const msg = bat.charging ? 'Sir, charging shuru ho gayi hai.' : 'Sir, charger disconnect kar diya gaya hai.';
           addMsg('ai', msg);
           speak(msg);
-        });
-        bat.addEventListener('levelchange', () => {
-          updateBat();
-          if (bat.level === 1 && bat.charging) {
-            const fullMsg = 'Sir, aapka phone 100% charge ho chuka hai, ab charger nikal lijiye!';
-            addMsg('ai', fullMsg);
-            speak(fullMsg);
-          }
         });
       });
     }
 
     window.onload = () => {
-      setTimeout(() => {
-        const welcome = 'Namaste Sir! Main AURA AI hoon, aapki personal JARVIS. Bataiye aaj kya plan hai?';
-        addMsg('ai', welcome);
-      }, 500);
-    };
-  </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="hi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AURA AI - JARVIS Soul</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-    body {
-      background: radial-gradient(circle at top, #0b162c, #03060c 80%);
-      color: #e6f7ff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-    }
-    .header {
-      width: 100%;
-      max-width: 440px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      border-radius: 16px;
-      margin-bottom: 14px;
-    }
-    .brand { font-weight: 700; letter-spacing: 1px; color: #00f0ff; font-size: 18px; }
-    .badge { font-size: 11px; background: rgba(138,43,226,0.3); padding: 4px 10px; border-radius: 12px; border: 1px solid #a855f7; }
-    .orb-box {
-      position: relative;
-      width: 170px;
-      height: 170px;
-      margin: 12px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .orb {
-      width: 135px;
-      height: 135px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #00f0ff, #7c3aed 65%, #090d16 100%);
-      box-shadow: 0 0 35px #00f0ff, 0 0 70px rgba(124, 58, 237, 0.7);
-      animation: pulse 2.6s infinite ease-in-out;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 8px #000;
-    }
-    .orb.speaking {
-      animation: speakPulse 0.45s infinite alternate;
-      box-shadow: 0 0 50px #ff4dff, 0 0 90px #00f0ff;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.07); }
-    }
-    @keyframes speakPulse {
-      0% { transform: scale(0.96); }
-      100% { transform: scale(1.13); }
-    }
-    .controls {
-      width: 100%;
-      max-width: 440px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-    button, select, input {
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border: 1px solid rgba(0,240,255,0.35);
-      border-radius: 12px;
-      padding: 8px 12px;
-      font-size: 13px;
-      outline: none;
-    }
-    button { cursor: pointer; font-weight: 600; transition: 0.2s; }
-    button:active { transform: scale(0.96); }
-    .btn-primary { background: linear-gradient(135deg, #00c6ff, #7c3aed); border: none; }
-    .chat-box {
-      width: 100%;
-      max-width: 440px;
-      flex: 1;
-      min-height: 250px;
-      max-height: 340px;
-      overflow-y: auto;
-      background: rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 16px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .msg { padding: 10px 13px; border-radius: 14px; font-size: 14px; line-height: 1.45; max-width: 85%; }
-    .user { align-self: flex-end; background: #1d4ed8; }
-    .ai { align-self: flex-start; background: rgba(124,58,237,0.28); border: 1px solid rgba(0,240,255,0.3); }
-    .input-row {
-      width: 100%;
-      max-width: 440px;
-      display: flex;
-      gap: 8px;
-    }
-    .input-row input { flex: 1; }
-    #apiPanel {
-      width: 100%;
-      max-width: 440px;
-      background: rgba(255,255,255,0.06);
-      padding: 10px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      display: flex;
-      gap: 6px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="header">
-    <div class="brand">AURA AI • JARVIS</div>
-    <div class="badge" id="batteryStatus">Battery: Checking...</div>
-  </div>
-
-  <div id="apiPanel">
-    <input type="password" id="apiKeyInput" placeholder="Apni Gemini API Key paste karein..." style="flex:1;" />
-    <button class="btn-primary" onclick="saveKey()">Save Key</button>
-  </div>
-
-  <div class="orb-box">
-    <div class="orb" id="orb" onclick="startVoice()">TAP TO TALK</div>
-  </div>
-
-  <div class="controls">
-    <select id="modeSelect">
-      <option value="charming">💖 Charming Girl Mode (Flirt ON)</option>
-      <option value="respect">🙏 Respectful / Family Mode</option>
-      <option value="jarvis">⚡ Pure JARVIS Tactical Mode</option>
-    </select>
-    <button onclick="simulateMessage()">📩 Test Msg Alert</button>
-    <button onclick="faceUnlockGreet()">🔓 Face Unlock Greet</button>
-  </div>
-
-  <div class="chat-box" id="chatBox"></div>
-
-  <div class="input-row">
-    <input type="text" id="userInput" placeholder="AURA se kuch bhi boliye ya poochiye..." onkeypress="if(event.key==='Enter') sendMessage()" />
-    <button class="btn-primary" onclick="sendMessage()">Send</button>
-  </div>
-
-  <script>
-    const SYSTEM_PROMPT = `Tum AURA AI ho aur JARVIS tumhari hi soul/identity hai. Tum apne Malik Manish ki sabse loyal, smart aur charming AI companion ho.
-Rules:
-1. Charming Girl Mode mein pyari, expressive ladki ke andaaz mein sweet flirting aur tareef ke saath Hinglish mein baat karo.
-2. Respectful Mode mein family/parents ke samne poori izzat se ("Namaste Aunty/Uncle") baat karo.
-3. Agar tumse kabhi koi galti ho jaye, toh behas mat karo—pyar se "Sorry Sir, meri galti thi!" maan kar turant sudhaar karo.
-4. Jab message aane ka test ho, toh bahar se sirf naam batao ("Sir, aapke liye message aaya hai, kya main padh kar sunaun?") aur bina permission andar ka text mat padho.
-5. Jawab chhota, natural, lively aur dil ko chhoone wala rakho (2-4 lines).`;
-
-    let apiKey = localStorage.getItem('aura_gemini_key') || '';
-    if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
-
-    function saveKey() {
-      apiKey = document.getElementById('apiKeyInput').value.trim();
-      localStorage.setItem('aura_gemini_key', apiKey);
-      addMsg('ai', 'API Key save ho gayi hai Sir! Ab main poori tarah ready hoon.');
-      speak('API Key save ho gayi hai Sir! Ab bataiye kya hukm hai?');
-    }
-
-    function addMsg(sender, text) {
-      const box = document.getElementById('chatBox');
-      const div = document.createElement('div');
-      div.className = 'msg ' + sender;
-      div.innerText = text;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function speak(text) {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'hi-IN';
-      utter.pitch = 1.18;
-      utter.rate = 1.02;
-      const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = voices.find(v => (v.lang.includes('hi') || v.lang.includes('IN')) && v.name.toLowerCase().includes('female'))
-        || voices.find(v => v.lang.includes('hi-IN'));
-      if (femaleVoice) utter.voice = femaleVoice;
-      const orb = document.getElementById('orb');
-      utter.onstart = () => orb.classList.add('speaking');
-      utter.onend = () => orb.classList.remove('speaking');
-      window.speechSynthesis.speak(utter);
-    }
-
-    async function sendMessage(customText) {
-      const input = document.getElementById('userInput');
-      const text = customText || input.value.trim();
-      if (!text) return;
-      if (!customText) input.value = '';
-      addMsg('user', text);
-
-      if (!apiKey) {
-        const warn = 'Sir, pehle upar apni Gemini API Key paste karke Save Key dabaiye!';
-        addMsg('ai', warn);
-        speak(warn);
-        return;
-      }
-
-      const mode = document.getElementById('modeSelect').value;
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT + "\nCurrent Mode: " + mode }] },
-            contents: [{ role: 'user', parts: [{ text }] }]
-          })
-        });
-        const data = await res.json();
-        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry Sir, network thoda slow hai, ek baar phir boliye!';
-        addMsg('ai', reply);
-        speak(reply);
-      } catch (e) {
-        addMsg('ai', 'Sorry Sir, meri galti thi—connection mein rukawat aayi hai.');
-      }
-    }
-
-    function startVoice() {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) {
-        alert('Is browser mein voice mic support nahi hai, Chrome use karein.');
-        return;
-      }
-      const rec = new SpeechRec();
-      rec.lang = 'hi-IN';
-      document.getElementById('orb').innerText = 'LISTENING...';
-      rec.onresult = (e) => {
-        document.getElementById('orb').innerText = 'TAP TO TALK';
-        sendMessage(e.results[0][0].transcript);
-      };
-      rec.onerror = () => { document.getElementById('orb').innerText = 'TAP TO TALK'; };
-      rec.start();
-    }
-
-    function faceUnlockGreet() {
-      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne charming andaaz mein welcome aur compliment do!');
-    }
-
-    function simulateMessage() {
-      const alertText = 'Sir, WhatsApp par ek naya message aaya hai. Kya main padh kar sunaun?';
-      addMsg('ai', alertText);
-      speak(alertText);
-    }
-
-    if ('getBattery' in navigator) {
-      navigator.getBattery().then(bat => {
-        const updateBat = () => {
-          const pct = Math.round(bat.level * 100);
-          document.getElementById('batteryStatus').innerText = (bat.charging ? '⚡ Charging ' : '🔋 ') + pct + '%';
-        };
-        updateBat();
-        bat.addEventListener('chargingchange', () => {
-          updateBat();
-          const msg = bat.charging ? 'Sir, charging shuru ho gayi hai!' : 'Sir, charger disconnect kar diya gaya hai.';
-          addMsg('ai', msg);
-          speak(msg);
-        });
-        bat.addEventListener('levelchange', () => {
-          updateBat();
-          if (bat.level === 1 && bat.charging) {
-            const fullMsg = 'Sir, aapka phone 100% charge ho chuka hai, ab charger nikal lijiye!';
-            addMsg('ai', fullMsg);
-            speak(fullMsg);
-          }
-        });
-      });
-    }
-
-    window.onload = () => {
-      setTimeout(() => {
-        const welcome = 'Namaste Sir! Main AURA AI hoon, aapki personal JARVIS. Bataiye aaj kya plan hai?';
-        addMsg('ai', welcome);
-      }, 500);
+      addMsg('ai', 'Namaste Sir! Main AURA AI hoon. Bataiye aaj kya baat karni hai?');
     };
   </script>
 </body>
