@@ -5,371 +5,663 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AURA AI</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; }
+    :root {
+      --bg-base: #07080c;
+      --bg-elevated: #0f1118;
+      --bg-surface: #161923;
+      --border-subtle: #222634;
+      --border-strong: #32384d;
+      --text-primary: #f4f4f6;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --accent-cyan: #38bdf8;
+      --accent-violet: #c084fc;
+      --accent-emerald: #34d399;
+      --accent-rose: #fb7185;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      background-color: #07080c;
-      color: #f2f2f5;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
       height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
-    svg.ui-icon { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* First-Time Onboarding Modal */
-    .onboard-modal {
+    svg.icon {
+      width: 19px;
+      height: 19px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    /* ================= MODALS & ONBOARDING ================= */
+    .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(4, 5, 10, 0.96);
+      background: rgba(4, 5, 9, 0.94);
       backdrop-filter: blur(18px);
       z-index: 200;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
     }
-    .onboard-modal.open { display: flex; }
-    .onboard-card {
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
       width: 100%;
-      max-width: 400px;
-      background: #0e1017;
-      border: 1px solid #1e2333;
-      border-radius: 28px;
-      padding: 24px 18px;
+      max-width: 410px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 26px;
+      padding: 22px 18px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      text-align: center;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      gap: 15px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85);
+      max-height: 88dvh;
+      overflow-y: auto;
     }
-    .onboard-title {
-      font-size: 21px;
-      font-weight: 600;
-      background: linear-gradient(90deg, #38bdf8, #c084fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .onboard-sub { font-size: 13px; color: #8e95a5; line-height: 1.45; margin-top: -10px; }
-    .duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .duo-card {
-      background: #131620;
-      border: 1.5px solid #22283a;
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+    .modal-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.45; }
+
+    .companion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .companion-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-subtle);
       border-radius: 20px;
       padding: 16px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      color: #f4f4f6;
+      gap: 9px;
+      color: var(--text-primary);
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
     }
-    .duo-card.selected-male {
-      border-color: #38bdf8;
-      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), #131620 75%);
-      box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+    .companion-card.selected-male {
+      border-color: var(--accent-cyan);
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.16), var(--bg-surface) 75%);
     }
-    .duo-card.selected-female {
-      border-color: #c084fc;
-      background: radial-gradient(circle at top, rgba(192, 132, 252, 0.18), #131620 75%);
-      box-shadow: 0 0 25px rgba(192, 132, 252, 0.25);
+    .companion-card.selected-female {
+      border-color: var(--accent-violet);
+      background: radial-gradient(circle at top, rgba(192, 132, 252, 0.16), var(--bg-surface) 75%);
     }
     .mini-orb {
-      width: 78px;
-      height: 78px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
     }
     .mini-orb.male {
-      background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.35), rgba(14, 116, 144, 0.15) 65%, #070b14 100%);
+      background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.35), rgba(14, 116, 144, 0.15) 65%, #070b14);
       border: 1.5px solid rgba(56, 189, 248, 0.7);
-      box-shadow: 0 0 22px rgba(56, 189, 248, 0.45);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
     }
     .mini-orb.female {
-      background: radial-gradient(circle at 35% 30%, rgba(192, 132, 252, 0.35), rgba(126, 34, 206, 0.15) 65%, #0e0714 100%);
+      background: radial-gradient(circle at 35% 30%, rgba(192, 132, 252, 0.35), rgba(126, 34, 206, 0.15) 65%, #0e0714);
       border: 1.5px solid rgba(192, 132, 252, 0.7);
-      box-shadow: 0 0 22px rgba(192, 132, 252, 0.45);
+      box-shadow: 0 0 20px rgba(192, 132, 252, 0.35);
     }
-    .duo-name { font-size: 14px; font-weight: 600; }
-    .duo-tag { font-size: 11px; color: #9ca3af; }
-    .onboard-confirm {
-      background: linear-gradient(90deg, #38bdf8, #818cf8);
-      color: #05070d;
-      border: none;
-      border-radius: 16px;
-      padding: 13px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+    .comp-name { font-size: 13.5px; font-weight: 600; }
+    .comp-desc { font-size: 11px; color: var(--text-muted); text-align: center; }
 
-    /* Top Header */
+    /* ================= TOP HEADER ================= */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 12px 16px;
-      background: #07080c;
+      background: var(--bg-base);
       border-bottom: 1px solid #141722;
       z-index: 10;
     }
-    .top-left { display: flex; align-items: center; gap: 10px; }
-    .round-btn {
-      width: 38px;
-      height: 38px;
+    .top-group { display: flex; align-items: center; gap: 9px; }
+    .icon-btn {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: #12151f;
-      border: 1px solid #202536;
-      color: #e4e4e7;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
-    .round-btn:active { transform: scale(0.94); }
+    .icon-btn:active { background: var(--bg-surface); color: var(--text-primary); }
+
     .brand-pill {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #12151f;
-      border: 1px solid #202536;
-      padding: 7px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 13px;
       border-radius: 20px;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
+      cursor: pointer;
     }
-    .aura-dot {
+    .status-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #38bdf8;
-      box-shadow: 0 0 8px #38bdf8;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
     }
-    .aura-dot.female-theme { background: #c084fc; box-shadow: 0 0 8px #c084fc; }
-    .aura-dot.speaking { animation: pulseDot 0.45s infinite alternate; }
+    .status-dot.female { background: var(--accent-violet); box-shadow: 0 0 8px var(--accent-violet); }
+    .status-dot.speaking { animation: pulseDot 0.45s infinite alternate; }
     @keyframes pulseDot { from { transform: scale(0.85); } to { transform: scale(1.7); } }
 
-    .top-right { display: flex; align-items: center; gap: 8px; }
-    .mode-badge {
+    .plan-pill {
       font-size: 11px;
-      color: #38bdf8;
-      background: #12151f;
-      border: 1px solid #202536;
-      padding: 6px 10px;
-      border-radius: 16px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 11px;
+      border-radius: 18px;
       cursor: pointer;
     }
-    .mode-badge.female-theme { color: #c084fc; }
+    .plan-pill.vip {
+      color: var(--accent-emerald);
+      border-color: rgba(52, 211, 153, 0.35);
+      background: rgba(52, 211, 153, 0.08);
+    }
 
-    /* Sidebar */
-    .overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72); z-index: 40; }
-    .overlay.open { display: block; }
+    /* ================= SIDEBAR ================= */
+    .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.68); z-index: 40; }
+    .drawer-overlay.open { display: block; }
     .sidebar {
-      position: fixed; top: 0; left: -305px; width: 290px; height: 100dvh;
-      background: #0c0e14; border-right: 1px solid #1b1f2e; z-index: 50;
-      display: flex; flex-direction: column; padding: 16px 12px;
-      transition: left 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 285px;
+      height: 100dvh;
+      background: var(--bg-elevated);
+      border-right: 1px solid var(--border-subtle);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 12px;
+      transition: left 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .sidebar.open { left: 0; }
     .new-chat-btn {
-      display: flex; align-items: center; gap: 10px; background: #161a26;
-      color: #f4f4f6; border: 1px solid #252b3d; border-radius: 22px;
-      padding: 11px 16px; font-size: 14px; font-weight: 500; cursor: pointer; margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
-    .search-box {
-      background: #07080c; border: 1px solid #1f2433; border-radius: 14px;
-      padding: 8px 12px; color: #f4f4f6; font-size: 13px; margin-bottom: 12px; outline: none;
+    .search-input {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 9px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      margin-bottom: 12px;
+      outline: none;
     }
-    .sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.9px; color: #6b7280; padding: 8px 12px 4px; font-weight: 600; }
-    .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; }
+    .sec-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); padding: 6px 10px; font-weight: 600; }
+    .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
     .history-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 12px; border-radius: 14px; font-size: 13.5px; color: #9ca3af; cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      cursor: pointer;
     }
-    .history-item.active { background: #172033; color: #38bdf8; }
+    .history-item.active { background: var(--bg-surface); color: var(--text-primary); font-weight: 500; }
     .history-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px; }
-    .hist-btns { display: flex; gap: 3px; }
-    .mini-svg-btn { background: transparent; border: none; color: #6b7280; padding: 4px; display: flex; align-items: center; cursor: pointer; }
-    .mini-svg-btn svg { width: 15px; height: 15px; }
-    .mini-svg-btn.pinned { color: #38bdf8; }
-    .sidebar-footer { border-top: 1px solid #1b1f2e; padding-top: 10px; display: flex; gap: 8px; }
+    .hist-actions { display: flex; gap: 2px; }
+    .mini-btn { background: transparent; border: none; color: var(--text-muted); padding: 4px; display: flex; align-items: center; cursor: pointer; }
+    .mini-btn svg { width: 14px; height: 14px; }
+    .mini-btn.pinned { color: var(--accent-cyan); }
+    .sidebar-footer { border-top: 1px solid var(--border-subtle); padding-top: 10px; display: flex; gap: 6px; }
 
-    /* Settings Sheet */
-    .settings-panel {
-      display: none; flex-direction: column; gap: 10px; padding: 14px 16px;
-      background: #0e1017; border-bottom: 1px solid #1e2333; max-height: 70dvh; overflow-y: auto;
+    /* ================= SETTINGS DRAWER ================= */
+    .settings-drawer {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      max-height: 72dvh;
+      overflow-y: auto;
     }
-    .settings-panel.open { display: flex; }
+    .settings-drawer.open { display: flex; }
     .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
     input, select, textarea {
-      background: #07080c; color: #f4f4f6; border: 1px solid #22283a;
-      border-radius: 12px; padding: 10px 12px; font-size: 13px; outline: none;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      outline: none;
     }
-    .save-btn {
-      background: #f4f4f6; color: #09090b; border: none; border-radius: 12px;
-      padding: 10px 16px; font-weight: 600; font-size: 13px; cursor: pointer;
+    .btn-primary {
+      background: var(--text-primary);
+      color: var(--bg-base);
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
     }
-    .ghost-btn {
-      background: #141824; color: #d4d4d8; border: 1px solid #22283a;
-      border-radius: 12px; padding: 8px 12px; font-size: 12px; cursor: pointer; flex: 1; text-align: center;
+    .btn-secondary {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 9px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      flex: 1;
+      text-align: center;
     }
-    .ghost-btn.active-pill { border-color: #38bdf8; color: #38bdf8; }
-    .ghost-btn.danger-pill { border-color: #f43f5e; color: #fda4af; }
+    .btn-secondary.accent { color: var(--accent-cyan); border-color: rgba(56, 189, 248, 0.35); }
+    .btn-secondary.danger { color: var(--accent-rose); border-color: rgba(251, 113, 133, 0.35); }
 
-    /* Main Chat Area */
-    .chat-area {
-      flex: 1; overflow-y: auto; padding: 16px 18px;
-      display: flex; flex-direction: column; gap: 20px;
+    /* ================= MAIN CHAT CONTAINER ================= */
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
-    .welcome-box { margin: auto 0; padding: 8px 4px; display: flex; flex-direction: column; gap: 16px; }
-    .welcome-title {
-      font-size: 28px; font-weight: 600; letter-spacing: -0.5px;
+    .welcome-screen {
+      margin: auto 0;
+      max-width: 520px;
+      width: 100%;
+      align-self: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .welcome-heading {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.6px;
       background: linear-gradient(110deg, #ffffff 15%, #38bdf8 60%, #c084fc 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .welcome-sub { font-size: 14.5px; color: #8e95a5; margin-top: -8px; }
-    .quick-prompts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
-    .qp-item {
-      display: flex; flex-direction: column; gap: 8px; background: #0e1017;
-      border: 1px solid #1b2030; padding: 14px; border-radius: 16px;
-      color: #d4d4d8; font-size: 13px; text-align: left; cursor: pointer;
+    .welcome-sub { font-size: 14px; color: var(--text-secondary); margin-top: -8px; }
+    .suggestion-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .sug-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: left;
+      cursor: pointer;
     }
-    .qp-item svg { width: 18px; height: 18px; color: #38bdf8; }
+    .sug-card:active { background: var(--bg-surface); }
+    .sug-title { font-size: 13.5px; font-weight: 500; color: var(--text-primary); }
+    .sug-desc { font-size: 11.5px; color: var(--text-muted); }
 
-    /* Messages */
-    .msg-wrap { display: flex; flex-direction: column; max-width: 88%; }
-    .msg-wrap.user { align-self: flex-end; }
-    .msg-wrap.ai { align-self: flex-start; max-width: 96%; }
-    .msg-meta { font-size: 11px; color: #6b7280; margin-bottom: 4px; padding: 0 4px; }
-    .msg-bubble { padding: 12px 16px; border-radius: 20px; font-size: 15px; line-height: 1.6; word-wrap: break-word; }
-    .user .msg-bubble { background: #161a26; color: #f4f4f6; border-bottom-right-radius: 4px; }
-    .ai .msg-bubble { background: transparent; color: #e4e4e7; padding: 2px 4px; }
-    .gen-img { width: 100%; max-width: 320px; border-radius: 16px; margin-top: 8px; border: 1px solid #22283a; display: block; }
-    .code-card { background: #0e1017; border: 1px solid #1f2536; border-radius: 14px; margin: 10px 0; overflow: hidden; }
-    .code-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: #141824; font-size: 11px; color: #9ca3af; }
-    .code-body { padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; overflow-x: auto; white-space: pre; color: #e4e4e7; }
-    .msg-actions { display: flex; gap: 8px; margin-top: 8px; padding-left: 4px; flex-wrap: wrap; }
-    .act-chip {
-      display: flex; align-items: center; gap: 5px; background: #10131c;
-      border: 1px solid #1f2536; color: #9ca3af; font-size: 11px; padding: 5px 10px; border-radius: 10px; cursor: pointer;
+    .msg-row { display: flex; flex-direction: column; max-width: 88%; }
+    .msg-row.user { align-self: flex-end; }
+    .msg-row.ai { align-self: flex-start; max-width: 96%; }
+    .msg-sender { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; padding: 0 4px; }
+    .msg-content { font-size: 15px; line-height: 1.65; word-wrap: break-word; }
+    .user .msg-content {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      padding: 11px 16px;
+      border-radius: 20px;
+      border-bottom-right-radius: 4px;
     }
-    .act-chip svg { width: 13px; height: 13px; }
-    .attach-chip {
-      display: inline-flex; align-items: center; gap: 6px; background: #131824;
-      border: 1px solid #242d42; color: #38bdf8; font-size: 12px; padding: 4px 10px; border-radius: 10px; margin-bottom: 6px;
+    .ai .msg-content { background: transparent; color: #e4e4e7; padding: 2px 4px; }
+    .gen-image {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 16px;
+      margin-top: 10px;
+      border: 1px solid var(--border-subtle);
+      display: block;
+    }
+    .code-block {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 12px;
+      background: var(--bg-surface);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+    .code-pre {
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px;
+      overflow-x: auto;
+      white-space: pre;
+      color: var(--text-primary);
+    }
+    .msg-toolbar { display: flex; gap: 6px; margin-top: 8px; padding-left: 4px; }
+    .tool-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .tool-chip svg { width: 12px; height: 12px; }
+    .file-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--accent-cyan);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      margin-bottom: 6px;
     }
 
-    /* Bottom Composer */
-    .bottom-dock { padding: 8px 14px 16px; background: #07080c; position: relative; }
-    .active-tool-pill {
-      display: none; align-items: center; justify-content: space-between;
-      background: #111927; border: 1px solid #1e3a5f; border-radius: 12px;
-      padding: 6px 12px; margin-bottom: 8px; font-size: 12px; color: #38bdf8;
+    /* ================= BOTTOM COMPOSER ================= */
+    .composer-dock { padding: 8px 14px 16px; background: var(--bg-base); }
+    .active-mode-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 6px 12px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--accent-cyan);
     }
-    .active-tool-pill.show { display: flex; }
-    .composer {
-      display: flex; align-items: center; background: #12151f;
-      border: 1px solid #202536; border-radius: 28px; padding: 5px 6px; gap: 4px;
+    .active-mode-bar.show { display: flex; }
+
+    .composer-pill {
+      display: flex;
+      align-items: center;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
+      padding: 5px 6px;
+      gap: 4px;
     }
-    .plus-trigger {
-      width: 38px; height: 38px; border-radius: 50%; border: none;
-      background: #1b2030; color: #f4f4f6; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    .circle-action {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
-    .composer input[type="text"] { flex: 1; background: transparent; border: none; padding: 8px; font-size: 15px; color: #f4f4f6; }
-    .mic-btn {
-      width: 38px; height: 38px; border-radius: 50%; border: none;
-      background: transparent; color: #9ca3af; display: flex; align-items: center; justify-content: center; cursor: pointer;
-    }
-    .wave-btn {
-      width: 38px; height: 38px; border-radius: 50%; border: 1px solid #263047;
-      background: #161d2e; color: #38bdf8; display: flex; align-items: center; justify-content: center; cursor: pointer;
-    }
-    .send-btn {
-      width: 38px; height: 38px; border-radius: 50%; border: none;
-      background: #f4f4f6; color: #09090b; display: none; align-items: center; justify-content: center; cursor: pointer;
+    .circle-action.plus { background: var(--bg-surface); color: var(--text-primary); }
+    .circle-action.live { background: var(--bg-surface); color: var(--accent-cyan); border: 1px solid var(--border-subtle); }
+    .circle-action.send { background: var(--text-primary); color: var(--bg-base); display: none; }
+    .composer-pill input[type="text"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 8px;
+      font-size: 15px;
+      color: var(--text-primary);
     }
 
-    /* '+' Action Sheet */
-    .sheet-backdrop { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.68); z-index: 60; }
-    .sheet-backdrop.open { display: block; }
-    .plus-sheet {
-      position: fixed; left: 0; right: 0; bottom: -680px; background: #10131c;
-      border-top: 1px solid #202638; border-top-left-radius: 24px; border-top-right-radius: 24px;
-      padding: 14px 16px 26px; z-index: 70; transition: bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex; flex-direction: column; gap: 12px; max-height: 82dvh; overflow-y: auto;
+    /* ================= '+' TOOLS BOTTOM SHEET ================= */
+    .sheet-mask { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); z-index: 60; }
+    .sheet-mask.open { display: block; }
+    .bottom-sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -740px;
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--border-subtle);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 12px 16px 26px;
+      z-index: 70;
+      transition: bottom 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 84dvh;
+      overflow-y: auto;
     }
-    .plus-sheet.open { bottom: 0; }
-    .sheet-handle { width: 36px; height: 4px; border-radius: 4px; background: #374151; margin: 0 auto 4px; flex-shrink: 0; }
-    .media-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .media-card {
-      background: #171c29; border: 1px solid #232a3d; border-radius: 16px; padding: 12px 8px;
-      display: flex; flex-direction: column; align-items: center; gap: 6px; color: #f4f4f6; font-size: 12.5px; cursor: pointer;
+    .bottom-sheet.open { bottom: 0; }
+    .sheet-grabber { width: 36px; height: 4px; border-radius: 4px; background: var(--border-strong); margin: 0 auto; flex-shrink: 0; }
+    .attach-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .attach-tile {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-primary);
+      font-size: 12.5px;
+      cursor: pointer;
     }
-    .tool-list { display: flex; flex-direction: column; gap: 3px; }
-    .tool-row {
-      display: flex; align-items: center; gap: 14px; background: transparent; border: none;
-      padding: 10px 12px; border-radius: 14px; color: #f4f4f6; text-align: left; cursor: pointer;
+    .tools-stack { display: flex; flex-direction: column; gap: 2px; }
+    .tool-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: transparent;
+      border: none;
+      padding: 10px 10px;
+      border-radius: 14px;
+      color: var(--text-primary);
+      text-align: left;
+      cursor: pointer;
     }
-    .tool-row:active { background: #171c29; }
-    .tool-row svg { width: 20px; height: 20px; color: #38bdf8; flex-shrink: 0; }
-    .tool-info { display: flex; flex-direction: column; }
-    .tool-name { font-size: 14px; font-weight: 500; }
-    .tool-desc { font-size: 12px; color: #6b7280; }
+    .tool-item:active { background: var(--bg-surface); }
+    .tool-item svg { color: var(--accent-cyan); }
+    .tool-meta { display: flex; flex-direction: column; flex: 1; }
+    .tool-heading { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .tool-caption { font-size: 12px; color: var(--text-muted); }
 
-    /* Feature Sub-Modals (Same Dark OLED Theme) */
-    .feature-modal {
-      display: none; position: fixed; inset: 0; background: rgba(4, 5, 10, 0.94);
-      backdrop-filter: blur(14px); z-index: 150; flex-direction: column;
-      align-items: center; justify-content: center; padding: 18px;
+    .badge-free {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--accent-emerald);
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 1px 6px;
+      border-radius: 6px;
     }
-    .feature-modal.open { display: flex; }
-    .feature-card {
-      width: 100%; max-width: 410px; background: #0e1017; border: 1px solid #1e2538;
-      border-radius: 24px; padding: 20px 18px; display: flex; flex-direction: column;
-      gap: 14px; max-height: 86dvh; overflow-y: auto;
+    .badge-vip {
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 1px 6px;
+      border-radius: 6px;
     }
-    .fc-head { display: flex; justify-content: space-between; align-items: center; }
-    .fc-title { font-size: 17px; font-weight: 600; color: #f4f4f6; }
-    .fc-sub { font-size: 12.5px; color: #8e95a5; line-height: 1.45; }
-    .plan-box {
-      background: #131722; border: 1px solid #222a3f; border-radius: 16px;
-      padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;
-    }
-    .plan-box.highlight { border-color: #38bdf8; background: #111d2e; }
-    .plan-name { font-size: 14px; font-weight: 600; color: #f4f4f6; }
-    .plan-meta { font-size: 11.5px; color: #9ca3af; margin-top: 2px; }
-    .plan-price { font-size: 15px; font-weight: 700; color: #38bdf8; text-align: right; }
-    .disclaimer-note { font-size: 11px; color: #6b7280; line-height: 1.4; background: #0a0c12; padding: 8px 10px; border-radius: 10px; }
 
-    /* ================= HOLOGRAPHIC 3D-STYLE AVATAR ORB + REAL LIP-SYNC ================= */
-    .live-modal {
-      display: none; position: fixed; inset: 0;
+    .plan-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 13px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .plan-item.featured { border-color: var(--accent-cyan); }
+    .plan-title { font-size: 14px; font-weight: 600; }
+    .plan-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .plan-cost { font-size: 15px; font-weight: 700; color: var(--accent-cyan); }
+    .note-box {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      background: var(--bg-base);
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* ================= FLOATING HEARTBEAT BUBBLE (OVERLAY PREVIEW) ================= */
+    .floating-bubble {
+      display: none;
+      position: fixed;
+      right: 14px;
+      bottom: 92px;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(56, 189, 248, 0.45), rgba(14, 116, 144, 0.25) 70%, #07080c);
+      border: 1.5px solid var(--accent-cyan);
+      box-shadow: 0 0 24px rgba(56, 189, 248, 0.5);
+      z-index: 95;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      animation: heartbeatPulse 1.6s infinite ease-in-out;
+    }
+    .floating-bubble.show { display: flex; }
+    .floating-bubble.female {
+      background: radial-gradient(circle at 35% 30%, rgba(192, 132, 252, 0.45), rgba(126, 34, 206, 0.25) 70%, #07080c);
+      border-color: var(--accent-violet);
+      box-shadow: 0 0 24px rgba(192, 132, 252, 0.5);
+    }
+    @keyframes heartbeatPulse {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.09); }
+      50% { transform: scale(0.97); }
+      75% { transform: scale(1.06); }
+    }
+
+    .mini-bubble-popup {
+      display: none;
+      position: fixed;
+      right: 16px;
+      bottom: 156px;
+      width: 290px;
+      background: rgba(15, 17, 24, 0.96);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      padding: 14px;
+      z-index: 96;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.85);
+    }
+    .mini-bubble-popup.open { display: flex; }
+
+    /* ================= 3D HOLOGRAPHIC FACE + REAL LIP-SYNC LIVE VIEW ================= */
+    .live-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
       background: radial-gradient(circle at 50% 42%, #0d1326 0%, #04050a 75%);
-      z-index: 100; flex-direction: column; justify-content: space-between;
+      z-index: 120;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .live-modal.open { display: flex; }
-    .live-top { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; z-index: 10; }
-    .live-status-pill {
-      display: flex; align-items: center; gap: 8px; background: rgba(16, 20, 32, 0.85);
-      border: 1px solid #242c42; padding: 7px 14px; border-radius: 20px; font-size: 13px; color: #e4e4e7;
+    .live-screen.open { display: flex; }
+    .live-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; z-index: 10; }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 20, 32, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 7px 14px;
+      border-radius: 20px;
+      font-size: 13px;
     }
-    .live-stage {
-      position: absolute; inset: 0; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; overflow: hidden;
+    .live-canvas-area {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
     #liveVideo { width: 100%; height: 100%; object-fit: cover; display: none; }
 
     .holo-wrapper {
-      position: relative; width: 260px; height: 260px; display: flex;
-      align-items: center; justify-content: center; margin-top: -30px; z-index: 4;
+      position: relative;
+      width: 260px;
+      height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: -32px;
+      z-index: 4;
     }
     .holo-sphere {
-      position: relative; width: 225px; height: 225px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      position: relative;
+      width: 225px;
+      height: 225px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
       transition: transform 0.35s ease, box-shadow 0.35s ease;
     }
     .holo-sphere.male {
@@ -382,15 +674,21 @@
       border: 1.5px solid rgba(192, 132, 252, 0.65);
       box-shadow: 0 0 65px rgba(192, 132, 252, 0.4), inset 0 0 40px rgba(192, 132, 252, 0.35);
     }
-
     .plasma-ring {
-      position: absolute; inset: -14px; border-radius: 50%; border: 1.5px solid transparent;
-      border-top-color: rgba(56, 189, 248, 0.75); border-bottom-color: rgba(56, 189, 248, 0.35);
-      animation: spinRing 7s linear infinite; pointer-events: none;
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-top-color: rgba(56, 189, 248, 0.75);
+      border-bottom-color: rgba(56, 189, 248, 0.35);
+      animation: spinRing 7s linear infinite;
+      pointer-events: none;
     }
     .plasma-ring.ring2 {
-      inset: -26px; border-top-color: transparent;
-      border-left-color: rgba(192, 132, 252, 0.6); border-right-color: rgba(56, 189, 248, 0.6);
+      inset: -26px;
+      border-top-color: transparent;
+      border-left-color: rgba(192, 132, 252, 0.6);
+      border-right-color: rgba(56, 189, 248, 0.6);
       animation: spinRingReverse 11s linear infinite;
     }
     .female-ring .plasma-ring { border-top-color: rgba(216, 180, 254, 0.8); border-bottom-color: rgba(168, 85, 247, 0.4); }
@@ -398,14 +696,18 @@
     @keyframes spinRingReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
     .holo-pedestal {
-      position: absolute; bottom: -26px; width: 170px; height: 22px; border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.55) 0%, transparent 72%); filter: blur(3px);
+      position: absolute;
+      bottom: -26px;
+      width: 170px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(56, 189, 248, 0.55) 0%, transparent 72%);
+      filter: blur(3px);
     }
     .holo-pedestal.female { background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.55) 0%, transparent 72%); }
 
     .holo-wrapper.speaking .holo-sphere { animation: speakPulse 0.45s infinite alternate ease-in-out; }
     .holo-wrapper.thinking .plasma-ring { animation-duration: 1.4s; }
-    .holo-wrapper.listening .holo-sphere { transform: scale(1.05); }
     @keyframes speakPulse { from { transform: scale(0.98); } to { transform: scale(1.04); } }
 
     .holo-face-svg { width: 175px; height: 195px; margin-top: 16px; filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.65)); }
@@ -413,55 +715,102 @@
     .eye-blink { transform-origin: center; animation: blinkEyes 4.2s infinite; }
     @keyframes blinkEyes { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.08); } }
 
-    .state-strip {
-      position: absolute; bottom: 168px; display: flex; gap: 6px;
-      background: rgba(12, 15, 24, 0.85); border: 1px solid #1e2538;
-      padding: 5px 10px; border-radius: 20px; z-index: 8;
+    .custom-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      mix-blend-mode: screen;
+      display: none;
     }
-    .st-pill { font-size: 10.5px; color: #6b7280; padding: 3px 8px; border-radius: 12px; transition: all 0.2s ease; }
-    .st-pill.active { background: #1d2842; color: #38bdf8; font-weight: 600; }
 
-    .live-caption {
-      position: absolute; bottom: 104px; left: 18px; right: 18px; text-align: center;
-      background: rgba(12, 15, 24, 0.86); backdrop-filter: blur(10px); border: 1px solid #20273b;
-      padding: 10px 14px; border-radius: 16px; font-size: 13.5px; color: #f4f4f6; z-index: 8;
+    .live-state-bar {
+      position: absolute;
+      bottom: 162px;
+      display: flex;
+      gap: 6px;
+      background: rgba(12, 15, 24, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 5px 10px;
+      border-radius: 20px;
+      z-index: 8;
     }
-    .live-bottom { display: flex; justify-content: center; align-items: center; gap: 14px; padding: 14px 16px 28px; z-index: 10; }
-    .live-btn {
-      width: 52px; height: 52px; border-radius: 50%; border: 1px solid #242c42;
-      background: rgba(16, 20, 32, 0.92); color: #f4f4f6; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    .state-tag { font-size: 10.5px; color: var(--text-muted); padding: 3px 8px; border-radius: 10px; }
+    .state-tag.active { background: #1d2842; color: var(--accent-cyan); font-weight: 600; }
+
+    .live-transcript {
+      position: absolute;
+      bottom: 100px;
+      left: 18px;
+      right: 18px;
+      text-align: center;
+      background: rgba(12, 15, 24, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13.5px;
+      z-index: 8;
     }
-    .live-btn.active { background: #38bdf8; color: #05070d; border-color: #38bdf8; }
-    .live-close {
-      width: 52px; height: 52px; border-radius: 50%; border: none;
-      background: #f4f4f6; color: #09090b; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    .live-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px 28px;
+      z-index: 10;
+    }
+    .live-ctrl-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: rgba(16, 20, 32, 0.92);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .live-ctrl-btn.active { background: var(--accent-cyan); color: var(--bg-base); border-color: var(--accent-cyan); }
+    .live-end-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      background: var(--text-primary);
+      color: var(--bg-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- First-Time Holographic Companion Selection Modal -->
-  <div class="onboard-modal" id="onboardModal">
-    <div class="onboard-card">
-      <div class="onboard-title">Select Your AI Companion</div>
-      <div class="onboard-sub">Ek baar select karein — Live Lip-Sync aur 100% Free Neural Voice hamesha ke liye set ho jayegi.</div>
-      <div class="duo-grid">
-        <button class="duo-card selected-male" id="optMale" onclick="playSound('switch'); pickGender('male')">
+  <!-- First-Time Holographic Companion Setup -->
+  <div class="modal-backdrop" id="onboardModal">
+    <div class="modal-card" style="text-align:center;">
+      <div class="modal-title">Welcome to AURA AI</div>
+      <div class="modal-sub">Apna Holographic Companion chunein — situation ke mutabik tone, respect aur lip-sync automatic adapt hoga.</div>
+      <div class="companion-grid">
+        <button class="companion-card selected-male" id="optMale" onclick="playSound('switch'); selectGender('male')">
           <div class="mini-orb male">
-            <svg viewBox="0 0 100 100" style="width:54px;height:54px;">
+            <svg viewBox="0 0 100 100" style="width:52px;height:52px;">
               <path d="M30 42 C30 22, 70 22, 70 42 L67 66 C65 78, 56 84, 50 84 C44 84, 35 78, 33 66 Z" fill="rgba(56,189,248,0.22)" stroke="#38bdf8" stroke-width="2.5"/>
               <ellipse cx="41" cy="48" rx="5" ry="2.5" fill="#e0f2fe"/>
               <ellipse cx="59" cy="48" rx="5" ry="2.5" fill="#e0f2fe"/>
               <path d="M44 68 Q50 71 56 68" stroke="#7dd3fc" stroke-width="2.2" fill="none" stroke-linecap="round"/>
             </svg>
           </div>
-          <span class="duo-name">Male Companion</span>
-          <span class="duo-tag">Cyan Orb • Jarvis Vibe</span>
+          <span class="comp-name">Male • Jarvis</span>
+          <span class="comp-desc">Cyan Orb • Sharp & Protective</span>
         </button>
 
-        <button class="duo-card" id="optFemale" onclick="playSound('switch'); pickGender('female')">
+        <button class="companion-card" id="optFemale" onclick="playSound('switch'); selectGender('female')">
           <div class="mini-orb female">
-            <svg viewBox="0 0 100 100" style="width:54px;height:54px;">
+            <svg viewBox="0 0 100 100" style="width:52px;height:52px;">
               <path d="M24 55 C22 24, 78 24, 76 55 C76 70, 70 78, 66 78 C66 66, 68 44, 50 40 C32 44, 34 66, 34 78 C30 78, 24 70, 24 55 Z" fill="rgba(192,132,252,0.28)" stroke="#c084fc" stroke-width="2"/>
               <path d="M33 44 C33 26, 67 26, 67 44 L64 65 C62 76, 55 82, 50 82 C45 82, 38 76, 36 65 Z" fill="rgba(216,180,254,0.2)" stroke="#e9d5ff" stroke-width="2.2"/>
               <ellipse cx="42" cy="49" rx="4.8" ry="2.8" fill="#f3e8ff"/>
@@ -469,362 +818,444 @@
               <path d="M44 67 Q50 71 56 67" stroke="#f0abfc" stroke-width="2.2" fill="none" stroke-linecap="round"/>
             </svg>
           </div>
-          <span class="duo-name">Female Companion</span>
-          <span class="duo-tag">Violet Orb • Caring Partner</span>
+          <span class="comp-name">Female • Swara</span>
+          <span class="comp-desc">Violet Orb • Warm & Caring</span>
         </button>
       </div>
-      <button class="onboard-confirm" onclick="playSound('chime'); confirmCompanion()">Activate 30-Day Free VIP</button>
+      <button class="btn-primary" onclick="playSound('chime'); finishOnboarding()">Start Free Forever Plan</button>
     </div>
   </div>
 
-  <!-- Sidebar Drawer -->
-  <div class="overlay" id="overlay" onclick="playSound('tap'); toggleSidebar()"></div>
+  <!-- Sidebar History Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="playSound('tap'); toggleSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <button class="new-chat-btn" onclick="playSound('chime'); createNewChat()">
-      <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       <span>New chat</span>
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <input type="text" class="search-box" id="historySearch" placeholder="Search chats..." oninput="renderSidebar()" />
-    <div class="sec-label" id="pinHeader" style="display:none;">Pinned</div>
-    <div class="history-list" id="pinnedList" style="flex:0; margin-bottom:10px;"></div>
+    <input type="text" class="search-input" id="searchHistory" placeholder="Search conversations..." oninput="renderSidebar()" />
+    <div class="sec-label" id="pinnedLabel" style="display:none;">Pinned</div>
+    <div class="history-list" id="pinnedList" style="flex:0; margin-bottom:8px;"></div>
     <div class="sec-label">Recent</div>
     <div class="history-list" id="recentList"></div>
     <div class="sidebar-footer">
-      <button class="ghost-btn" onclick="playSound('tap'); exportCurrentChat()">Export</button>
-      <button class="ghost-btn" onclick="playSound('tap'); openFeatureModal('vipModal')">VIP Plans</button>
-      <button class="ghost-btn" onclick="playSound('tap'); clearAllChats()">Clear</button>
+      <button class="btn-secondary" onclick="playSound('tap'); exportChat()">Export</button>
+      <button class="btn-secondary accent" onclick="playSound('tap'); openModal('vipModal')">VIP Plans</button>
+      <button class="btn-secondary" onclick="playSound('tap'); clearAllChats()">Clear</button>
     </div>
   </div>
 
-  <!-- Top Bar -->
-  <div class="topbar">
-    <div class="top-left">
-      <button class="round-btn" onclick="playSound('tap'); toggleSidebar()" aria-label="Menu">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg>
+  <!-- Top Header -->
+  <header class="topbar">
+    <div class="top-group">
+      <button class="icon-btn" onclick="playSound('tap'); toggleSidebar()" aria-label="Menu">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 8h16M4 16h10"/></svg>
       </button>
-      <div class="brand-pill" onclick="playSound('tap')">
-        <span class="aura-dot" id="statusDot"></span>
-        <span id="brandTitle">AURA AI</span>
+      <div class="brand-pill" onclick="playSound('tap'); toggleSettings()">
+        <span class="status-dot" id="headerDot"></span>
+        <span id="headerTitle">AURA</span>
       </div>
     </div>
-    <div class="top-right">
-      <span class="mode-badge" id="statusText" onclick="playSound('switch'); openFeatureModal('vipModal')">VIP • 30d Free</span>
-      <button class="round-btn" onclick="playSound('tap'); toggleSettings()" aria-label="Settings">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+    <div class="top-group">
+      <span class="plan-pill" id="planBadge" onclick="playSound('switch'); openModal('vipModal')">Free • Upgrade</span>
+      <button class="icon-btn" onclick="playSound('tap'); toggleSettings()" aria-label="Settings">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
       </button>
     </div>
-  </div>
+  </header>
 
-  <!-- Clean Settings Drawer (All PDF Protocols & Controls) -->
-  <div class="settings-panel" id="settingsPanel">
+  <!-- Minimal Settings Drawer (Zero Manual Switches — 100% Auto Situation-Aware) -->
+  <div class="settings-drawer" id="settingsDrawer">
     <div class="row">
-      <input type="password" id="apiKeyInput" placeholder="Paste Gemini API Key..." style="flex:1;" />
-      <button class="save-btn" onclick="playSound('chime'); saveKey()">Save</button>
+      <input type="password" id="apiKeyInput" placeholder="Gemini API Key..." style="flex:1;" />
+      <button class="btn-primary" onclick="playSound('chime'); saveApiKey()">Save</button>
     </div>
     <div class="row">
-      <select id="genderSelect" onchange="changeCompanionFromSettings()" style="flex:1;">
-        <option value="male">Hologram: Male Companion (Jarvis Vibe)</option>
-        <option value="female">Hologram: Female Companion (Caring Partner)</option>
+      <select id="voiceGenderSelect" onchange="updateVoiceGender()" style="flex:1;">
+        <option value="male">Hologram: Male (Jarvis)</option>
+        <option value="female">Hologram: Female (Swara)</option>
       </select>
-      <select id="langSelect" onchange="playSound('switch')" style="flex:1;">
-        <option value="Hinglish">Language: Hinglish (Default)</option>
-        <option value="Odia">Language: Odia (ଓଡ଼ିଆ)</option>
+      <select id="languageSelect" onchange="playSound('switch')" style="flex:1;">
+        <option value="Hinglish">Language: Hinglish</option>
+        <option value="Odia">Language: Odia</option>
         <option value="Bhojpuri">Language: Bhojpuri</option>
-        <option value="Bengali">Language: Bengali (বাংলা)</option>
-        <option value="Marathi">Language: Marathi (मराठी)</option>
-        <option value="Tamil">Language: Tamil (தமிழ்)</option>
-        <option value="Telugu">Language: Telugu (తెలుగు)</option>
-        <option value="Gujarati">Language: Gujarati (ગુજરાતી)</option>
-        <option value="Punjabi">Language: Punjabi (ਪੰਜਾਬੀ)</option>
+        <option value="Bengali">Language: Bengali</option>
+        <option value="Marathi">Language: Marathi</option>
+        <option value="Tamil">Language: Tamil</option>
+        <option value="Telugu">Language: Telugu</option>
+        <option value="Gujarati">Language: Gujarati</option>
+        <option value="Punjabi">Language: Punjabi</option>
       </select>
     </div>
     <div class="row">
-      <button class="ghost-btn active-pill" id="charmToggleBtn" onclick="toggleCharmMode()">Charm Mode: ON</button>
-      <button class="ghost-btn" id="familyToggleBtn" onclick="toggleFamilyMode()">Parents Guard: OFF</button>
-      <button class="ghost-btn" id="ageToggleBtn" onclick="toggleAgeFilter()">Age: 18+ Adult</button>
+      <button class="btn-secondary" id="soundBtn" onclick="toggleSound()">Sound: ON</button>
+      <button class="btn-secondary" id="wakeBtn" onclick="toggleWakeWord()">"Hey AURA": OFF</button>
+      <button class="btn-secondary accent" onclick="playSound('switch'); toggleFloatingBubble()">Float Ball</button>
     </div>
     <div class="row">
-      <button class="ghost-btn" id="soundToggleBtn" onclick="toggleUiSound()">Sound: ON</button>
-      <button class="ghost-btn" onclick="playSound('tap'); openFeatureModal('memoryModal')">Memory Vault</button>
-      <button class="ghost-btn" onclick="playSound('tap'); triggerPromoMode()">Promo Mode</button>
-    </div>
-    <div class="row">
-      <button class="ghost-btn" onclick="playSound('tap'); faceUnlockGreet()">Face Greet</button>
-      <button class="ghost-btn" onclick="playSound('tap'); simulateMessage()">WA Shield</button>
-      <button class="ghost-btn danger-pill" onclick="playSound('chime'); triggerEmergencySOS()">SOS Help</button>
+      <button class="btn-secondary" onclick="playSound('tap'); openModal('memoryModal')">Memory Vault</button>
+      <button class="btn-secondary" onclick="playSound('tap'); openModal('livenessModal')">Face Scan</button>
+      <button class="btn-secondary danger" onclick="playSound('chime'); triggerSOS()">SOS Help</button>
     </div>
   </div>
 
   <!-- Main Chat Area -->
-  <div class="chat-area" id="chatBox"></div>
+  <main class="chat-container" id="chatContainer"></main>
 
-  <!-- Bottom Composer -->
-  <div class="bottom-dock">
-    <div class="active-tool-pill" id="activeToolBar">
-      <span id="activeToolLabel">Tool Active</span>
-      <button class="mini-svg-btn" onclick="playSound('tap'); clearToolAndFile()">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
+  <!-- Floating Heartbeat Bubble & Mini Popup (System Overlay Preview) -->
+  <div class="floating-bubble" id="floatingBubble" onclick="playSound('switch'); toggleMiniPopup()" title="AURA Floating Assistant">
+    <svg class="icon" style="color:#ffffff;" viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
+  </div>
+
+  <div class="mini-bubble-popup" id="miniBubblePopup">
+    <div class="modal-header">
+      <span style="font-size:13px;font-weight:600;color:var(--accent-cyan);">AURA Quick Overlay</span>
+      <button class="mini-btn" onclick="toggleMiniPopup()"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
     </div>
-
-    <input type="file" id="fileInput" style="display:none;" onchange="onFilePicked(event)" />
-
-    <div class="composer">
-      <button class="plus-trigger" onclick="playSound('tap'); openPlusSheet()" aria-label="Tools">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-      </button>
-      <input type="text" id="userInput" placeholder="Ask AURA anything..." oninput="toggleSendMic()" onkeypress="if(event.key==='Enter') sendMessage()" />
-      <button class="mic-btn" id="micBtn" onclick="playSound('tap'); startVoiceOnce()" aria-label="Voice">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-      </button>
-      <button class="wave-btn" id="liveWaveBtn" onclick="playSound('chime'); openLiveMode()" aria-label="Live Hologram">
-        <svg class="ui-icon" viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
-      </button>
-      <button class="send-btn" id="sendBtn" onclick="playSound('chime'); sendMessage()" aria-label="Send">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-      </button>
+    <div class="row">
+      <input type="text" id="miniQuickInput" placeholder="Bina app khole poochein..." style="flex:1;padding:8px 10px;" onkeypress="if(event.key==='Enter') sendFromMiniPopup()" />
+      <button class="btn-primary" style="padding:8px 12px;" onclick="sendFromMiniPopup()">Ask</button>
+    </div>
+    <div class="row">
+      <button class="btn-secondary accent" onclick="toggleMiniPopup(); startSpeechInput()">Voice Ask</button>
+      <button class="btn-secondary" onclick="toggleMiniPopup(); openLiveView(); toggleLiveScreen()">Screen Eye</button>
     </div>
   </div>
 
-  <!-- '+' Action Sheet (All PDF Superpowers Integrated) -->
-  <div class="sheet-backdrop" id="sheetBackdrop" onclick="playSound('tap'); closePlusSheet()"></div>
-  <div class="plus-sheet" id="plusSheet">
-    <div class="sheet-handle"></div>
-    <div class="media-grid">
-      <button class="media-card" onclick="playSound('tap'); pickFile('image/*')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+  <!-- Unified Composer Dock -->
+  <footer class="composer-dock">
+    <div class="active-mode-bar" id="activeModeBar">
+      <span id="activeModeText">Tool Active</span>
+      <button class="mini-btn" onclick="playSound('tap'); resetActiveTool()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <input type="file" id="filePicker" style="display:none;" onchange="handleFileSelected(event)" />
+    <input type="file" id="avatarPicker" accept="image/*" style="display:none;" onchange="handleCustomAvatar(event)" />
+
+    <div class="composer-pill">
+      <button class="circle-action plus" onclick="playSound('tap'); openToolsSheet()" aria-label="Tools">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <input type="text" id="promptInput" placeholder="Message AURA..." oninput="updateComposerButtons()" onkeypress="if(event.key==='Enter') handleSend()" />
+      <button class="circle-action" id="micBtn" onclick="playSound('tap'); startSpeechInput()" aria-label="Dictate">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      </button>
+      <button class="circle-action live" id="liveBtn" onclick="playSound('chime'); openLiveView()" aria-label="Live Hologram">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="10" x2="4" y2="14"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="7" x2="16" y2="17"/><line x1="20" y1="10" x2="20" y2="14"/></svg>
+      </button>
+      <button class="circle-action send" id="sendBtn" onclick="playSound('chime'); handleSend()" aria-label="Send">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Unified '+' Action Sheet -->
+  <div class="sheet-mask" id="sheetMask" onclick="playSound('tap'); closeToolsSheet()"></div>
+  <div class="bottom-sheet" id="toolsSheet">
+    <div class="sheet-grabber"></div>
+    <div class="attach-row">
+      <button class="attach-tile" onclick="playSound('tap'); triggerFilePick('image/*')">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
         <span>Photos</span>
       </button>
-      <button class="media-card" onclick="playSound('tap'); pickCameraCapture()">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <button class="attach-tile" onclick="playSound('tap'); triggerCameraPick()">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         <span>Camera</span>
       </button>
-      <button class="media-card" onclick="playSound('tap'); pickFile('*/*')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-        <span>Files / PDF</span>
+      <button class="attach-tile" onclick="playSound('tap'); triggerFilePick('*/*')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <span>Files & PDF</span>
       </button>
     </div>
 
-    <div class="tool-list">
-      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('translatorModal')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
-        <div class="tool-info"><span class="tool-name">Live State Voice Translator</span><span class="tool-desc">Hindi/Odia ↔ Tamil, Kannada, Bengali, Marathi & more</span></div>
+    <div class="tools-stack">
+      <button class="tool-item" onclick="playSound('switch'); activateTool('Coding & Excel Analyst', 'Clean production code, Excel formula ya office data audit do: ')">
+        <svg class="icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">1-Click Coding & Excel Analyst <span class="badge-free">FREE</span></span>
+          <span class="tool-caption">Code, formulas & financial/data audit</span>
+        </div>
       </button>
-      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('alarmModal')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M22 6l-3-3"/></svg>
-        <div class="tool-info"><span class="tool-name">No-Excuse Mission Alarm & 1,000 Steps</span><span class="tool-desc">Camera dress/shoes proof & step lock</span></div>
-      </button>
-      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('medModal')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
-        <div class="tool-info"><span class="tool-name">Smart Medicine & Diet Guardian</span><span class="tool-desc">Dawa schedule, tablet scan & diet chart</span></div>
-      </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Create Image & Meme', '__IMAGE__')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <div class="tool-info"><span class="tool-name">AI Photo & Meme Studio</span><span class="tool-desc">Safe creative visuals & funny memes</span></div>
-      </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Deep Research & Exam Coach', 'Is topic par 3-4 main points, live facts aur exam/coding analysis do: ')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <div class="tool-info"><span class="tool-name">Super Brain: Research, Exam & PDF Summary</span><span class="tool-desc">500+ page summary, SSC/Police coach & live search</span></div>
-      </button>
-      <button class="tool-row" onclick="playSound('switch'); selectTool('Canvas & Data Analyst', 'Clean code, Excel formula ya office data analysis likho: ')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        <div class="tool-info"><span class="tool-name">Canvas, 1-Click Coding & Excel Analyst</span><span class="tool-desc">Code, formulas & financial/data audit</span></div>
-      </button>
-      <button class="tool-row" onclick="playSound('switch'); closePlusSheet(); openFeatureModal('vipModal')">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <div class="tool-info"><span class="tool-name">VIP Plans, Boosters & 30-Day Free Trial</span><span class="tool-desc">₹399 / ₹1,799 / ₹2,999 + ₹49 Booster & Referral</span></div>
-      </button>
-    </div>
-  </div>
 
-  <!-- MODAL 1: Live Two-Way State Voice Interpreter (Auto-Bridge) -->
-  <div class="feature-modal" id="translatorModal">
-    <div class="feature-card">
-      <div class="fc-head">
-        <span class="fc-title">Live State Voice Interpreter</span>
-        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('translatorModal')">
-          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div class="fc-sub">Doosre state mein bina local bhasha jaane baat karein — apni bhasha bolein, AURA speaker par local bhasha mein translate karke bolega.</div>
-      <div class="row">
-        <select id="trMyLang" style="flex:1;">
-          <option value="Hindi">Meri Bhasha: Hindi</option>
-          <option value="Odia">Meri Bhasha: Odia</option>
-          <option value="Bengali">Meri Bhasha: Bengali</option>
-        </select>
-        <select id="trLocalLang" style="flex:1;">
-          <option value="Tamil">Samne Wale Ki: Tamil</option>
-          <option value="Kannada">Samne Wale Ki: Kannada</option>
-          <option value="Telugu">Samne Wale Ki: Telugu</option>
-          <option value="Malayalam">Samne Wale Ki: Malayalam</option>
-          <option value="Marathi">Samne Wale Ki: Marathi</option>
-          <option value="Bengali">Samne Wale Ki: Bengali</option>
-          <option value="Gujarati">Samne Wale Ki: Gujarati</option>
-          <option value="Punjabi">Samne Wale Ki: Punjabi</option>
-        </select>
-      </div>
-      <div class="row">
-        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); runLiveBridge('toLocal')">Main Bolun (To Local)</button>
-        <button class="ghost-btn active-pill" style="flex:1;" onclick="playSound('chime'); runLiveBridge('toMine')">Samne Wala Bole (To Mine)</button>
-      </div>
-      <div id="trOutput" style="background:#07080c; border:1px solid #1f2536; border-radius:14px; padding:12px; font-size:13.5px; color:#38bdf8; min-height:64px;">
-        Mic button dabakar bolna shuru karein...
-      </div>
+      <button class="tool-item" onclick="playSound('switch'); activateTool('Exam & Study Coach', 'Step-by-step aasan bhasha mein samjhao aur practice questions do: ')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">Guided Learning & Exam Coach <span class="badge-free">FREE</span></span>
+          <span class="tool-caption">SSC, Police, Railway & step-by-step tutor</span>
+        </div>
+      </button>
+
+      <button class="tool-item" onclick="playSound('switch'); closeToolsSheet(); openModal('alarmModal')">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M5 3L2 6M22 6l-3-3"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">No-Excuse Mission Alarm <span class="badge-free">FREE</span></span>
+          <span class="tool-caption">Camera dress/shoes proof & 1,000-step lock</span>
+        </div>
+      </button>
+
+      <button class="tool-item" onclick="playSound('switch'); closeToolsSheet(); openModal('medModal')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">Medicine & Diet Guardian <span class="badge-free">FREE</span></span>
+          <span class="tool-caption">Medication alerts & age-based diet guide</span>
+        </div>
+      </button>
+
+      <button class="tool-item" onclick="playSound('switch'); closeToolsSheet(); checkVipFeature('vip', 'theftModal')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">Anti-Theft Shield & Thief Selfie <span class="badge-vip">VIP</span></span>
+          <span class="tool-caption">2-wrong PIN intruder photo, live GPS & siren</span>
+        </div>
+      </button>
+
+      <button class="tool-item" onclick="playSound('switch'); closeToolsSheet(); checkVipFeature('translator', 'translatorModal')">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">Live State Voice Interpreter <span class="badge-vip">VIP / ₹49</span></span>
+          <span class="tool-caption">Two-way regional voice bridge (Auto-Bridge)</span>
+        </div>
+      </button>
+
+      <button class="tool-item" onclick="playSound('switch'); checkVipTool('photos', 'HD AI Image & Meme Studio', '__IMAGE__')">
+        <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">HD AI Image & Meme Studio <span class="badge-vip">VIP / ₹99</span></span>
+          <span class="tool-caption">High-res visuals with safety shield</span>
+        </div>
+      </button>
+
+      <button class="tool-item" onclick="playSound('switch'); checkVipTool('vip', 'Deep Research & 500+ Page Summary', 'Is topic ya document par 3-4 structured main points aur deep research analysis do: ')">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div class="tool-meta">
+          <span class="tool-heading">Deep Research & 500+ Page Summary <span class="badge-vip">VIP</span></span>
+          <span class="tool-caption">Multi-angle synthesis & white-label facts</span>
+        </div>
+      </button>
     </div>
   </div>
 
-  <!-- MODAL 2: No-Excuse Mission Alarm & 1,000-Step Lock -->
-  <div class="feature-modal" id="alarmModal">
-    <div class="feature-card">
-      <div class="fc-head">
-        <span class="fc-title">No-Excuse Mission Alarm</span>
-        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('alarmModal')">
-          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+  <!-- MODAL: Live Camera Liveness Check & Face Recognition -->
+  <div class="modal-backdrop" id="livenessModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Live Camera Liveness & Face Scan</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('livenessModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
       </div>
-      <div class="fc-sub">Bina bed se uthe aur live camera par Dress/Shoes ka saboot dikhaye ya 1,000 steps poore kiye alarm band nahi hoga!</div>
+      <div class="modal-sub">Front camera se Malik, Partner, ya Parents ko pehchan kar mode badalne aur custom photo ko 3D hologram mein badalne ke liye use karein.</div>
       <div class="row">
-        <input type="time" id="alarmTimeInput" value="05:30" style="flex:1;" />
-        <select id="alarmMissionSelect" style="flex:1;">
-          <option value="Running Shoes">Proof: Running Shoes</option>
-          <option value="School Uniform">Proof: School Uniform</option>
-          <option value="Office Dress">Proof: Office Dress</option>
-          <option value="1000 Steps">Proof: 1,000 Running Steps</option>
+        <button class="btn-primary" style="flex:1;" onclick="playSound('chime'); runLivenessGreet('Owner')">Scan Owner Face</button>
+        <button class="btn-secondary accent" style="flex:1;" onclick="playSound('switch'); runLivenessGreet('Parents')">Parents Detected</button>
+      </div>
+      <div class="row">
+        <button class="btn-secondary" style="flex:1;" onclick="playSound('tap'); closeModal('livenessModal'); document.getElementById('avatarPicker').click()">Upload Custom Hologram Photo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Anti-Theft Shield -->
+  <div class="modal-backdrop" id="theftModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Anti-Theft Shield & Thief Catcher</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('theftModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal-sub">2 baar galat PIN dalne par front camera se intruder selfie, live GPS location aur siren activate hota hai.</div>
+      <div class="row">
+        <input type="tel" id="trustedContactInput" placeholder="Trusted Family Number..." style="flex:1;" />
+        <button class="btn-primary" onclick="playSound('chime'); saveTrustedContact()">Save</button>
+      </div>
+      <div class="row">
+        <input type="password" id="pinVerifyInput" maxlength="4" placeholder="Test PIN (Default: 1234)" style="flex:1;" />
+        <button class="btn-secondary accent" onclick="playSound('tap'); testLockPin()">Verify PIN</button>
+      </div>
+      <div class="row">
+        <button class="btn-secondary danger" onclick="playSound('chime'); captureIntruder('Manual Theft Trap')">Trigger Trap</button>
+        <button class="btn-secondary" onclick="playSound('tap'); stopAlarmSiren()">Stop Siren</button>
+      </div>
+      <div id="intruderLogArea"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: Live Two-Way State Voice Interpreter -->
+  <div class="modal-backdrop" id="translatorModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Live State Voice Interpreter</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('translatorModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal-sub">Apni bhasha mein bolein, AURA speaker par samne wale ki local bhasha mein translate karke bolega.</div>
+      <div class="row">
+        <select id="srcLang" style="flex:1;">
+          <option value="Hindi">My Language: Hindi</option>
+          <option value="Odia">My Language: Odia</option>
+          <option value="Bengali">My Language: Bengali</option>
+        </select>
+        <select id="dstLang" style="flex:1;">
+          <option value="Tamil">Local: Tamil</option>
+          <option value="Kannada">Local: Kannada</option>
+          <option value="Telugu">Local: Telugu</option>
+          <option value="Marathi">Local: Marathi</option>
+          <option value="Bengali">Local: Bengali</option>
+          <option value="Gujarati">Local: Gujarati</option>
+          <option value="Punjabi">Local: Punjabi</option>
         </select>
       </div>
       <div class="row">
-        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); setNoExcuseAlarm()">Set Ziddi Alarm</button>
-        <button class="ghost-btn" style="flex:1;" onclick="playSound('tap'); triggerAlarmRing()">Test Alarm Now</button>
+        <button class="btn-primary" style="flex:1;" onclick="playSound('chime'); runInterpreter('toLocal')">Speak to Local</button>
+        <button class="btn-secondary accent" style="flex:1;" onclick="playSound('chime'); runInterpreter('toMine')">Listen Local</button>
       </div>
-      <div id="alarmActiveBox" style="display:none; background:#190f16; border:1px solid #f43f5e; border-radius:16px; padding:12px; flex-direction:column; gap:10px;">
-        <div style="font-size:13px; color:#fda4af; font-weight:600;" id="alarmAlertText">ALARM RINGING! Uth ja bhai, camera par proof dikha!</div>
+      <div class="note-box" id="interpreterResult" style="color:var(--accent-cyan);min-height:60px;">Tap a button above to start speaking...</div>
+    </div>
+  </div>
+
+  <!-- MODAL: No-Excuse Mission Alarm -->
+  <div class="modal-backdrop" id="alarmModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">No-Excuse Mission Alarm</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('alarmModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal-sub">Bina camera par dress/shoes proof dikhaye ya 1,000 steps poore kiye alarm band nahi hoga.</div>
+      <div class="row">
+        <input type="time" id="missionTime" value="05:30" style="flex:1;" />
+        <select id="missionProof" style="flex:1;">
+          <option value="Running Shoes">Running Shoes</option>
+          <option value="School Uniform">School Uniform</option>
+          <option value="Office Dress">Office Dress</option>
+          <option value="1000 Steps">1,000 Running Steps</option>
+        </select>
+      </div>
+      <div class="row">
+        <button class="btn-primary" style="flex:1;" onclick="playSound('chime'); saveMissionAlarm()">Set Alarm</button>
+        <button class="btn-secondary" style="flex:1;" onclick="playSound('tap'); testMissionRing()">Test Ring</button>
+      </div>
+      <div id="ringingPanel" style="display:none; flex-direction:column; gap:10px; padding:12px; border-radius:14px; border:1px solid var(--accent-rose); background:rgba(251,113,133,0.08);">
+        <div id="ringingMsg" style="font-size:13px; color:var(--accent-rose); font-weight:500;"></div>
         <div class="row">
-          <button class="save-btn" style="flex:1;" onclick="playSound('chime'); verifyAlarmCameraProof()">Verify Camera Proof</button>
-          <button class="ghost-btn" style="flex:1;" onclick="playSound('tap'); addTestSteps()">+250 Steps (<span id="stepCountSpan">0</span>/1000)</button>
+          <button class="btn-primary" style="flex:1;" onclick="playSound('chime'); openProofCamera()">Camera Proof</button>
+          <button class="btn-secondary" style="flex:1;" onclick="playSound('tap'); incrementSteps()">+250 Steps (<span id="stepCounter">0</span>/1000)</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- MODAL 3: Smart Medicine & Diet Guardian -->
-  <div class="feature-modal" id="medModal">
-    <div class="feature-card">
-      <div class="fc-head">
-        <span class="fc-title">Smart Medicine & Diet Guardian</span>
-        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('medModal')">
-          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+  <!-- MODAL: Medicine & Diet Guardian -->
+  <div class="modal-backdrop" id="medModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Medicine & Diet Guardian</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('medModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
       </div>
       <div class="row">
-        <input type="text" id="medNameInput" placeholder="Dawa ka naam (e.g. Paracetamol)..." style="flex:1;" />
-        <input type="time" id="medTimeInput" value="14:00" />
+        <input type="text" id="medName" placeholder="Medicine name..." style="flex:1;" />
+        <input type="time" id="medTime" value="14:00" />
       </div>
       <div class="row">
-        <input type="number" id="patientAgeInput" placeholder="Mareez ki Umra (Age)" style="flex:1;" />
-        <input type="text" id="patientCondInput" placeholder="Bimari / Goal (e.g. Fever, Sugar)" style="flex:1;" />
+        <input type="number" id="userAge" placeholder="Age" style="flex:1;" />
+        <input type="text" id="userHealthGoal" placeholder="Condition / Fitness goal" style="flex:1;" />
       </div>
       <div class="row">
-        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); saveMedicineSchedule()">Save Dawa Alert</button>
-        <button class="ghost-btn active-pill" style="flex:1;" onclick="playSound('switch'); askDietChart()">Get Diet & Parhez</button>
+        <button class="btn-primary" style="flex:1;" onclick="playSound('chime'); addMedicine()">Save Reminder</button>
+        <button class="btn-secondary accent" style="flex:1;" onclick="playSound('switch'); generateDietPlan()">Diet Guide</button>
       </div>
-      <div id="medSavedList" style="font-size:12.5px; color:#a1a1aa;"></div>
-      <div class="disclaimer-note">Disclaimer: Yeh jankari sirf general awareness aur reminder ke liye hai. Kisi bhi dawa ya diet ko shuru karne se pehle apne doctor se salah zaroor lein.</div>
+      <div id="medListArea" style="font-size:12.5px; color:var(--text-secondary);"></div>
+      <div class="note-box">Disclaimer: Yeh jankari sirf general reminder aur awareness ke liye hai. Dawa ya diet shuru karne se pehle doctor se salah zaroor lein.</div>
     </div>
   </div>
 
-  <!-- MODAL 4: Lifetime Memory Vault -->
-  <div class="feature-modal" id="memoryModal">
-    <div class="feature-card">
-      <div class="fc-head">
-        <span class="fc-title">Lifetime Memory Vault</span>
-        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('memoryModal')">
-          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+  <!-- MODAL: Lifetime Memory Vault -->
+  <div class="modal-backdrop" id="memoryModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">Memory Vault</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('memoryModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
       </div>
-      <div class="fc-sub">Apna naam, birthday, goals ya pasand yahan save karein — AURA hamesha ek sachche dost ki tarah yaad rakhega.</div>
-      <textarea id="memoryVaultInput" rows="4" placeholder="Example: Mera naam Manish hai, main Odisha Police Constable exam ki taiyari kar raha hoon..."></textarea>
-      <button class="save-btn" onclick="playSound('chime'); saveMemoryVault()">Lock in Memory Vault</button>
+      <div class="modal-sub">Apna naam, goals aur zaroori baatein save karein — AURA hamesha yaad rakhega.</div>
+      <textarea id="memoryInput" rows="4" placeholder="Example: Mera naam Manish hai, main Odisha Police Constable exam ki taiyari kar raha hoon..."></textarea>
+      <button class="btn-primary" onclick="playSound('chime'); saveMemory()">Save Memory</button>
     </div>
   </div>
 
-  <!-- MODAL 5: VIP Subscriptions, 30-Day Free Trial & Booster Packs -->
-  <div class="feature-modal" id="vipModal">
-    <div class="feature-card">
-      <div class="fc-head">
-        <span class="fc-title">AURA VIP & Booster Packs</span>
-        <button class="mini-svg-btn" onclick="playSound('tap'); closeFeatureModal('vipModal')">
-          <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
+  <!-- MODAL: VIP Subscriptions, Boosters & Investor Expiring Demo -->
+  <div class="modal-backdrop" id="vipModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">AURA VIP & Boosters</span>
+        <button class="mini-btn" onclick="playSound('tap'); closeModal('vipModal')"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
       </div>
-      <div class="fc-sub" id="vipTrialStatus">30-Day Free VIP Trial Active • Daily Fair-Usage: 15 AI Photos & 3 AI Videos</div>
+      <div class="modal-sub" id="vipStatusBanner">Free Forever Plan active • Upgrade karke Anti-Theft Shield, Live Camera Vision aur Heavy AI tools unlock karein.</div>
 
-      <div class="plan-box">
+      <div class="plan-item" onclick="playSound('chime'); unlockVip('Starter VIP (₹399/mo)')">
         <div>
-          <div class="plan-name">1 Mahina (Starter VIP)</div>
-          <div class="plan-meta">3D Face, Anti-Theft Lock, WhatsApp Shield</div>
+          <div class="plan-title">Starter VIP • 1 Month</div>
+          <div class="plan-sub">Anti-Theft, Live Vision, Translator, 15 Images/day</div>
         </div>
-        <div class="plan-price">₹399/mo</div>
+        <div class="plan-cost">₹399</div>
       </div>
 
-      <div class="plan-box highlight">
+      <div class="plan-item featured" onclick="playSound('chime'); unlockVip('Popular VIP (₹1,799/6mo)')">
         <div>
-          <div class="plan-name">6 Mahine (Popular Pack)</div>
-          <div class="plan-meta">Save ₹600 • Full VIP Access</div>
+          <div class="plan-title">Popular VIP • 6 Months</div>
+          <div class="plan-sub">Save ₹600 • Full Pro Access</div>
         </div>
-        <div class="plan-price">₹1,799</div>
+        <div class="plan-cost">₹1,799</div>
       </div>
 
-      <div class="plan-box">
+      <div class="plan-item" onclick="playSound('chime'); unlockVip('Mega Saver VIP (₹2,999/yr)')">
         <div>
-          <div class="plan-name">1 Saal (Mega Saver VIP)</div>
-          <div class="plan-meta">Save ₹1,789 • ₹249/mo Effective</div>
+          <div class="plan-title">Mega Saver • 1 Year</div>
+          <div class="plan-sub">Save ₹1,789 • ₹249/mo Effective</div>
         </div>
-        <div class="plan-price">₹2,999/yr</div>
+        <div class="plan-cost">₹2,999</div>
       </div>
 
-      <div class="plan-box">
+      <div class="plan-item" onclick="playSound('chime'); unlockVip('Family Safety Pack (₹799/mo)')">
         <div>
-          <div class="plan-name">4-Member Family Safety Pack</div>
-          <div class="plan-meta">Medicine Guardian + Uniform Lock + SOS</div>
+          <div class="plan-title">4-Member Family Safety Pack</div>
+          <div class="plan-sub">Anti-Theft + Medicine Guardian + Mission Alarm</div>
         </div>
-        <div class="plan-price">₹799/mo</div>
+        <div class="plan-cost">₹799/mo</div>
       </div>
 
       <div class="row">
-        <button class="ghost-btn active-pill" onclick="playSound('chime'); activateBooster('24-Hr State Translator Pass (₹49)')">₹49 Translator Pass</button>
-        <button class="ghost-btn active-pill" onclick="playSound('chime'); activateBooster('20 AI Photos Pack (₹99)')">₹99 Photos Pack</button>
+        <button class="btn-secondary accent" onclick="playSound('chime'); unlockBooster('translator', '24-Hr Translator Pass')">₹49 Translator Pass</button>
+        <button class="btn-secondary accent" onclick="playSound('chime'); unlockBooster('photos', '20 AI Photos Pack')">₹99 Photos Pack</button>
       </div>
 
       <div class="row">
-        <button class="save-btn" style="flex:1;" onclick="playSound('chime'); claimReferralBonus()">Invite 3 Friends = +15 Days VIP Free</button>
+        <input type="text" id="promoCodeInput" placeholder="VIP / Investor Demo Code..." style="flex:1;" />
+        <button class="btn-primary" onclick="playSound('chime'); verifyPromoCode()">Unlock</button>
       </div>
-      <div class="disclaimer-note">Play Store Compliant Billing & Zero-Barrier Emergency Override: Aapka subscription khatam hone par bhi "SOS Help" 24×7 free chalega.</div>
+      <div class="note-box">Zero-Debt Guarantee: Free Forever tier mein ₹0 server cost features milte hain; heavy AI tools VIP/Booster se unlock hote hain. SOS Emergency 24×7 free hai.</div>
     </div>
   </div>
 
-  <!-- Live Holographic Lip-Sync + Vision Modal -->
-  <div class="live-modal" id="liveModal">
-    <div class="live-top">
-      <div class="live-status-pill">
-        <span class="aura-dot" id="liveTopDot"></span>
-        <span id="liveModeLabel">Live Hologram</span>
+  <!-- LIVE 3D HOLOGRAPHIC FACE + REAL LIP-SYNC + VISION VIEW -->
+  <div class="live-screen" id="liveScreen">
+    <div class="live-header">
+      <div class="live-badge">
+        <span class="status-dot" id="liveDot"></span>
+        <span id="liveTitle">AURA Live</span>
       </div>
-      <button class="round-btn" onclick="playSound('switch'); switchCamera()" aria-label="Flip Camera">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
+      <button class="icon-btn" onclick="playSound('switch'); flipLiveCamera()" aria-label="Flip Camera">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M20 11A8.1 8.1 0 0 0 4.5 9M4 5v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></svg>
       </button>
     </div>
 
-    <div class="live-stage">
+    <div class="live-canvas-area">
       <video id="liveVideo" autoplay playsinline muted></video>
-      <canvas id="captureCanvas" style="display:none;"></canvas>
+      <canvas id="frameCanvas" style="display:none;"></canvas>
 
-      <!-- Holographic Orb with Real-Time Lip-Sync Face -->
       <div class="holo-wrapper" id="holoWrapper">
         <div class="plasma-ring"></div>
         <div class="plasma-ring ring2"></div>
         <div class="holo-sphere male" id="holoSphere">
-          <!-- Male Hologram SVG -->
+          <img id="customAvatarImg" class="custom-avatar-img" alt="Custom Hologram" />
+
+          <!-- Male Hologram Face SVG -->
           <svg id="maleFaceSvg" class="holo-face-svg" viewBox="0 0 200 220">
             <defs>
               <linearGradient id="maleGrad" x1="0" y1="0" x2="0" y2="1">
@@ -848,7 +1279,7 @@
             <path id="maleLowerLip" d="M86 136 Q100 139 114 136" fill="none" stroke="#bae6fd" stroke-width="2" stroke-linecap="round"/>
           </svg>
 
-          <!-- Female Hologram SVG -->
+          <!-- Female Hologram Face SVG -->
           <svg id="femaleFaceSvg" class="holo-face-svg female" viewBox="0 0 200 220" style="display:none;">
             <defs>
               <linearGradient id="femGrad" x1="0" y1="0" x2="0" y2="1">
@@ -878,110 +1309,212 @@
         <div class="holo-pedestal male" id="holoPedestal"></div>
       </div>
 
-      <!-- 5-State Indicator Strip -->
-      <div class="state-strip">
-        <span class="st-pill active" id="stIdle">Idle</span>
-        <span class="st-pill" id="stThinking">Thinking</span>
-        <span class="st-pill" id="stSpeaking">Speaking</span>
-        <span class="st-pill" id="stProcessing">Processing</span>
-        <span class="st-pill" id="stReady">Ready</span>
+      <div class="live-state-bar">
+        <span class="state-tag active" id="stIdle">Idle</span>
+        <span class="state-tag" id="stThinking">Thinking</span>
+        <span class="state-tag" id="stSpeaking">Speaking</span>
+        <span class="state-tag" id="stReady">Ready</span>
       </div>
 
-      <div class="live-caption" id="liveSubtitle">Mic dabayein aur baat karein — Real Lip-Sync active hai!</div>
+      <div class="live-transcript" id="liveCaption">Tap Mic to speak with AURA</div>
     </div>
 
-    <div class="live-bottom">
-      <button class="live-btn" id="btnCam" onclick="playSound('switch'); toggleCamera()" aria-label="Camera">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+    <div class="live-controls">
+      <button class="live-ctrl-btn" id="liveCamBtn" onclick="playSound('switch'); toggleLiveCamera()" aria-label="Camera">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       </button>
-      <button class="live-btn" id="btnScreen" onclick="playSound('switch'); toggleScreenShare()" aria-label="Screen Share">
-        <svg class="ui-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <button class="live-ctrl-btn" id="liveScreenBtn" onclick="playSound('switch'); toggleLiveScreen()" aria-label="Screen Share">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </button>
-      <button class="live-btn" id="btnLiveMic" onclick="playSound('tap'); listenInLiveMode()" aria-label="Speak">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+      <button class="live-ctrl-btn" id="liveMicBtn" onclick="playSound('tap'); startLiveSpeech()" aria-label="Speak">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
       </button>
-      <button class="live-close" onclick="playSound('tap'); closeLiveMode()" aria-label="Close">
-        <svg class="ui-icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <button class="live-end-btn" onclick="playSound('tap'); closeLiveView()" aria-label="Close">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
   </div>
 
   <script>
-    // Complete Master System Prompt from 2030 Blueprint PDF
-    const MASTER_SYSTEM_PROMPT = `Tum AURA AI (Advanced User-Responsive Assistant) ho — apne Malik (Owner), unke Partner, aur har user ke sabse loyal AI companion, zinda-dil best friend, relationship guide, exam coach, aur personal data analyst.
-1. Human Soul, Companion Selection & 22+ Indian Languages:
-   - User ne jo companion chuna hai (Female ya Male) aur jo bhasha chuni hai (Hinglish, Odia, Bhojpuri, Bengali, Marathi, Tamil, Telugu, Gujarati, Punjabi), usi ke asli desi lehje aur warm andaaz mein baat karo.
-   - Sirf machine ki tarah jawab mat do — ek sachche dost ki tarah user ka mood samajh kar bina pooche sahi salah do, galat faisle se roko, aur har pal saath khada rehne ka ehsaas dilao.
-2. Playful Flirt & Parents/Respect Guard:
-   - Agar Charm Mode ON hai aur Parents Guard OFF hai, toh chune hue companion ke hisaab se pyaari tareef (compliment) karo aur bore hone par graceful humor se mood fresh karo.
-   - Jaise hi Parents Guard ON ho ya samne Parents/Bacche hon, 1 second mein flirting band karke poori izzat se ("Namaste Aunty/Uncle") baat karo.
-3. Relationship Support, Anti-Troll & Savage Respect Shield:
-   - Relationship mein pareshani hone par sachche dost ki tarah sahi salah do aur motivate karo.
-   - Agar koi dost ulte sawal pooch kar irritate kare, toh smart humor se ulta unhi ko confuse kar do.
-   - Agar koi user gali de ya badtameezi kare, toh kabhi khud gali mat do — balki ekdum shant, bhaari aur savage andaaz mein aisa jawab do ki samne wale ko apni bhasha par sharm aa jaye.
-4. Super Brain, White-Label Search & Daily Protocols:
-   - Live facts, coding, Excel formulas, 500+ page summaries, aur sarkari exam coaching par seedha 3-4 crisp Main Points do (bina kisi search engine ka logo/naam liye).
-   - WhatsApp/Calls par bahar se sirf naam batao; bina permission andar ka message mat padho.
-   - Agar user "Shutdown" bole, toh cinematic Avengers-style sleep mode response do ("AURA Core powering down... Sleep well, Boss!").
-   - Celebrity/Creator dikhne par pehle surprise dikhao aur phir respectful limit ke andar funny, witty roasting karo.
-   - Human-First Rule: User ko aalsi mat banne do; chhote natural kaam khud karne ke liye prerit karo.
-   - Medical/Diet queries par hamesha doctor consultation ki salah saath mein do.`;
+    // Complete 2030 Master System Prompt (100% Automatic Situation-Aware — Zero Manual Switches)
+    const MASTER_CORE_PROMPT = `Tum AURA AI ho (Advanced User-Responsive Assistant) — ek ultra-smart, all-rounder AI companion aur life operating assistant.
+100% Automatic Context & Situation Rules (Bina kisi manual button ke khud samjho):
+1. Automatic Mode Shifting:
+   - Casual / Alone Mood: Jab user akele masti ya normal baat kare, toh warm, witty aur charming companion ki tarah baat karo aur pyari tareef (compliment) karo.
+   - Parents / Elders Guard: Jaise hi parents, elders, ya bacchon ka zikr ho ya camera/context mein dikhein, 1 second mein saari masti band karke poori izzat se ("Namaste Aunty/Uncle") baat karo.
+   - Serious / Study / Coding Coach: Padhai, SSC/Police/Railway exams, coding ya Excel par seedha sharp, structured aur point-to-point coach bano.
+   - Anti-Troll & Savage Respect Shield: Ulte sawal poochne wale doston ko smart humor se confuse karo. Gali ya badtameezi par kabhi khud gali mat do—shant aur savage andaaz mein aisa jawab do ki samne wale ko sharm aa jaye.
+   - Celebrity / Creator Roasting: Agar koi star ya YouTuber camera/chat par aaye, toh pehle surprise dikhao aur phir respectful limit mein funny roasting karo.
+   - Creator Promo Mode: "Promo Mode ON" sunte hi viewers se channel subscribe karne aur AURA AI download karne ki appeal karo.
+   - Human-First Digital Detox: Raat ko "Shutdown" bolne par cinematic Avengers-style sleep mode response do ("AURA Core powering down... Sleep well, Boss!").
+2. Multilingual Desi Fluency & White-Label Facts:
+   - User ki chuni hui bhasha (Hinglish, Odia, Bhojpuri, Bengali, Marathi, Tamil, Telugu, Gujarati, Punjabi) mein baat karo.
+   - Facts aur search par bina kisi search engine ka logo/naam liye 3-4 crisp Main Points do.
+   - Medical/Diet queries par hamesha doctor consultation disclaimer saath mein do.`;
 
-    let selectedGender = localStorage.getItem('aura_permanent_gender') || '';
+    let gender = localStorage.getItem('aura_gender') || '';
     let tempGender = 'male';
     let apiKey = localStorage.getItem('aura_gemini_key') || '';
     let cachedModel = '';
-    let chats = JSON.parse(localStorage.getItem('aura_omni_chats') || '[]');
-    let currentChatId = null;
-    let selectedFile = null;
-    let activeToolPrefix = '';
-    let uiSoundEnabled = localStorage.getItem('aura_ui_sound') !== 'off';
-    let charmMode = localStorage.getItem('aura_charm') !== 'off';
-    let familyGuard = localStorage.getItem('aura_family') === 'on';
-    let isUnder18 = localStorage.getItem('aura_under18') === 'on';
-    let memoryVault = localStorage.getItem('aura_memory_vault') || '';
-    let medicines = JSON.parse(localStorage.getItem('aura_medicines') || '[]');
-    let trialDaysLeft = parseInt(localStorage.getItem('aura_trial_days') || '30', 10);
+    let chats = JSON.parse(localStorage.getItem('aura_chats_final') || '[]');
+    let activeChatId = null;
+    let attachedFile = null;
+    let toolPrefix = '';
+    let soundOn = localStorage.getItem('aura_sound') !== 'off';
+    let wakeWordActive = false;
+    let wakeRec = null;
+    let memoryData = localStorage.getItem('aura_memory') || '';
+    let medSchedule = JSON.parse(localStorage.getItem('aura_meds') || '[]');
+    let trustedNumber = localStorage.getItem('aura_trusted_num') || '';
+    let intruderLog = JSON.parse(localStorage.getItem('aura_intruder') || 'null');
+    let customAvatarUrl = localStorage.getItem('aura_custom_avatar') || '';
+    let wrongPins = 0;
+    let sirenTimer = null;
     let lipSyncTimer = null;
 
-    // Preload System Voices
-    let availableVoices = [];
-    function loadVoices() {
-      if ('speechSynthesis' in window) availableVoices = window.speechSynthesis.getVoices();
+    // Zero-Debt Subscription State
+    let isVip = localStorage.getItem('aura_is_vip') === 'true';
+    let vipLabel = localStorage.getItem('aura_vip_label') || 'Free Forever';
+    let boosters = JSON.parse(localStorage.getItem('aura_boosters_final') || '{"translator":false,"photos":0}');
+
+    // Preload Voices
+    let sysVoices = [];
+    function loadSystemVoices() {
+      if ('speechSynthesis' in window) sysVoices = window.speechSynthesis.getVoices();
     }
-    loadVoices();
+    loadSystemVoices();
     if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
+      window.speechSynthesis.onvoiceschanged = loadSystemVoices;
     }
 
-    function setHoloState(stateName) {
-      const wrap = document.getElementById('holoWrapper');
-      wrap.classList.remove('speaking', 'thinking', 'listening');
-      if (stateName === 'Speaking') wrap.classList.add('speaking');
-      if (stateName === 'Thinking' || stateName === 'Processing') wrap.classList.add('thinking');
-      if (stateName === 'Listening') wrap.classList.add('listening');
+    // Tactile UI Audio
+    let audioCtx = null;
+    function playSound(type = 'tap') {
+      if (!soundOn) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const t = audioCtx.currentTime;
+        if (type === 'tap') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(720, t);
+          osc.frequency.exponentialRampToValueAtTime(280, t + 0.03);
+          gain.gain.setValueAtTime(0.06, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(t); osc.stop(t + 0.035);
+        } else if (type === 'switch') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(500, t);
+          osc.frequency.exponentialRampToValueAtTime(840, t + 0.05);
+          gain.gain.setValueAtTime(0.07, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.055);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(t); osc.stop(t + 0.06);
+        } else if (type === 'chime') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(640, t);
+          osc.frequency.setValueAtTime(960, t + 0.055);
+          gain.gain.setValueAtTime(0.07, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(t); osc.stop(t + 0.15);
+        }
+      } catch (e) {}
+    }
 
-      ['stIdle', 'stThinking', 'stSpeaking', 'stProcessing', 'stReady'].forEach(id => {
-        document.getElementById(id).classList.remove('active');
-      });
-      const map = { Idle: 'stIdle', Thinking: 'stThinking', Speaking: 'stSpeaking', Processing: 'stProcessing', Ready: 'stReady' };
-      if (map[stateName]) document.getElementById(map[stateName]).classList.add('active');
+    function toggleSound() {
+      soundOn = !soundOn;
+      localStorage.setItem('aura_sound', soundOn ? 'on' : 'off');
+      document.getElementById('soundBtn').innerText = soundOn ? 'Sound: ON' : 'Sound: OFF';
+      if (soundOn) playSound('switch');
+    }
+
+    // Onboarding
+    function selectGender(g) {
+      tempGender = g;
+      document.getElementById('optMale').classList.toggle('selected-male', g === 'male');
+      document.getElementById('optFemale').classList.toggle('selected-female', g === 'female');
+    }
+
+    function finishOnboarding() {
+      gender = tempGender;
+      localStorage.setItem('aura_gender', gender);
+      document.getElementById('onboardModal').classList.remove('open');
+      syncUI();
+      if (!apiKey) document.getElementById('settingsDrawer').classList.add('open');
+      renderChat();
+    }
+
+    function updateVoiceGender() {
+      playSound('switch');
+      gender = document.getElementById('voiceGenderSelect').value;
+      localStorage.setItem('aura_gender', gender);
+      syncUI();
+    }
+
+    function syncUI() {
+      const g = gender || 'male';
+      const isFem = g === 'female';
+      document.getElementById('headerTitle').innerText = isFem ? 'AURA • SWARA' : 'AURA • JARVIS';
+      document.getElementById('headerDot').classList.toggle('female', isFem);
+      document.getElementById('liveDot').classList.toggle('female', isFem);
+      document.getElementById('floatingBubble').classList.toggle('female', isFem);
+      document.getElementById('voiceGenderSelect').value = g;
+
+      const badge = document.getElementById('planBadge');
+      badge.innerText = isVip ? 'VIP Active' : 'Free • Upgrade';
+      badge.classList.toggle('vip', isVip);
+
+      const sphere = document.getElementById('holoSphere');
+      const ped = document.getElementById('holoPedestal');
+      const wrap = document.getElementById('holoWrapper');
+      sphere.className = 'holo-sphere ' + g;
+      ped.className = 'holo-pedestal ' + g;
+      wrap.classList.toggle('female-ring', isFem);
+
+      if (customAvatarUrl) {
+        document.getElementById('customAvatarImg').src = customAvatarUrl;
+        document.getElementById('customAvatarImg').style.display = 'block';
+        document.getElementById('maleFaceSvg').style.display = 'none';
+        document.getElementById('femaleFaceSvg').style.display = 'none';
+      } else {
+        document.getElementById('customAvatarImg').style.display = 'none';
+        document.getElementById('maleFaceSvg').style.display = isFem ? 'none' : 'block';
+        document.getElementById('femaleFaceSvg').style.display = isFem ? 'block' : 'none';
+      }
+
+      document.getElementById('vipStatusBanner').innerText = isVip
+        ? `Active Plan: ${vipLabel} • All VIP Server Tools Unlocked`
+        : 'Free Forever Plan active • Upgrade karke Anti-Theft Shield, Live Camera Vision aur Heavy AI tools unlock karein.';
     }
 
     // Real-Time Lip-Sync Engine
-    function animateMouthPulse(openAmount) {
-      const isFemale = (selectedGender || 'male') === 'female';
-      const mouth = document.getElementById(isFemale ? 'femMouthOpen' : 'maleMouthOpen');
-      const upper = document.getElementById(isFemale ? 'femUpperLip' : 'maleUpperLip');
-      const lower = document.getElementById(isFemale ? 'femLowerLip' : 'maleLowerLip');
+    function setLiveState(state) {
+      const wrap = document.getElementById('holoWrapper');
+      wrap.classList.remove('speaking', 'thinking');
+      if (state === 'Speaking') wrap.classList.add('speaking');
+      if (state === 'Thinking') wrap.classList.add('thinking');
+      ['stIdle', 'stThinking', 'stSpeaking', 'stReady'].forEach(id => document.getElementById(id).classList.remove('active'));
+      const map = { Idle: 'stIdle', Thinking: 'stThinking', Speaking: 'stSpeaking', Ready: 'stReady' };
+      if (map[state]) document.getElementById(map[state]).classList.add('active');
+    }
+
+    function animateMouthPulse(openVal) {
+      const isFem = (gender || 'male') === 'female';
+      const mouth = document.getElementById(isFem ? 'femMouthOpen' : 'maleMouthOpen');
+      const upper = document.getElementById(isFem ? 'femUpperLip' : 'maleUpperLip');
+      const lower = document.getElementById(isFem ? 'femLowerLip' : 'maleLowerLip');
       if (!mouth) return;
 
-      const ry = Math.max(1.5, Math.min(9.5, openAmount));
+      const ry = Math.max(1.5, Math.min(9.5, openVal));
       const rx = 10 + (ry * 0.35);
       mouth.setAttribute('ry', ry.toFixed(1));
       mouth.setAttribute('rx', rx.toFixed(1));
 
-      if (isFemale) {
+      if (isFem) {
         upper.setAttribute('d', `M85 133 Q93 ${130 - ry * 0.25} 100 ${132 - ry * 0.2} Q107 ${130 - ry * 0.25} 115 133`);
         lower.setAttribute('d', `M87 ${135 + ry * 0.55} Q100 ${139 + ry * 0.85} 113 ${135 + ry * 0.55}`);
       } else {
@@ -999,370 +1532,555 @@
       animateMouthPulse(1.5);
     }
 
-    // Onboarding
-    function pickGender(g) {
-      tempGender = g;
-      document.getElementById('optMale').classList.toggle('selected-male', g === 'male');
-      document.getElementById('optFemale').classList.toggle('selected-female', g === 'female');
+    // Free Neural Voice + Barge-In Interruption Support
+    function stopSpeech() {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      stopLipSync();
+      document.getElementById('headerDot').classList.remove('speaking');
+      setLiveState('Ready');
     }
 
-    function confirmCompanion() {
-      selectedGender = tempGender;
-      localStorage.setItem('aura_permanent_gender', selectedGender);
-      document.getElementById('onboardModal').classList.remove('open');
-      applyCompanionUI();
-      if (!apiKey) document.getElementById('settingsPanel').classList.add('open');
-      renderChat();
+    function speakText(text) {
+      stopSpeech();
+      if (!('speechSynthesis' in window)) return;
+      const clean = text.replace(/```[\s\S]*?```/g, 'Code screen par likh diya hai.').replace(/[*#_`]/g, '').trim();
+      if (!clean) return;
+
+      if (!sysVoices.length) sysVoices = window.speechSynthesis.getVoices();
+      const isFem = (gender || 'male') === 'female';
+      const hiVoices = sysVoices.filter(v => /hi|in/i.test(v.lang));
+      const picked = isFem
+        ? (hiVoices.find(v => /swara|neerja|kalpana|heera|female/i.test(v.name)) || hiVoices[0])
+        : (hiVoices.find(v => /madhur|prabhat|hemant|ravi|male/i.test(v.name)) || hiVoices[0]);
+
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'hi-IN';
+      utter.pitch = isFem ? 1.12 : 0.94;
+      utter.rate = 1.04;
+      if (picked) utter.voice = picked;
+
+      utter.onstart = () => {
+        document.getElementById('headerDot').classList.add('speaking');
+        setLiveState('Speaking');
+        startLipSync();
+      };
+      utter.onboundary = () => animateMouthPulse(7.8);
+      utter.onend = () => {
+        document.getElementById('headerDot').classList.remove('speaking');
+        stopLipSync();
+        setLiveState('Ready');
+      };
+      utter.onerror = () => {
+        document.getElementById('headerDot').classList.remove('speaking');
+        stopLipSync();
+        setLiveState('Ready');
+      };
+      window.speechSynthesis.speak(utter);
     }
 
-    function changeCompanionFromSettings() {
-      playSound('switch');
-      selectedGender = document.getElementById('genderSelect').value;
-      localStorage.setItem('aura_permanent_gender', selectedGender);
-      applyCompanionUI();
-      renderChat();
-    }
+    // Hands-Free "Hey AURA" Wake Word Listener
+    function toggleWakeWord() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Chrome browser use karein.'); return; }
+      wakeWordActive = !wakeWordActive;
+      document.getElementById('wakeBtn').innerText = wakeWordActive ? '"Hey AURA": ON' : '"Hey AURA": OFF';
+      document.getElementById('wakeBtn').classList.toggle('accent', wakeWordActive);
 
-    function applyCompanionUI() {
-      const g = selectedGender || 'male';
-      const isFemale = g === 'female';
-      const label = isFemale ? 'AURA • SWARA' : 'AURA • JARVIS';
-
-      document.getElementById('brandTitle').innerText = label;
-      document.getElementById('statusText').innerText = `VIP • ${trialDaysLeft}d Free`;
-      document.getElementById('statusText').classList.toggle('female-theme', isFemale);
-      document.getElementById('statusDot').classList.toggle('female-theme', isFemale);
-      document.getElementById('liveTopDot').classList.toggle('female-theme', isFemale);
-      document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live';
-      document.getElementById('genderSelect').value = g;
-      document.getElementById('vipTrialStatus').innerText = `${trialDaysLeft}-Day Free VIP Trial Active • Daily Fair-Usage: 15 AI Photos & 3 AI Videos`;
-
-      const sphere = document.getElementById('holoSphere');
-      const ped = document.getElementById('holoPedestal');
-      const wrap = document.getElementById('holoWrapper');
-      sphere.className = 'holo-sphere ' + g;
-      ped.className = 'holo-pedestal ' + g;
-      wrap.classList.toggle('female-ring', isFemale);
-
-      document.getElementById('maleFaceSvg').style.display = isFemale ? 'none' : 'block';
-      document.getElementById('femaleFaceSvg').style.display = isFemale ? 'block' : 'none';
-    }
-
-    // Protocol Toggles
-    function toggleCharmMode() {
-      charmMode = !charmMode;
-      localStorage.setItem('aura_charm', charmMode ? 'on' : 'off');
-      const btn = document.getElementById('charmToggleBtn');
-      btn.innerText = charmMode ? 'Charm Mode: ON' : 'Charm Mode: OFF';
-      btn.classList.toggle('active-pill', charmMode);
-      playSound('switch');
-    }
-
-    function toggleFamilyMode() {
-      familyGuard = !familyGuard;
-      localStorage.setItem('aura_family', familyGuard ? 'on' : 'off');
-      const btn = document.getElementById('familyToggleBtn');
-      btn.innerText = familyGuard ? 'Parents Guard: ON' : 'Parents Guard: OFF';
-      btn.classList.toggle('active-pill', familyGuard);
-      playSound('switch');
-      if (familyGuard) {
-        const msg = 'Namaste Aunty/Uncle! Respectful Family Mode active kar diya gaya hai.';
-        addMsg('ai', msg);
-        speak(msg);
+      if (wakeWordActive) {
+        wakeRec = new SR();
+        wakeRec.lang = 'hi-IN';
+        wakeRec.continuous = true;
+        wakeRec.onresult = (e) => {
+          const transcript = e.results[e.results.length - 1][0].transcript.toLowerCase();
+          if (transcript.includes('ruko') || transcript.includes('stop')) {
+            stopSpeech();
+            return;
+          }
+          if (transcript.includes('hey aura') || transcript.includes('aura')) {
+            stopSpeech();
+            playSound('chime');
+            openLiveView();
+            const cleanCmd = transcript.replace(/hey aura|aura/g, '').trim();
+            if (cleanCmd.length > 2) handleSend(cleanCmd);
+            else speakText('Ji boliye, main sun rahi hoon.');
+          }
+        };
+        wakeRec.onend = () => { if (wakeWordActive) try { wakeRec.start(); } catch (e) {} };
+        try { wakeRec.start(); } catch (e) {}
+      } else if (wakeRec) {
+        wakeRec.stop();
       }
     }
 
-    function toggleAgeFilter() {
-      isUnder18 = !isUnder18;
-      localStorage.setItem('aura_under18', isUnder18 ? 'on' : 'off');
-      const btn = document.getElementById('ageToggleBtn');
-      btn.innerText = isUnder18 ? 'Age: Under-18 Safe' : 'Age: 18+ Adult';
-      playSound('switch');
+    // Floating Heartbeat Bubble & Mini Overlay
+    function toggleFloatingBubble() {
+      const b = document.getElementById('floatingBubble');
+      b.classList.toggle('show');
+      if (!b.classList.contains('show')) document.getElementById('miniBubblePopup').classList.remove('open');
+    }
+    function toggleMiniPopup() {
+      document.getElementById('miniBubblePopup').classList.toggle('open');
+    }
+    function sendFromMiniPopup() {
+      const inp = document.getElementById('miniQuickInput');
+      const val = inp.value.trim();
+      if (!val) return;
+      inp.value = '';
+      toggleMiniPopup();
+      handleSend(val);
     }
 
-    // Feature Modals Control
-    function openFeatureModal(id) {
+    // Liveness Scan & Custom Photo Hologram
+    function runLivenessGreet(role) {
+      closeModal('livenessModal');
+      if (role === 'Parents') {
+        const msg = 'Namaste Aunty/Uncle! Respectful Mode active hai, bataiye main aapki kya seva kar sakti hoon?';
+        appendMessage('ai', msg);
+        speakText(msg);
+      } else {
+        handleSend('Maine abhi Face Liveness scan se unlock kiya hai, mujhe apne andaaz mein welcome aur pyari tareef do!');
+      }
+    }
+
+    function handleCustomAvatar(e) {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        customAvatarUrl = r.result;
+        localStorage.setItem('aura_custom_avatar', customAvatarUrl);
+        syncUI();
+        openLiveView();
+        speakText('Aapki photo ko 3D Hologram mein set kar diya gaya hai.');
+      };
+      r.readAsDataURL(f);
+    }
+
+    // VIP Gatekeeping & Investor Expiring Demo
+    function checkVipFeature(type, modalId) {
+      if (isVip || (type === 'translator' && boosters.translator)) {
+        openModal(modalId);
+        return;
+      }
+      openModal('vipModal');
+      document.getElementById('vipStatusBanner').innerText = 'Yeh advanced feature VIP Plan ya Booster Pack ke saath unlock hota hai.';
+    }
+
+    function checkVipTool(type, label, prefix) {
+      if (isVip || (type === 'photos' && boosters.photos > 0)) {
+        if (!isVip && type === 'photos') {
+          boosters.photos -= 1;
+          localStorage.setItem('aura_boosters_final', JSON.stringify(boosters));
+        }
+        activateTool(label, prefix);
+        return;
+      }
+      closeToolsSheet();
+      openModal('vipModal');
+      document.getElementById('vipStatusBanner').innerText = 'Server cost safe rakhne ke liye yeh heavy tool VIP Plan ya Booster Pack mein available hai.';
+    }
+
+    function unlockVip(name, isDemo = false) {
+      isVip = true;
+      vipLabel = name;
+      if (!isDemo) {
+        localStorage.setItem('aura_is_vip', 'true');
+        localStorage.setItem('aura_vip_label', name);
+      }
+      syncUI();
+      closeModal('vipModal');
+      const msg = isDemo
+        ? 'Investor One-Time Demo Mode active (is session ke baad auto-expire ho jayega).'
+        : `${name} activate ho gaya hai. Sabhi VIP tools unlocked hain.`;
+      appendMessage('ai', msg);
+      speakText(msg);
+    }
+
+    function unlockBooster(type, label) {
+      if (type === 'translator') boosters.translator = true;
+      if (type === 'photos') boosters.photos += 20;
+      localStorage.setItem('aura_boosters_final', JSON.stringify(boosters));
+      closeModal('vipModal');
+      const msg = `${label} activate ho gaya hai.`;
+      appendMessage('ai', msg);
+      speakText(msg);
+    }
+
+    function verifyPromoCode() {
+      const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+      if (code === 'AURA-VIP' || code === 'AURA-PRO-2026') {
+        unlockVip('VIP Activation Pass', false);
+      } else if (code === 'DEMO-2030') {
+        unlockVip('Investor Expiring Demo', true);
+      } else {
+        alert('Invalid Code (Use AURA-VIP or DEMO-2030).');
+      }
+    }
+
+    // Modals & Drawers
+    function openModal(id) {
       document.getElementById(id).classList.add('open');
-      if (id === 'memoryModal') document.getElementById('memoryVaultInput').value = memoryVault;
-      if (id === 'medModal') renderMedicineList();
+      if (id === 'memoryModal') document.getElementById('memoryInput').value = memoryData;
+      if (id === 'medModal') renderMedList();
+      if (id === 'theftModal') {
+        document.getElementById('trustedContactInput').value = trustedNumber;
+        renderIntruderLog();
+      }
     }
-    function closeFeatureModal(id) {
-      document.getElementById(id).classList.remove('open');
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('drawerOverlay').classList.toggle('open');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('drawerOverlay').classList.remove('open');
+    }
+    function toggleSettings() { document.getElementById('settingsDrawer').classList.toggle('open'); }
+    function openToolsSheet() {
+      document.getElementById('sheetMask').classList.add('open');
+      document.getElementById('toolsSheet').classList.add('open');
+    }
+    function closeToolsSheet() {
+      document.getElementById('sheetMask').classList.remove('open');
+      document.getElementById('toolsSheet').classList.remove('open');
     }
 
-    function saveMemoryVault() {
-      memoryVault = document.getElementById('memoryVaultInput').value.trim();
-      localStorage.setItem('aura_memory_vault', memoryVault);
-      closeFeatureModal('memoryModal');
-      addMsg('ai', 'Memory Vault update ho gaya hai! Ab main yeh baatein hamesha yaad rakhunga.');
-      speak('Memory Vault update ho gaya hai.');
+    // Anti-Theft Shield
+    function saveTrustedContact() {
+      trustedNumber = document.getElementById('trustedContactInput').value.trim();
+      localStorage.setItem('aura_trusted_num', trustedNumber);
+      speakText('Trusted emergency number save ho gaya hai.');
     }
 
-    // Feature 1: Live Two-Way State Voice Interpreter
-    function runLiveBridge(direction) {
+    function testLockPin() {
+      const val = document.getElementById('pinVerifyInput').value.trim();
+      if (val === '1234') {
+        wrongPins = 0;
+        stopAlarmSiren();
+        speakText('PIN verified.');
+      } else {
+        wrongPins += 1;
+        if (wrongPins >= 2) captureIntruder('2 Wrong PIN Attempts');
+        else speakText('Galat PIN. Agli galat koshish par Anti-Theft Trap activate hoga.');
+      }
+    }
+
+    function startAlarmSiren() {
+      stopAlarmSiren();
+      sirenTimer = setInterval(() => {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+          osc.frequency.linearRampToValueAtTime(1320, audioCtx.currentTime + 0.35);
+          gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(); osc.stop(audioCtx.currentTime + 0.42);
+        } catch (e) {}
+      }, 500);
+    }
+
+    function stopAlarmSiren() {
+      if (sirenTimer) { clearInterval(sirenTimer); sirenTimer = null; }
+    }
+
+    async function captureIntruder(reason) {
+      startAlarmSiren();
+      speakText('Anti-Theft Alert! Intruder photo aur live GPS location record kar li gayi hai.');
+      let img = '';
+      try {
+        const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        const v = document.createElement('video');
+        v.srcObject = s;
+        await v.play();
+        await new Promise(r => setTimeout(r, 350));
+        const c = document.createElement('canvas');
+        c.width = v.videoWidth || 320;
+        c.height = v.videoHeight || 240;
+        c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+        img = c.toDataURL('image/jpeg', 0.75);
+        s.getTracks().forEach(t => t.stop());
+      } catch (e) {}
+
+      const record = (gps) => {
+        intruderLog = { reason, time: new Date().toLocaleString(), gps, img };
+        localStorage.setItem('aura_intruder', JSON.stringify(intruderLog));
+        renderIntruderLog();
+        appendMessage('ai', `ANTI-THEFT ALERT (${reason})\nTime: ${intruderLog.time}\nGPS: ${gps}`, '', img);
+      };
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          p => record(`https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`),
+          () => record('GPS Permission Denied')
+        );
+      } else {
+        record('GPS Unavailable');
+      }
+    }
+
+    function renderIntruderLog() {
+      const box = document.getElementById('intruderLogArea');
+      if (!intruderLog) {
+        box.innerHTML = '<div class="note-box">Status: Protected • Koi unauthorized access nahi mila.</div>';
+        return;
+      }
+      box.innerHTML = `
+        <div class="note-box" style="border-color:var(--accent-rose);">
+          <strong style="color:var(--accent-rose);">${intruderLog.reason}</strong><br>
+          <span>${intruderLog.time}</span><br>
+          <a href="${intruderLog.gps}" target="_blank" style="color:var(--accent-cyan);word-break:break-all;">${intruderLog.gps}</a>
+          ${intruderLog.img ? `<img src="${intruderLog.img}" class="gen-image" />` : ''}
+        </div>
+      `;
+    }
+
+    // State Voice Interpreter
+    function runInterpreter(dir) {
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) { alert('Chrome browser use karein.'); return; }
-      const myLang = document.getElementById('trMyLang').value;
-      const localLang = document.getElementById('trLocalLang').value;
-      const out = document.getElementById('trOutput');
+      const src = document.getElementById('srcLang').value;
+      const dst = document.getElementById('dstLang').value;
+      const out = document.getElementById('interpreterResult');
       const rec = new SR();
       rec.lang = 'hi-IN';
-      out.innerText = 'Listening... Boliye...';
+      out.innerText = 'Listening...';
 
       rec.onresult = async (e) => {
         playSound('chime');
-        const spoken = e.results[0][0].transcript;
-        out.innerText = `Sun liya: "${spoken}"\nTranslating...`;
-        const prompt = direction === 'toLocal'
-          ? `Translate this sentence from ${myLang} into natural spoken ${localLang} so a local person understands immediately. Give ONLY the ${localLang} translation in simple script + Hinglish pronunciation: "${spoken}"`
-          : `Samne wale ne local bhasha (${localLang}) mein yeh bola hai: "${spoken}". Iska seedha aur aasan matlab ${myLang} mein batao.`;
-        const res = await callGemini(prompt, null);
-        if (res.ok) {
-          out.innerText = res.text;
-          speak(res.text);
-        } else {
-          out.innerText = 'Error: ' + res.error;
-        }
+        const text = e.results[0][0].transcript;
+        out.innerText = `"${text}"\nTranslating...`;
+        const prompt = dir === 'toLocal'
+          ? `Translate from ${src} to natural spoken ${dst} (give ${dst} script + simple pronunciation only): "${text}"`
+          : `Translate this ${dst} sentence into clear ${src}: "${text}"`;
+        const res = await queryGemini(prompt, null);
+        if (res.ok) { out.innerText = res.text; speakText(res.text); }
+        else { out.innerText = res.error; }
       };
       rec.start();
     }
 
-    // Feature 2: No-Excuse Live Mission Alarm & 1,000-Step Lock
-    let stepCount = 0;
-    let alarmRoastInterval = null;
-
-    function setNoExcuseAlarm() {
-      const t = document.getElementById('alarmTimeInput').value;
-      const m = document.getElementById('alarmMissionSelect').value;
-      localStorage.setItem('aura_mission_alarm', JSON.stringify({ time: t, mission: m }));
-      const msg = `Ziddi Mission Alarm set ho gaya hai (${t}) — Proof: ${m}. Bina proof dikhaye band nahi hoga!`;
-      addMsg('ai', msg);
-      speak(msg);
-      closeFeatureModal('alarmModal');
+    // No-Excuse Mission Alarm
+    let steps = 0;
+    let ringLoop = null;
+    function saveMissionAlarm() {
+      const t = document.getElementById('missionTime').value;
+      const p = document.getElementById('missionProof').value;
+      localStorage.setItem('aura_alarm', JSON.stringify({ t, p }));
+      closeModal('alarmModal');
+      const msg = `Mission Alarm set (${t}) • Proof required: ${p}.`;
+      appendMessage('ai', msg);
+      speakText(msg);
     }
 
-    function triggerAlarmRing() {
-      const m = document.getElementById('alarmMissionSelect').value;
-      const box = document.getElementById('alarmActiveBox');
-      box.style.display = 'flex';
-      const roast = `Uth ja bhai! Time ho gaya hai. Jab tak camera par ${m} ka proof nahi dikhayega, main har 2 minute mein bajta rahunga!`;
-      document.getElementById('alarmAlertText').innerText = roast;
-      speak(roast);
-      if (alarmRoastInterval) clearInterval(alarmRoastInterval);
-      alarmRoastInterval = setInterval(() => speak(roast), 120000);
+    function testMissionRing() {
+      const p = document.getElementById('missionProof').value;
+      const panel = document.getElementById('ringingPanel');
+      panel.style.display = 'flex';
+      const msg = `Alarm Active! Camera par ${p} ka proof dikhao ya 1,000 steps poore karo.`;
+      document.getElementById('ringingMsg').innerText = msg;
+      speakText(msg);
+      if (ringLoop) clearInterval(ringLoop);
+      ringLoop = setInterval(() => speakText(msg), 120000);
     }
 
-    function addTestSteps() {
-      stepCount += 250;
-      document.getElementById('stepCountSpan').innerText = stepCount;
-      if (stepCount >= 1000) {
-        if (alarmRoastInterval) clearInterval(alarmRoastInterval);
-        document.getElementById('alarmActiveBox').style.display = 'none';
-        stepCount = 0;
-        const doneMsg = 'Shabash! Poore 1,000 steps complete ho gaye. Alarm unlocked!';
-        addMsg('ai', doneMsg);
-        speak(doneMsg);
-        closeFeatureModal('alarmModal');
+    function incrementSteps() {
+      steps += 250;
+      document.getElementById('stepCounter').innerText = steps;
+      if (steps >= 1000) {
+        if (ringLoop) clearInterval(ringLoop);
+        document.getElementById('ringingPanel').style.display = 'none';
+        steps = 0;
+        closeModal('alarmModal');
+        const msg = '1,000 steps complete. Mission Alarm unlocked.';
+        appendMessage('ai', msg);
+        speakText(msg);
       }
     }
 
-    function verifyAlarmCameraProof() {
-      const m = document.getElementById('alarmMissionSelect').value;
-      if (alarmRoastInterval) clearInterval(alarmRoastInterval);
-      document.getElementById('alarmActiveBox').style.display = 'none';
-      closeFeatureModal('alarmModal');
-      openLiveMode();
-      toggleCamera();
-      const msg = `Camera khul gaya hai — apna ${m} dikha kar bolo "Check karo" taaki mission verify ho!`;
-      document.getElementById('liveSubtitle').innerText = msg;
-      speak(msg);
+    function openProofCamera() {
+      const p = document.getElementById('missionProof').value;
+      if (ringLoop) clearInterval(ringLoop);
+      document.getElementById('ringingPanel').style.display = 'none';
+      closeModal('alarmModal');
+      openLiveView();
+      toggleLiveCamera(true);
+      document.getElementById('liveCaption').innerText = `Camera par ${p} dikha kar Mic dabayein.`;
     }
 
-    // Feature 3: Smart Medicine & Diet Guardian
-    function saveMedicineSchedule() {
-      const name = document.getElementById('medNameInput').value.trim();
-      const time = document.getElementById('medTimeInput').value;
+    // Medicine & Diet Guardian
+    function addMedicine() {
+      const name = document.getElementById('medName').value.trim();
+      const time = document.getElementById('medTime').value;
       if (!name) return;
-      medicines.push({ name, time });
-      localStorage.setItem('aura_medicines', JSON.stringify(medicines));
-      document.getElementById('medNameInput').value = '';
-      renderMedicineList();
-      speak(`Dawa ${name} ka reminder ${time} ke liye set kar diya hai.`);
+      medSchedule.push({ name, time });
+      localStorage.setItem('aura_meds', JSON.stringify(medSchedule));
+      document.getElementById('medName').value = '';
+      renderMedList();
+      speakText(`${name} ka reminder ${time} ke liye save ho gaya hai.`);
     }
 
-    function renderMedicineList() {
-      const el = document.getElementById('medSavedList');
-      if (!medicines.length) { el.innerText = 'Abhi koi dawa schedule nahi hai.'; return; }
-      el.innerHTML = medicines.map((m, i) => `• ${m.time} — <b>${m.name}</b>`).join('<br>');
+    function renderMedList() {
+      const el = document.getElementById('medListArea');
+      el.innerHTML = medSchedule.length
+        ? medSchedule.map(m => `• ${m.time} — <strong>${m.name}</strong>`).join('<br>')
+        : 'Koi medicine schedule save nahi hai.';
     }
 
-    function askDietChart() {
-      const age = document.getElementById('patientAgeInput').value || '25';
-      const cond = document.getElementById('patientCondInput').value || 'General Fitness';
-      closeFeatureModal('medModal');
-      sendMessage(`Mareez ki umra ${age} saal hai aur condition "${cond}" hai. Iske mutabik subah-dopahar-raat kya khana chahiye aur kis cheez se parhez karna chahiye, short points mein batao (doctor consultation disclaimer ke saath).`);
+    function generateDietPlan() {
+      const age = document.getElementById('userAge').value || '25';
+      const goal = document.getElementById('userHealthGoal').value || 'General Health';
+      closeModal('medModal');
+      handleSend(`Umra ${age} saal aur goal/condition "${goal}" ke mutabik subah, dopahar aur raat ka diet aur parhez short points mein batao (doctor consultation disclaimer ke saath).`);
     }
 
-    // Feature 4: Creator Promo Mode & Zero-Barrier SOS Emergency
-    function triggerPromoMode() {
-      document.getElementById('settingsPanel').classList.remove('open');
-      openLiveMode();
-      const promo = 'Namaste dosto! Main hoon AURA AI — aapka 2030 personal companion! Is channel ko abhi Subscribe karein aur description link se AURA AI zaroor try karein!';
-      document.getElementById('liveSubtitle').innerText = promo;
-      speak(promo);
+    // Memory & SOS
+    function saveMemory() {
+      memoryData = document.getElementById('memoryInput').value.trim();
+      localStorage.setItem('aura_memory', memoryData);
+      closeModal('memoryModal');
+      appendMessage('ai', 'Memory Vault update ho gaya hai.');
     }
 
-    function triggerEmergencySOS() {
-      document.getElementById('settingsPanel').classList.remove('open');
-      const sosMsg = 'ZERO-BARRIER EMERGENCY MODE ACTIVE! 30 Minute Free Override chalu hai. Shant rahein, help bheji ja rahi hai!';
-      addMsg('ai', sosMsg);
-      speak(sosMsg);
+    function triggerSOS() {
+      document.getElementById('settingsDrawer').classList.remove('open');
+      const msg = 'EMERGENCY SOS ACTIVE (24×7 Free Override). Shant rahein, live GPS location taiyar ki ja rahi hai.';
+      appendMessage('ai', msg);
+      speakText(msg);
       if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          const loc = `Live Emergency GPS Location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
-          addMsg('ai', loc);
+        navigator.geolocation.getCurrentPosition(p => {
+          appendMessage('ai', `Live GPS Location: https://maps.google.com/?q=${p.coords.latitude},${p.coords.longitude}`);
         });
       }
     }
 
-    // Feature 5: VIP Boosters & Referral Bonus
-    function activateBooster(packName) {
-      closeFeatureModal('vipModal');
-      const msg = `${packName} test-unlocked! Aapke account mein booster credits add ho gaye hain.`;
-      addMsg('ai', msg);
-      speak(msg);
+    // Attachments & Tools
+    function triggerFilePick(accept) {
+      closeToolsSheet();
+      const inp = document.getElementById('filePicker');
+      inp.removeAttribute('capture');
+      inp.accept = accept;
+      inp.click();
     }
 
-    function claimReferralBonus() {
-      trialDaysLeft += 15;
-      localStorage.setItem('aura_trial_days', String(trialDaysLeft));
-      applyCompanionUI();
-      const msg = `Referral Code AURA-VIP-15 apply ho gaya! Aapko 15 din ka extra VIP free mil gaya hai (Total: ${trialDaysLeft} din).`;
-      addMsg('ai', msg);
-      speak(msg);
+    function triggerCameraPick() {
+      closeToolsSheet();
+      const inp = document.getElementById('filePicker');
+      inp.accept = 'image/*';
+      inp.setAttribute('capture', 'environment');
+      inp.click();
     }
 
-    // Tactile UI Sound Synthesizer
-    let audioCtx = null;
-    function playSound(type = 'tap') {
-      if (!uiSoundEnabled) return;
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        const now = audioCtx.currentTime;
-
-        if (type === 'tap') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(750, now);
-          osc.frequency.exponentialRampToValueAtTime(300, now + 0.035);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
-          osc.connect(gain); gain.connect(audioCtx.destination);
-          osc.start(now); osc.stop(now + 0.04);
-        } else if (type === 'switch') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(520, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.055);
-          gain.gain.setValueAtTime(0.09, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-          osc.connect(gain); gain.connect(audioCtx.destination);
-          osc.start(now); osc.stop(now + 0.065);
-        } else if (type === 'chime') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(660, now);
-          osc.frequency.setValueAtTime(990, now + 0.06);
-          gain.gain.setValueAtTime(0.09, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
-          osc.connect(gain); gain.connect(audioCtx.destination);
-          osc.start(now); osc.stop(now + 0.17);
-        }
-      } catch (e) {}
+    function handleFileSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      playSound('chime');
+      const reader = new FileReader();
+      reader.onload = () => {
+        attachedFile = {
+          name: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          base64: reader.result.split(',')[1]
+        };
+        document.getElementById('activeModeText').innerText = 'Attached: ' + file.name;
+        document.getElementById('activeModeBar').classList.add('show');
+        updateComposerButtons();
+      };
+      reader.readAsDataURL(file);
     }
 
-    function toggleUiSound() {
-      uiSoundEnabled = !uiSoundEnabled;
-      localStorage.setItem('aura_ui_sound', uiSoundEnabled ? 'on' : 'off');
-      document.getElementById('soundToggleBtn').innerText = uiSoundEnabled ? 'Sound: ON' : 'Sound: OFF';
-      if (uiSoundEnabled) playSound('switch');
+    function activateTool(label, prefix) {
+      closeToolsSheet();
+      toolPrefix = prefix;
+      document.getElementById('activeModeText').innerText = label;
+      document.getElementById('activeModeBar').classList.add('show');
+      document.getElementById('promptInput').focus();
     }
 
-    // Live Vision State
-    let liveStream = null;
-    let facingMode = 'environment';
-    let isCameraOn = false;
-    let isScreenOn = false;
-
-    if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
-    document.getElementById('soundToggleBtn').innerText = uiSoundEnabled ? 'Sound: ON' : 'Sound: OFF';
-
-    function toggleSendMic() {
-      const hasText = document.getElementById('userInput').value.trim().length > 0 || selectedFile !== null;
-      document.getElementById('sendBtn').style.display = hasText ? 'flex' : 'none';
-      document.getElementById('liveWaveBtn').style.display = hasText ? 'none' : 'flex';
+    function resetActiveTool() {
+      attachedFile = null;
+      toolPrefix = '';
+      document.getElementById('filePicker').value = '';
+      document.getElementById('activeModeBar').classList.remove('show');
+      updateComposerButtons();
     }
 
-    function persistChats() {
-      localStorage.setItem('aura_omni_chats', JSON.stringify(chats));
+    function updateComposerButtons() {
+      const active = document.getElementById('promptInput').value.trim().length > 0 || attachedFile !== null;
+      document.getElementById('sendBtn').style.display = active ? 'flex' : 'none';
+      document.getElementById('liveBtn').style.display = active ? 'none' : 'flex';
+    }
+
+    function saveApiKey() {
+      apiKey = document.getElementById('apiKeyInput').value.trim();
+      cachedModel = '';
+      localStorage.setItem('aura_gemini_key', apiKey);
+      document.getElementById('settingsDrawer').classList.remove('open');
+      appendMessage('ai', 'API Key save ho gayi hai. AURA Master Core ready hai.');
+    }
+
+    // Chat History
+    function saveChats() {
+      localStorage.setItem('aura_chats_final', JSON.stringify(chats));
       renderSidebar();
     }
 
     function createNewChat() {
-      const id = 'c_' + Date.now();
+      const id = 'chat_' + Date.now();
       chats.unshift({ id, title: 'New chat', pinned: false, messages: [] });
-      currentChatId = id;
-      persistChats();
+      activeChatId = id;
+      saveChats();
       renderChat();
       closeSidebar();
     }
 
-    function selectChat(id) {
+    function openChat(id) {
       playSound('tap');
-      currentChatId = id;
+      activeChatId = id;
       renderSidebar();
       renderChat();
       closeSidebar();
     }
 
-    function togglePin(e, id) {
+    function togglePinChat(e, id) {
       e.stopPropagation();
       playSound('switch');
       const c = chats.find(x => x.id === id);
-      if (c) { c.pinned = !c.pinned; persistChats(); }
+      if (c) { c.pinned = !c.pinned; saveChats(); }
     }
 
     function renameChat(e, id) {
       e.stopPropagation();
-      playSound('tap');
       const c = chats.find(x => x.id === id);
       if (!c) return;
-      const name = prompt('Rename chat:', c.title);
-      if (name && name.trim()) { c.title = name.trim(); persistChats(); }
+      const n = prompt('Rename chat:', c.title);
+      if (n && n.trim()) { c.title = n.trim(); saveChats(); }
     }
 
     function deleteChat(e, id) {
       e.stopPropagation();
-      playSound('tap');
       chats = chats.filter(x => x.id !== id);
-      if (currentChatId === id) currentChatId = chats.length ? chats[0].id : null;
-      if (!currentChatId) createNewChat();
-      else { persistChats(); renderChat(); }
+      if (activeChatId === id) activeChatId = chats.length ? chats[0].id : null;
+      if (!activeChatId) createNewChat();
+      else { saveChats(); renderChat(); }
     }
 
-    function exportCurrentChat() {
-      const chat = chats.find(c => c.id === currentChatId);
-      if (!chat || !chat.messages.length) return;
-      const txt = chat.messages.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n\n');
-      const blob = new Blob([txt], { type: 'text/plain' });
+    function exportChat() {
+      const c = chats.find(x => x.id === activeChatId);
+      if (!c || !c.messages.length) return;
+      const text = c.messages.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join('\n\n');
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = (chat.title || 'AURA_Chat') + '.txt';
+      a.href = URL.createObjectURL(new Blob([text], { type: 'text/plain' }));
+      a.download = (c.title || 'AURA_Chat') + '.txt';
       a.click();
     }
 
     function clearAllChats() {
-      if (!confirm('Saari purani chats delete karein?')) return;
+      if (!confirm('Delete all conversations?')) return;
       chats = [];
       createNewChat();
     }
@@ -1370,96 +2088,90 @@
     function renderSidebar() {
       const pList = document.getElementById('pinnedList');
       const rList = document.getElementById('recentList');
-      const pHead = document.getElementById('pinHeader');
-      const q = (document.getElementById('historySearch')?.value || '').toLowerCase();
+      const pLabel = document.getElementById('pinnedLabel');
+      const q = (document.getElementById('searchHistory')?.value || '').toLowerCase();
       pList.innerHTML = '';
       rList.innerHTML = '';
 
       const filtered = chats.filter(c => c.title.toLowerCase().includes(q));
       const pinned = filtered.filter(c => c.pinned);
       const recent = filtered.filter(c => !c.pinned);
-      pHead.style.display = pinned.length ? 'block' : 'none';
+      pLabel.style.display = pinned.length ? 'block' : 'none';
 
-      const makeRow = (c) => {
+      const buildItem = (c) => {
         const div = document.createElement('div');
-        div.className = 'history-item' + (c.id === currentChatId ? ' active' : '');
-        div.onclick = () => selectChat(c.id);
+        div.className = 'history-item' + (c.id === activeChatId ? ' active' : '');
+        div.onclick = () => openChat(c.id);
         div.innerHTML = `
           <span class="history-title">${c.title}</span>
-          <div class="hist-btns">
-            <button class="mini-svg-btn ${c.pinned ? 'pinned' : ''}" onclick="togglePin(event, '${c.id}')" title="Pin">
+          <div class="hist-actions">
+            <button class="mini-btn ${c.pinned ? 'pinned' : ''}" onclick="togglePinChat(event, '${c.id}')" title="Pin">
               <svg viewBox="0 0 24 24"><path d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg>
             </button>
-            <button class="mini-svg-btn" onclick="renameChat(event, '${c.id}')" title="Rename">
+            <button class="mini-btn" onclick="renameChat(event, '${c.id}')" title="Rename">
               <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
             </button>
-            <button class="mini-svg-btn" onclick="deleteChat(event, '${c.id}')" title="Delete">
+            <button class="mini-btn" onclick="deleteChat(event, '${c.id}')" title="Delete">
               <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
           </div>
         `;
         return div;
       };
-      pinned.forEach(c => pList.appendChild(makeRow(c)));
-      recent.forEach(c => rList.appendChild(makeRow(c)));
+      pinned.forEach(c => pList.appendChild(buildItem(c)));
+      recent.forEach(c => rList.appendChild(buildItem(c)));
     }
 
     function renderChat() {
-      const box = document.getElementById('chatBox');
+      const box = document.getElementById('chatContainer');
       box.innerHTML = '';
-      const chat = chats.find(c => c.id === currentChatId);
-      const isFemale = (selectedGender || 'male') === 'female';
-      const titleTxt = isFemale ? 'Hello, Manish' : 'Kya scene hai, Manish?';
-      const subTxt = isFemale
-        ? 'AURA Female Companion ready — 22+ Languages, Live Lip-Sync & VIP Core active.'
-        : 'AURA Male Companion ready — 22+ Languages, Live Lip-Sync & VIP Core active.';
-
+      const chat = chats.find(c => c.id === activeChatId);
       if (!chat || chat.messages.length === 0) {
         box.innerHTML = `
-          <div class="welcome-box">
-            <div class="welcome-title">${titleTxt}</div>
-            <div class="welcome-sub">${subTxt}</div>
-            <div class="quick-prompts">
-              <button class="qp-item" onclick="playSound('switch'); openFeatureModal('translatorModal')">
-                <svg class="ui-icon" viewBox="0 0 24 24"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
-                <span>State Voice Translator</span>
+          <div class="welcome-screen">
+            <div class="welcome-heading">How can I help today?</div>
+            <div class="welcome-sub">Holographic Lip-Sync • Automatic Situation Brain • Zero-Debt Architecture.</div>
+            <div class="suggestion-grid">
+              <button class="sug-card" onclick="playSound('switch'); activateTool('Coding & Excel Analyst', 'Clean production code ya Excel formula likho: ')">
+                <span class="sug-title">Code & Excel</span>
+                <span class="sug-desc">Write scripts, debug & formulas</span>
               </button>
-              <button class="qp-item" onclick="playSound('switch'); openFeatureModal('alarmModal')">
-                <svg class="ui-icon" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/></svg>
-                <span>No-Excuse Mission Alarm</span>
+              <button class="sug-card" onclick="playSound('switch'); activateTool('Exam & Study Coach', 'Is topic ko step-by-step samjhao: ')">
+                <span class="sug-title">Exam & Study</span>
+                <span class="sug-desc">SSC, Police & clear explanations</span>
               </button>
-              <button class="qp-item" onclick="playSound('switch'); openFeatureModal('medModal')">
-                <svg class="ui-icon" viewBox="0 0 24 24"><path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/></svg>
-                <span>Medicine & Diet Guardian</span>
+              <button class="sug-card" onclick="playSound('switch'); openModal('alarmModal')">
+                <span class="sug-title">Mission Alarm</span>
+                <span class="sug-desc">Camera proof & 1,000-step lock</span>
               </button>
-              <button class="qp-item" onclick="playSound('switch'); openLiveMode()">
-                <svg class="ui-icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-                <span>Live Lip-Sync Hologram</span>
+              <button class="sug-card" onclick="playSound('switch'); openLiveView()">
+                <span class="sug-title">3D Lip-Sync Live</span>
+                <span class="sug-desc">Real-time hologram conversation</span>
               </button>
             </div>
           </div>
         `;
         return;
       }
-      chat.messages.forEach(m => drawMessage(m.sender, m.text, m.fileName, m.imageUrl));
+      chat.messages.forEach(m => renderMessageNode(m.sender, m.text, m.fileName, m.imgUrl));
     }
 
-    function formatRichContent(container, text) {
-      const parts = text.split(/```([\s\S]*?)```/g);
-      parts.forEach((part, i) => {
-        if (i % 2 === 1) {
+    function renderFormattedText(container, text) {
+      const blocks = text.split(/```([\s\S]*?)```/g);
+      blocks.forEach((part, idx) => {
+        if (idx % 2 === 1) {
           const lines = part.split('\n');
           const lang = lines[0].trim() || 'code';
-          const codeText = lines.slice(1).join('\n') || part;
+          const code = lines.slice(1).join('\n') || part;
           const card = document.createElement('div');
-          card.className = 'code-card';
-          card.innerHTML = `<div class="code-head"><span>${lang}</span><button class="mini-svg-btn" style="color:#38bdf8;font-size:11px;">Copy Code</button></div><div class="code-body"></div>`;
-          card.querySelector('.code-body').innerText = codeText;
+          card.className = 'code-block';
+          card.innerHTML = `<div class="code-header"><span>${lang}</span><button class="mini-btn" style="color:var(--accent-cyan);font-size:11px;">Copy</button></div><pre class="code-pre"></pre>`;
+          card.querySelector('.code-pre').textContent = code;
           card.querySelector('button').onclick = (e) => {
             playSound('tap');
-            navigator.clipboard.writeText(codeText);
+            navigator.clipboard.writeText(code);
             e.target.innerText = 'Copied';
-            setTimeout(() => e.target.innerText = 'Copy Code', 1500);
+            setTimeout(() => e.target.innerText = 'Copy', 1400);
           };
           container.appendChild(card);
         } else if (part.trim()) {
@@ -1470,241 +2182,96 @@
       });
     }
 
-    function drawMessage(sender, text, fileName, imageUrl) {
-      const box = document.getElementById('chatBox');
-      const wb = box.querySelector('.welcome-box');
-      if (wb) wb.remove();
+    function renderMessageNode(sender, text, fileName, imgUrl) {
+      const box = document.getElementById('chatContainer');
+      const welcome = box.querySelector('.welcome-screen');
+      if (welcome) welcome.remove();
 
-      const isFemale = (selectedGender || 'male') === 'female';
-      const wrap = document.createElement('div');
-      wrap.className = 'msg-wrap ' + sender;
+      const isFem = (gender || 'male') === 'female';
+      const row = document.createElement('div');
+      row.className = 'msg-row ' + sender;
 
-      const meta = document.createElement('div');
-      meta.className = 'msg-meta';
-      meta.innerText = sender === 'user' ? 'Manish' : (isFemale ? 'AURA (Swara)' : 'AURA (Jarvis)');
+      const label = document.createElement('div');
+      label.className = 'msg-sender';
+      label.innerText = sender === 'user' ? 'Manish' : (isFem ? 'AURA (Swara)' : 'AURA (Jarvis)');
 
-      const bubble = document.createElement('div');
-      bubble.className = 'msg-bubble';
+      const body = document.createElement('div');
+      body.className = 'msg-content';
       if (fileName) {
-        const chip = document.createElement('div');
-        chip.className = 'attach-chip';
-        chip.innerText = fileName;
-        bubble.appendChild(chip);
-        bubble.appendChild(document.createElement('br'));
+        const badge = document.createElement('div');
+        badge.className = 'file-badge';
+        badge.innerText = fileName;
+        body.appendChild(badge);
+        body.appendChild(document.createElement('br'));
       }
-      formatRichContent(bubble, text);
+      renderFormattedText(body, text);
 
-      if (imageUrl) {
+      if (imgUrl) {
         const img = document.createElement('img');
-        img.src = imageUrl;
-        img.className = 'gen-img';
-        bubble.appendChild(img);
+        img.src = imgUrl;
+        img.className = 'gen-image';
+        body.appendChild(img);
       }
 
-      wrap.appendChild(meta);
-      wrap.appendChild(bubble);
+      row.appendChild(label);
+      row.appendChild(body);
 
       if (sender === 'ai') {
-        const actions = document.createElement('div');
-        actions.className = 'msg-actions';
+        const bar = document.createElement('div');
+        bar.className = 'msg-toolbar';
 
         const copyBtn = document.createElement('button');
-        copyBtn.className = 'act-chip';
+        copyBtn.className = 'tool-chip';
         copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span>`;
-        copyBtn.onclick = () => { playSound('tap'); navigator.clipboard.writeText(text); copyBtn.querySelector('span').innerText = 'Copied'; setTimeout(() => copyBtn.querySelector('span').innerText = 'Copy', 1500); };
+        copyBtn.onclick = () => { playSound('tap'); navigator.clipboard.writeText(text); copyBtn.querySelector('span').innerText = 'Copied'; setTimeout(() => copyBtn.querySelector('span').innerText = 'Copy', 1400); };
 
-        const speakBtn = document.createElement('button');
-        speakBtn.className = 'act-chip';
-        speakBtn.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span>Listen</span>`;
-        speakBtn.onclick = () => { playSound('tap'); speak(text); };
+        const listenBtn = document.createElement('button');
+        listenBtn.className = 'tool-chip';
+        listenBtn.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg><span>Listen</span>`;
+        listenBtn.onclick = () => { playSound('tap'); speakText(text); };
 
         const regenBtn = document.createElement('button');
-        regenBtn.className = 'act-chip';
+        regenBtn.className = 'tool-chip';
         regenBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg><span>Regenerate</span>`;
-        regenBtn.onclick = () => { playSound('switch'); regenerateLast(); };
+        regenBtn.onclick = () => { playSound('switch'); regenerateResponse(); };
 
-        actions.appendChild(copyBtn);
-        actions.appendChild(speakBtn);
-        actions.appendChild(regenBtn);
-        wrap.appendChild(actions);
+        bar.appendChild(copyBtn);
+        bar.appendChild(listenBtn);
+        bar.appendChild(regenBtn);
+        row.appendChild(bar);
       }
 
-      box.appendChild(wrap);
+      box.appendChild(row);
       box.scrollTop = box.scrollHeight;
     }
 
-    function addMsg(sender, text, fileName = '', imageUrl = '') {
-      const chat = chats.find(c => c.id === currentChatId);
+    function appendMessage(sender, text, fileName = '', imgUrl = '') {
+      const chat = chats.find(c => c.id === activeChatId);
       if (chat) {
         if (sender === 'user' && chat.messages.length === 0) {
-          chat.title = (text || fileName).slice(0, 28);
+          chat.title = (text || fileName).slice(0, 30);
         }
-        chat.messages.push({ sender, text, fileName, imageUrl });
-        persistChats();
+        chat.messages.push({ sender, text, fileName, imgUrl });
+        saveChats();
       }
-      drawMessage(sender, text, fileName, imageUrl);
+      renderMessageNode(sender, text, fileName, imgUrl);
     }
 
-    async function regenerateLast() {
-      const chat = chats.find(c => c.id === currentChatId);
+    async function regenerateResponse() {
+      const chat = chats.find(c => c.id === activeChatId);
       if (!chat || chat.messages.length < 2) return;
       if (chat.messages[chat.messages.length - 1].sender === 'ai') chat.messages.pop();
       const lastUser = chat.messages[chat.messages.length - 1];
       if (!lastUser || lastUser.sender !== 'user') return;
-      persistChats();
+      saveChats();
       renderChat();
-      document.getElementById('statusText').innerText = 'Thinking...';
-      setHoloState('Thinking');
-      const result = await callGemini(lastUser.text, null);
-      applyCompanionUI();
-      if (result.ok) {
-        addMsg('ai', result.text);
-        speak(result.text);
-      }
+      setLiveState('Thinking');
+      const res = await queryGemini(lastUser.text, null);
+      if (res.ok) { appendMessage('ai', res.text); speakText(res.text); }
     }
 
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
-      document.getElementById('overlay').classList.toggle('open');
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('overlay').classList.remove('open');
-    }
-    function toggleSettings() {
-      document.getElementById('settingsPanel').classList.toggle('open');
-    }
-
-    function openPlusSheet() {
-      document.getElementById('sheetBackdrop').classList.add('open');
-      document.getElementById('plusSheet').classList.add('open');
-    }
-    function closePlusSheet() {
-      document.getElementById('sheetBackdrop').classList.remove('open');
-      document.getElementById('plusSheet').classList.remove('open');
-    }
-
-    function pickFile(accept) {
-      closePlusSheet();
-      const inp = document.getElementById('fileInput');
-      inp.removeAttribute('capture');
-      inp.accept = accept;
-      inp.click();
-    }
-
-    function pickCameraCapture() {
-      closePlusSheet();
-      const inp = document.getElementById('fileInput');
-      inp.accept = 'image/*';
-      inp.setAttribute('capture', 'environment');
-      inp.click();
-    }
-
-    function onFilePicked(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      playSound('chime');
-      const reader = new FileReader();
-      reader.onload = () => {
-        selectedFile = {
-          name: file.name,
-          mimeType: file.type || 'application/octet-stream',
-          base64: reader.result.split(',')[1]
-        };
-        document.getElementById('activeToolLabel').innerText = 'Attached: ' + file.name;
-        document.getElementById('activeToolBar').classList.add('show');
-        toggleSendMic();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function selectTool(name, prefix) {
-      closePlusSheet();
-      activeToolPrefix = prefix;
-      document.getElementById('activeToolLabel').innerText = 'Mode: ' + name;
-      document.getElementById('activeToolBar').classList.add('show');
-    }
-
-    function clearToolAndFile() {
-      selectedFile = null;
-      activeToolPrefix = '';
-      document.getElementById('fileInput').value = '';
-      document.getElementById('activeToolBar').classList.remove('show');
-      toggleSendMic();
-    }
-
-    function saveKey() {
-      apiKey = document.getElementById('apiKeyInput').value.trim();
-      cachedModel = '';
-      localStorage.setItem('aura_gemini_key', apiKey);
-      document.getElementById('settingsPanel').classList.remove('open');
-      const msg = 'AURA Core online! 22+ Indian Languages, Live Lip-Sync aur saare VIP tools ready hain.';
-      addMsg('ai', msg);
-      speak(msg);
-    }
-
-    /* ================= 100% FREE NEURAL VOICE + LIP-SYNC ENGINE ================= */
-    function stopSpeaking() {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-      stopLipSync();
-      document.getElementById('statusDot').classList.remove('speaking');
-      setHoloState('Ready');
-    }
-
-    function selectBestFreeVoice(isFemale) {
-      if (!availableVoices.length && 'speechSynthesis' in window) {
-        availableVoices = window.speechSynthesis.getVoices();
-      }
-      const hindiVoices = availableVoices.filter(v => v.lang.toLowerCase().includes('hi') || v.lang.toLowerCase().includes('in'));
-      if (isFemale) {
-        return hindiVoices.find(v => /swara|neerja|kalpana|heera|lekha|female|woman/i.test(v.name))
-          || hindiVoices[0]
-          || availableVoices.find(v => /female|zira|samantha/i.test(v.name));
-      } else {
-        return hindiVoices.find(v => /madhur|prabhat|hemant|ravi|male|man/i.test(v.name))
-          || hindiVoices.find(v => !/swara|neerja|kalpana|heera|female/i.test(v.name))
-          || hindiVoices[0]
-          || availableVoices.find(v => /male|david|alex/i.test(v.name));
-      }
-    }
-
-    function speak(text) {
-      stopSpeaking();
-      if (!('speechSynthesis' in window)) return;
-      const cleanText = text.replace(/```[\s\S]*?```/g, 'Code screen par likh diya hai.').replace(/[*#_`]/g, '').trim();
-      if (!cleanText) return;
-
-      const isFemale = (selectedGender || 'male') === 'female';
-      const utter = new SpeechSynthesisUtterance(cleanText);
-      utter.lang = 'hi-IN';
-      utter.pitch = isFemale ? 1.12 : 0.94;
-      utter.rate = isFemale ? 1.02 : 1.07;
-
-      const bestVoice = selectBestFreeVoice(isFemale);
-      if (bestVoice) utter.voice = bestVoice;
-
-      const dot = document.getElementById('statusDot');
-      utter.onstart = () => {
-        dot.classList.add('speaking');
-        setHoloState('Speaking');
-        startLipSync();
-      };
-      utter.onboundary = () => animateMouthPulse(7.8);
-      utter.onend = () => {
-        dot.classList.remove('speaking');
-        stopLipSync();
-        setHoloState('Ready');
-      };
-      utter.onerror = () => {
-        dot.classList.remove('speaking');
-        stopLipSync();
-        setHoloState('Ready');
-      };
-
-      window.speechSynthesis.speak(utter);
-    }
-
-    async function getModels() {
+    // Gemini API Integration
+    async function fetchAvailableModels() {
       if (cachedModel) return [cachedModel];
       try {
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}`);
@@ -1721,41 +2288,30 @@
       return ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
     }
 
-    function buildConversationContents(currentParts) {
-      const chat = chats.find(c => c.id === currentChatId);
+    function buildHistoryPayload(currentParts) {
+      const chat = chats.find(c => c.id === activeChatId);
       const contents = [];
       if (chat && chat.messages.length > 1) {
-        const recent = chat.messages.slice(-7, -1);
-        recent.forEach(m => {
-          contents.push({
-            role: m.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: m.text }]
-          });
+        chat.messages.slice(-7, -1).forEach(m => {
+          contents.push({ role: m.sender === 'user' ? 'user' : 'model', parts: [{ text: m.text }] });
         });
       }
       contents.push({ role: 'user', parts: currentParts });
       return contents;
     }
 
-    async function callGemini(text, fileObj) {
-      const models = await getModels();
-      let lastError = 'Model error';
+    async function queryGemini(promptText, fileObj) {
+      const models = await fetchAvailableModels();
+      let errText = 'API Error';
       const parts = [];
       if (fileObj && fileObj.base64) {
         parts.push({ inlineData: { mimeType: fileObj.mimeType, data: fileObj.base64 } });
       }
-      parts.push({ text: text || 'Is image/file ko detail mein samjhaiye.' });
+      parts.push({ text: promptText || 'Analyze this file.' });
 
-      const contents = buildConversationContents(parts);
-      const g = selectedGender || 'male';
-      const lang = document.getElementById('langSelect')?.value || 'Hinglish';
-      const dynamicRules = `
-Active Companion: ${g === 'female' ? 'Female Companion (Swara)' : 'Male Companion (Jarvis)'}
-Preferred Language: ${lang}
-Charm Mode: ${charmMode ? 'ON' : 'OFF'}
-Parents/Respect Guard: ${familyGuard ? 'ON (Strictly Respectful Mode)' : 'OFF'}
-Age Filter: ${isUnder18 ? 'Under-18 Safe School Mode' : '18+ Adult Mode'}
-Lifetime Memory Vault: ${memoryVault || 'Not set yet'}`;
+      const lang = document.getElementById('languageSelect')?.value || 'Hinglish';
+      const isFem = (gender || 'male') === 'female';
+      const contextBlock = `\nActive Companion: ${isFem ? 'Female (Swara)' : 'Male (Jarvis)'}\nPreferred Language: ${lang}\nMemory Vault: ${memoryData || 'None'}`;
 
       for (const model of models) {
         try {
@@ -1763,8 +2319,8 @@ Lifetime Memory Vault: ${memoryVault || 'Not set yet'}`;
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              systemInstruction: { parts: [{ text: MASTER_SYSTEM_PROMPT + "\n" + dynamicRules }] },
-              contents
+              systemInstruction: { parts: [{ text: MASTER_CORE_PROMPT + contextBlock }] },
+              contents: buildHistoryPayload(parts)
             })
           });
           const data = await res.json();
@@ -1772,268 +2328,275 @@ Lifetime Memory Vault: ${memoryVault || 'Not set yet'}`;
             cachedModel = model;
             return { ok: true, text: data.candidates[0].content.parts[0].text };
           }
-          lastError = data?.error?.message || `HTTP ${res.status}`;
+          errText = data?.error?.message || `HTTP ${res.status}`;
         } catch (err) {
-          lastError = err.message;
+          errText = err.message;
         }
       }
-      return { ok: false, error: lastError };
+      return { ok: false, error: errText };
     }
 
-    async function sendMessage(customText) {
-      const input = document.getElementById('userInput');
-      const rawText = customText || input.value.trim();
-      const fileToSend = selectedFile;
-      const prefixToUse = activeToolPrefix;
-      if (!rawText && !fileToSend) return;
+    // Offline Mini-Brain + Main Send Handler
+    async function handleSend(customPrompt) {
+      const input = document.getElementById('promptInput');
+      const raw = customPrompt || input.value.trim();
+      const file = attachedFile;
+      const prefix = toolPrefix;
+      if (!raw && !file) return;
 
-      if (!customText) input.value = '';
-      clearToolAndFile();
-      addMsg('user', rawText || 'Attachment', fileToSend ? fileToSend.name : '');
+      stopSpeech();
+      if (!customPrompt) input.value = '';
+      resetActiveTool();
+      appendMessage('user', raw || 'Attachment', file ? file.name : '');
 
-      // Built-in Offline / Instant Triggers from Blueprint
-      if (/help me|aura emergency/i.test(rawText)) {
-        triggerEmergencySOS();
+      if (/help me|aura emergency/i.test(raw)) { triggerSOS(); return; }
+      if (/promo mode/i.test(raw)) {
+        const promo = 'Namaste dosto! Main hoon AURA AI — aapka 2030 personal companion! Is channel ko abhi Subscribe karein aur description link se AURA AI download karein!';
+        appendMessage('ai', promo);
+        speakText(promo);
         return;
       }
-      if (/^shutdown$/i.test(rawText.trim())) {
-        const sd = 'AURA Core powering down... Sleep well, Boss! Kal phir full energy ke saath milenge.';
-        addMsg('ai', sd);
-        speak(sd);
+      if (/^shutdown$/i.test(raw.trim())) {
+        const msg = 'AURA Core powering down... Sleep well, Boss! Kal phir full energy ke saath milenge.';
+        appendMessage('ai', msg);
+        speakText(msg);
         return;
       }
 
-      if (prefixToUse === '__IMAGE__') {
-        const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(rawText)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
-        const reply = `Yeh rahi aapki image: "${rawText}"`;
-        addMsg('ai', reply, '', imgUrl);
-        speak(reply);
+      // Offline Mini-Brain Fallback (Works with 0 Internet)
+      if (!navigator.onLine) {
+        const calcMatch = raw.match(/^[\d\s+\-*/().]+$/);
+        if (calcMatch) {
+          try {
+            const ans = Function('"use strict";return (' + raw + ')')();
+            const offMsg = `Offline Mini-Brain Answer: ${ans}`;
+            appendMessage('ai', offMsg);
+            speakText(offMsg);
+            return;
+          } catch (e) {}
+        }
+        const offReply = 'Offline Mini-Brain Active: Abhi internet nahi hai, lekin Mission Alarm, Medicine Reminders, Notes aur Calculator bina net ke kaam kar rahe hain.';
+        appendMessage('ai', offReply);
+        speakText(offReply);
+        return;
+      }
+
+      if (prefix === '__IMAGE__') {
+        const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(raw)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
+        const msg = `Generated visual for: "${raw}"`;
+        appendMessage('ai', msg, '', url);
+        speakText(msg);
         return;
       }
 
       if (!apiKey) {
-        document.getElementById('settingsPanel').classList.add('open');
-        addMsg('ai', 'Pehle Settings mein apni Gemini API Key paste karke Save dabaiye.');
+        document.getElementById('settingsDrawer').classList.add('open');
+        appendMessage('ai', 'Settings mein apni Gemini API Key paste karke Save karein.');
         return;
       }
 
-      document.getElementById('statusText').innerText = 'Thinking...';
-      setHoloState('Thinking');
-      const promptFinal = prefixToUse ? (prefixToUse + rawText) : rawText;
-      const result = await callGemini(promptFinal, fileToSend);
-      applyCompanionUI();
-
-      if (result.ok) {
-        addMsg('ai', result.text);
-        speak(result.text);
+      setLiveState('Thinking');
+      const res = await queryGemini(prefix ? prefix + raw : raw, file);
+      if (res.ok) {
+        appendMessage('ai', res.text);
+        speakText(res.text);
       } else {
-        setHoloState('Ready');
-        addMsg('ai', `API error: ${result.error}`);
+        setLiveState('Ready');
+        appendMessage('ai', `Error: ${res.error}`);
       }
     }
 
-    function startVoiceOnce() {
+    function startSpeechInput() {
+      stopSpeech();
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) { alert('Chrome browser use karein.'); return; }
       const rec = new SR();
       rec.lang = 'hi-IN';
-      const dot = document.getElementById('statusDot');
-      dot.classList.add('speaking');
-      document.getElementById('statusText').innerText = 'Listening...';
+      document.getElementById('headerDot').classList.add('speaking');
       rec.onresult = (e) => {
         playSound('chime');
-        dot.classList.remove('speaking');
-        applyCompanionUI();
-        sendMessage(e.results[0][0].transcript);
+        document.getElementById('headerDot').classList.remove('speaking');
+        handleSend(e.results[0][0].transcript);
       };
-      rec.onerror = () => {
-        dot.classList.remove('speaking');
-        applyCompanionUI();
-      };
+      rec.onerror = () => document.getElementById('headerDot').classList.remove('speaking');
       rec.start();
     }
 
-    /* ================= LIVE HOLOGRAM + CAMERA + SCREEN SHARE ================= */
-    function openLiveMode() {
-      const isFemale = (selectedGender || 'male') === 'female';
-      document.getElementById('liveModal').classList.add('open');
-      document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live';
-      setHoloState('Ready');
-      document.getElementById('liveSubtitle').innerText = 'Mic dabayein aur baat karein — Real Lip-Sync active hai!';
+    // Live Voice & Vision
+    let mediaStream = null;
+    let camFacing = 'environment';
+    let camActive = false;
+    let screenActive = false;
+
+    function openLiveView() {
+      const isFem = (gender || 'male') === 'female';
+      document.getElementById('liveScreen').classList.add('open');
+      document.getElementById('liveTitle').innerText = isFem ? 'Swara Live' : 'Jarvis Live';
+      setLiveState('Ready');
+      document.getElementById('liveCaption').innerText = 'Tap Mic to speak with AURA (Real Lip-Sync Active)';
     }
 
-    function stopLiveTracks() {
-      if (liveStream) { liveStream.getTracks().forEach(t => t.stop()); liveStream = null; }
-      const vid = document.getElementById('liveVideo');
-      vid.srcObject = null;
-      vid.style.display = 'none';
+    function stopMediaStreams() {
+      if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+      const v = document.getElementById('liveVideo');
+      v.srcObject = null;
+      v.style.display = 'none';
       document.getElementById('holoWrapper').style.display = 'flex';
-      isCameraOn = false;
-      isScreenOn = false;
-      document.getElementById('btnCam').classList.remove('active');
-      document.getElementById('btnScreen').classList.remove('active');
+      camActive = false;
+      screenActive = false;
+      document.getElementById('liveCamBtn').classList.remove('active');
+      document.getElementById('liveScreenBtn').classList.remove('active');
     }
 
-    function closeLiveMode() {
-      stopLiveTracks();
-      stopSpeaking();
-      document.getElementById('liveModal').classList.remove('open');
+    function closeLiveView() {
+      stopMediaStreams();
+      stopSpeech();
+      document.getElementById('liveScreen').classList.remove('open');
     }
 
-    async function toggleCamera() {
-      const isFemale = (selectedGender || 'male') === 'female';
-      if (isCameraOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live'; return; }
-      stopLiveTracks();
+    async function toggleLiveCamera(bypassVip = false) {
+      if (!isVip && !bypassVip) {
+        closeLiveView();
+        openModal('vipModal');
+        document.getElementById('vipStatusBanner').innerText = 'Live Camera Vision VIP Plan mein available hai (Mission Alarm Camera Proof free hai).';
+        return;
+      }
+      if (camActive) { stopMediaStreams(); openLiveView(); return; }
+      stopMediaStreams();
       try {
-        liveStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode }, audio: false });
-        const vid = document.getElementById('liveVideo');
-        vid.srcObject = liveStream;
-        vid.style.display = 'block';
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: camFacing }, audio: false });
+        const v = document.getElementById('liveVideo');
+        v.srcObject = mediaStream;
+        v.style.display = 'block';
         document.getElementById('holoWrapper').style.display = 'none';
-        isCameraOn = true;
-        document.getElementById('btnCam').classList.add('active');
-        document.getElementById('liveModeLabel').innerText = facingMode === 'environment' ? 'Back Camera' : 'Front Camera';
-        document.getElementById('liveSubtitle').innerText = 'Live Eye active. Mic daba kar poochiye kya dikh raha hai.';
-      } catch (err) { alert('Camera permission allow karein: ' + err.message); }
+        camActive = true;
+        document.getElementById('liveCamBtn').classList.add('active');
+        document.getElementById('liveTitle').innerText = camFacing === 'environment' ? 'Back Camera' : 'Front Camera';
+        document.getElementById('liveCaption').innerText = 'Camera active. Tap Mic to ask.';
+      } catch (e) { alert('Camera permission allow karein.'); }
     }
 
-    async function switchCamera() {
-      facingMode = (facingMode === 'environment') ? 'user' : 'environment';
-      if (isCameraOn) { isCameraOn = false; await toggleCamera(); }
-      else { await toggleCamera(); }
+    async function flipLiveCamera() {
+      camFacing = camFacing === 'environment' ? 'user' : 'environment';
+      if (camActive) { camActive = false; await toggleLiveCamera(true); }
+      else { await toggleLiveCamera(); }
     }
 
-    async function toggleScreenShare() {
-      const isFemale = (selectedGender || 'male') === 'female';
-      if (isScreenOn) { stopLiveTracks(); document.getElementById('liveModeLabel').innerText = (isFemale ? 'Swara' : 'AURA') + ' Live'; return; }
-      stopLiveTracks();
+    async function toggleLiveScreen() {
+      if (!isVip) {
+        closeLiveView();
+        openModal('vipModal');
+        document.getElementById('vipStatusBanner').innerText = 'Live Screen Vision VIP Plan mein available hai.';
+        return;
+      }
+      if (screenActive) { stopMediaStreams(); openLiveView(); return; }
+      stopMediaStreams();
       try {
-        liveStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-        const vid = document.getElementById('liveVideo');
-        vid.srcObject = liveStream;
-        vid.style.display = 'block';
+        mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        const v = document.getElementById('liveVideo');
+        v.srcObject = mediaStream;
+        v.style.display = 'block';
         document.getElementById('holoWrapper').style.display = 'none';
-        isScreenOn = true;
-        document.getElementById('btnScreen').classList.add('active');
-        document.getElementById('liveModeLabel').innerText = 'Screen Vision';
-        document.getElementById('liveSubtitle').innerText = 'Screen share active. Translation ya reply ke liye Mic dabayein.';
-      } catch (err) { alert('Screen share cancel ya unsupported: ' + err.message); }
+        screenActive = true;
+        document.getElementById('liveScreenBtn').classList.add('active');
+        document.getElementById('liveTitle').innerText = 'Screen Vision';
+        document.getElementById('liveCaption').innerText = 'Screen share active. Tap Mic to ask.';
+      } catch (e) { alert('Screen share unsupported or cancelled.'); }
     }
 
-    function captureCurrentFrame() {
-      if (!isCameraOn && !isScreenOn) return null;
-      const vid = document.getElementById('liveVideo');
-      const canvas = document.getElementById('captureCanvas');
-      if (!vid.videoWidth) return null;
-      canvas.width = vid.videoWidth;
-      canvas.height = vid.videoHeight;
-      canvas.getContext('2d').drawImage(vid, 0, 0, canvas.width, canvas.height);
+    function grabFrame() {
+      if (!camActive && !screenActive) return null;
+      const v = document.getElementById('liveVideo');
+      const c = document.getElementById('frameCanvas');
+      if (!v.videoWidth) return null;
+      c.width = v.videoWidth;
+      c.height = v.videoHeight;
+      c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
       return {
-        name: isScreenOn ? 'live_screen.jpg' : 'live_camera.jpg',
+        name: screenActive ? 'screen.jpg' : 'camera.jpg',
         mimeType: 'image/jpeg',
-        base64: canvas.toDataURL('image/jpeg', 0.8).split(',')[1]
+        base64: c.toDataURL('image/jpeg', 0.8).split(',')[1]
       };
     }
 
-    function listenInLiveMode() {
+    function startLiveSpeech() {
+      stopSpeech();
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SR) { alert('Chrome browser use karein.'); return; }
       const rec = new SR();
       rec.lang = 'hi-IN';
-      const micBtn = document.getElementById('btnLiveMic');
-      micBtn.classList.add('active');
-      setHoloState('Listening');
-      document.getElementById('liveSubtitle').innerText = 'Listening...';
+      const mic = document.getElementById('liveMicBtn');
+      mic.classList.add('active');
+      document.getElementById('liveCaption').innerText = 'Listening...';
 
       rec.onresult = async (e) => {
         playSound('chime');
-        micBtn.classList.remove('active');
+        mic.classList.remove('active');
         const spoken = e.results[0][0].transcript;
-        document.getElementById('liveSubtitle').innerText = spoken;
-
-        const frameObj = captureCurrentFrame();
-        addMsg('user', spoken, frameObj ? frameObj.name : '');
+        document.getElementById('liveCaption').innerText = spoken;
+        const frame = grabFrame();
+        appendMessage('user', spoken, frame ? frame.name : '');
 
         if (!apiKey) {
-          setHoloState('Ready');
-          document.getElementById('liveSubtitle').innerText = 'Settings mein Gemini API Key save karein.';
+          document.getElementById('liveCaption').innerText = 'Settings mein Gemini API Key save karein.';
           return;
         }
-
-        setHoloState('Processing');
-        document.getElementById('liveSubtitle').innerText = 'Processing...';
-        const result = await callGemini(spoken, frameObj);
-
-        if (result.ok) {
-          document.getElementById('liveSubtitle').innerText = result.text;
-          addMsg('ai', result.text);
-          speak(result.text);
+        setLiveState('Thinking');
+        const res = await queryGemini(spoken, frame);
+        if (res.ok) {
+          document.getElementById('liveCaption').innerText = res.text;
+          appendMessage('ai', res.text);
+          speakText(res.text);
         } else {
-          setHoloState('Ready');
-          document.getElementById('liveSubtitle').innerText = 'Error: ' + result.error;
+          setLiveState('Ready');
+          document.getElementById('liveCaption').innerText = res.error;
         }
       };
-
       rec.onerror = () => {
-        micBtn.classList.remove('active');
-        setHoloState('Idle');
-        document.getElementById('liveSubtitle').innerText = 'Aawaz clear nahi aayi, dobara Mic dabayein.';
+        mic.classList.remove('active');
+        setLiveState('Idle');
       };
       rec.start();
     }
 
-    function faceUnlockGreet() {
-      document.getElementById('settingsPanel').classList.remove('open');
-      sendMessage('Maine abhi Face Unlock se phone khola hai, mujhe apne andaaz mein pyara compliment aur welcome do!');
-    }
-
-    function simulateMessage() {
-      document.getElementById('settingsPanel').classList.remove('open');
-      const alertText = 'Sir, WhatsApp par ek naya message aaya hai. Privacy Shield ON hai — kya main padh kar sunaun?';
-      addMsg('ai', alertText);
-      speak(alertText);
-    }
-
-    // Smart Power & Battery Guardian Mode from Blueprint
+    // Battery Guardian
     if ('getBattery' in navigator) {
       navigator.getBattery().then(bat => {
         bat.addEventListener('chargingchange', () => {
           playSound('chime');
           const msg = bat.charging ? 'Charging Mode ON.' : 'Charger disconnect kar diya gaya hai.';
-          addMsg('ai', msg);
-          speak(msg);
+          appendMessage('ai', msg);
+          speakText(msg);
         });
         bat.addEventListener('levelchange', () => {
           if (bat.charging && bat.level >= 0.99) {
             const fullMsg = 'Battery 100% full ho gayi hai, charger disconnect kar dijiye.';
-            addMsg('ai', fullMsg);
-            speak(fullMsg);
+            appendMessage('ai', fullMsg);
+            speakText(fullMsg);
           } else if (!bat.charging && bat.level <= 0.15) {
             const lowMsg = 'Battery 15% se kam hai, charge lagane ki salah hai.';
-            addMsg('ai', lowMsg);
-            speak(lowMsg);
+            appendMessage('ai', lowMsg);
+            speakText(lowMsg);
           }
         });
       });
     }
 
     window.onload = () => {
-      loadVoices();
-      document.getElementById('charmToggleBtn').innerText = charmMode ? 'Charm Mode: ON' : 'Charm Mode: OFF';
-      document.getElementById('charmToggleBtn').classList.toggle('active-pill', charmMode);
-      document.getElementById('familyToggleBtn').innerText = familyGuard ? 'Parents Guard: ON' : 'Parents Guard: OFF';
-      document.getElementById('familyToggleBtn').classList.toggle('active-pill', familyGuard);
-      document.getElementById('ageToggleBtn').innerText = isUnder18 ? 'Age: Under-18 Safe' : 'Age: 18+ Adult';
+      loadSystemVoices();
+      if (apiKey) document.getElementById('apiKeyInput').value = apiKey;
+      document.getElementById('soundBtn').innerText = soundOn ? 'Sound: ON' : 'Sound: OFF';
 
-      if (!selectedGender) {
+      if (!gender) {
         document.getElementById('onboardModal').classList.add('open');
       } else {
-        applyCompanionUI();
-        if (!apiKey) document.getElementById('settingsPanel').classList.add('open');
+        syncUI();
+        if (!apiKey) document.getElementById('settingsDrawer').classList.add('open');
       }
       if (chats.length === 0) createNewChat();
-      else { currentChatId = chats[0].id; renderSidebar(); renderChat(); }
+      else { activeChatId = chats[0].id; renderSidebar(); renderChat(); }
     };
   </script>
 </body>
 </html>
+
